@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using ReadABit.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace ReadABit.Web
 {
@@ -19,6 +21,9 @@ namespace ReadABit.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddDbContext<CoreDbContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("CoreDbContext")));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -44,7 +49,10 @@ namespace ReadABit.Web
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                    name: "areas",
+                    pattern: "{area:exists}/{controller}/{action}/{id?}"
+                );
             });
         }
     }
