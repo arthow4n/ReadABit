@@ -22,8 +22,10 @@ namespace ReadABit.Web
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddDbContext<CoreDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("CoreDbContext")));
+            services.AddDbContext<CoreDbContext>(
+                options => options.UseNpgsql(Configuration.GetConnectionString("CoreDbContext"),
+                x => x.MigrationsAssembly("ReadABit.Infrastructure")
+            ));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
