@@ -2,9 +2,9 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { useQuery } from 'react-query';
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
-import { api } from '../integrations/backend/backend';
+import EditScreenInfo from '../../shared/components/EditScreenInfo';
+import { Text, View } from '../../shared/components/Themed';
+import { api } from '../../integrations/backend/backend';
 
 export default function TabOneScreen() {
 

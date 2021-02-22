@@ -3,8 +3,8 @@ import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import useCachedResources from './hooks/useCachedResources';
-import useColorScheme from './hooks/useColorScheme';
+import useCachedResources from './shared/hooks/useCachedResources';
+import useColorScheme from './shared/hooks/useColorScheme';
 import Navigation from './navigation';
 
 const queryClient = new QueryClient()
