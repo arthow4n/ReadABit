@@ -6,7 +6,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "backend:regenerate-client": "sh ../../server/scripts/regenerate-client.sh"
   },
   "jest": {
     "preset": "jest-expo"
@@ -19,7 +20,7 @@
     "@react-navigation/stack": "~5.12.8",
     "expo": "~40.0.0",
     "expo-asset": "~8.2.1",
-    "expo-constants": "~9.3.0",
+    "expo-constants": "~9.3.3",
     "expo-font": "~8.4.0",
     "expo-linking": "~2.0.0",
     "expo-splash-screen": "~0.8.0",
@@ -31,7 +32,8 @@
     "react-native-gesture-handler": "~1.8.0",
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "~2.15.0",
-    "react-native-web": "~0.13.12"
+    "react-native-web": "~0.13.12",
+    "react-query": "^3.9.9"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",

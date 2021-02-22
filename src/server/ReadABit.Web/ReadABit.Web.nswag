@@ -58,7 +58,7 @@
   "codeGenerators": {
     "openApiToTypeScriptClient": {
       "className": "{controller}Client",
-      "moduleName": "",
+      "moduleName": "Backend",
       "namespace": "",
       "typeScriptVersion": 2.7,
       "template": "Fetch",
@@ -75,7 +75,7 @@
       "generateOptionalParameters": true,
       "exportTypes": true,
       "wrapDtoExceptions": true,
-      "exceptionClass": "ApiException",
+      "exceptionClass": "BackendCallException",
       "clientBaseClass": null,
       "wrapResponses": false,
       "wrapResponseMethods": [],
@@ -86,7 +86,7 @@
       "useTransformOptionsMethod": false,
       "useTransformResultMethod": false,
       "generateDtoTypes": true,
-      "operationGenerationMode": "MultipleClientsFromOperationId",
+      "operationGenerationMode": "SingleClientFromOperationId",
       "markOptionalProperties": true,
       "generateCloneMethod": true,
       "typeStyle": "Interface",
@@ -114,9 +114,8 @@
       "enumNameGeneratorType": null,
       "serviceHost": "",
       "serviceSchemes": null,
-      "output": "bin/ReadABit.Web.ts",
-      "newLineBehavior": "CRLF",
-      "generateNullableReferenceTypes": true
+      "output": "../../client/ReadABit/integrations/backend/types.ts",
+      "newLineBehavior": "CRLF"
     }
   }
 }

@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "backend:regenerate-client",
+			"problemMatcher": [],
+			"label": "npm: backend:regenerate-client",
+			"detail": "sh ../../server/scripts/regenerate-client.sh"
+		}
+	]
+}

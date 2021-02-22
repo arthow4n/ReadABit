@@ -44,7 +44,10 @@ namespace ReadABit.Web
                 app.UseSwaggerUi3();
             }
 
-            app.UseHttpsRedirection();
+            if (!env.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseRouting();
 

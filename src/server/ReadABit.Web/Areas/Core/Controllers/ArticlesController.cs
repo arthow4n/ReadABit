@@ -21,6 +21,13 @@ namespace ReadABit.Web.Areas.Core.Controller
         [HttpGet("{id}")]
         public async Task<ActionResult<Article>> GetArticle(Guid id)
         {
+            // TODO: Remove dummy code that was used for POC.
+            return new Article
+            {
+                Id = id,
+                Title = "Hello world!",
+            };
+
             var article = await _context.Articles.FindAsync(id);
 
             if (article == null)
