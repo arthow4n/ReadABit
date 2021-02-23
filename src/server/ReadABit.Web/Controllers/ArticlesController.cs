@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Infrastructure;
 using ReadABit.Infrastructure.Models;
-using ReadABit.Web.Shared;
+using ReadABit.Web.Controller.Utils;
 
-namespace ReadABit.Web.Areas.Core.Controller
+namespace ReadABit.Web.Controller
 {
     public class ArticlesController : ApiControllerBase
     {

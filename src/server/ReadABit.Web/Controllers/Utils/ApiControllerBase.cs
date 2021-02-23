@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ReadABit.Web.Shared
+namespace ReadABit.Web.Controller.Utils
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -56,8 +56,8 @@ namespace ReadABit.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "areas",
-                    pattern: "{area:exists}/{controller}/{action}/{id?}"
+                    name: "default",
+                    pattern: "{controller}/{action}/{id?}"
                 );
             });
         }
