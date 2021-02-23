@@ -46,6 +46,7 @@ namespace ReadABit.Web
 
             if (!env.IsDevelopment())
             {
+                app.UseHsts();
                 app.UseHttpsRedirection();
             }
 
