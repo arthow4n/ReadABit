@@ -24,7 +24,7 @@ export class Client implements IClient {
     }
 
     articles_GetArticle(id: string): Promise<Article> {
-        let url_ = this.baseUrl + "/api/Articles/{id}";
+        let url_ = this.baseUrl + "/api/v1/Articles/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));

@@ -26,7 +26,13 @@ namespace ReadABit.Web
                 options => options.UseNpgsql(Configuration.GetConnectionString("CoreDbContext"),
                 x => x.MigrationsAssembly("ReadABit.Infrastructure")
             ));
-            services.AddControllers();
+            services
+                .AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ReadABit.Web", Version = "v1" });
