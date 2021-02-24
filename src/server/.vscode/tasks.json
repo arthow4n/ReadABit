@@ -8,6 +8,33 @@
             "args": [
                 "scripts/regenerate-client.sh",
             ],
+            "problemMatcher": [],
         },
-    ]
+        {
+            "label": "scripts/init.sh",
+            "command": "sh",
+            "type": "shell",
+            "args": [
+                "scripts/init.sh",
+            ],
+            "problemMatcher": [],
+        },
+        {
+            "label": "scripts/add-migration.sh",
+            "command": "sh",
+            "type": "shell",
+            "args": [
+                "scripts/add-migration.sh",
+                "${input:addMigrationName}",
+            ],
+            "problemMatcher": [],
+        },
+    ],
+    "inputs": [
+        {
+            "id": "addMigrationName",
+            "description": "Name of migration that will be created",
+            "type": "promptString",
+        },
+    ],
 }
