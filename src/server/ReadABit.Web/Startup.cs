@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ReadABit.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using ReadABit.Infrastructure.Models;
+using Microsoft.AspNetCore.Authentication;
 
 namespace ReadABit.Web
 {
@@ -26,6 +28,26 @@ namespace ReadABit.Web
                 options => options.UseNpgsql(Configuration.GetConnectionString("CoreDbContext"),
                 x => x.MigrationsAssembly("ReadABit.Infrastructure")
             ));
+
+
+            services
+                .AddDefaultIdentity<ApplicationUser>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = true;
+                })
+                .AddEntityFrameworkStores<CoreDbContext>();
+
+            services
+                .AddIdentityServer()
+                .AddApiAuthorization<ApplicationUser, CoreDbContext>();
+
+            services
+                .AddAuthentication()
+                .AddIdentityServerJwt();
+
+            services.AddControllersWithViews();
+            services.AddRazorPages();
+
             services
                 .AddControllers()
                 .AddNewtonsoftJson(options =>
@@ -58,14 +80,15 @@ namespace ReadABit.Web
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseIdentityServer();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller}/{action}/{id?}"
-                );
+                    pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }
