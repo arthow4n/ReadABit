@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ReadABit.Infrastructure;
 using ReadABit.Infrastructure.Models;
 using ReadABit.Web.Controller.Utils;
+using ReadABit.Web.Integrations.Services;
 
 namespace ReadABit.Web.Controller
 {
@@ -34,6 +35,16 @@ namespace ReadABit.Web.Controller
             }
 
             return article;
+        }
+
+        // TODO: Dummy controller, should be removed soon.
+        [Route("Conllu")]
+        [HttpGet]
+        public async Task<ActionResult> Conllu(string input = "")
+        {
+            var pipe = new UDPipeV1Service(UDPipeV1Service.ModelLanguage.Swedish);
+            var conllu = pipe.ConvertToConllu(input);
+            return Ok(conllu);
         }
     }
 }

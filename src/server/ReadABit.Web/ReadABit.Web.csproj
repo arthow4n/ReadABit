@@ -28,9 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="udpipe_csharp">
-      <HintPath>.\Integrations\Ufal\UDPipe\runtime\udpipe_csharp.dll</HintPath>
-    </Reference>
+    <None Update=".\Integrations\Ufal\UDPipe\runtime\**" CopyToOutputDirectory="PreserveNewest"/>
     <Content Include=".\Integrations\Ufal\UDPipe\runtime\swedish-ud-1.2-160523.udpipe" />
   </ItemGroup>
 </Project>
