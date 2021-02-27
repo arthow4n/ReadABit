@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ReadABit.Core.Integrations.Services;
 using ReadABit.Infrastructure;
 using ReadABit.Infrastructure.Models;
 using ReadABit.Web.Controller.Utils;
-using ReadABit.Web.Integrations.Services;
 
 namespace ReadABit.Web.Controller
 {

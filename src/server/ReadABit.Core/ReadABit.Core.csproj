@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update=".\Integrations\Ufal\UDPipe\models\**" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Copy dll to output root for easier loading without too much wrapper code. -->
+    <None Update=".\Integrations\Ufal\UDPipe\runtime\udpipe_csharp.dll" CopyToOutputDirectory="PreserveNewest" Link="%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

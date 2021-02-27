@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using Ufal.UDPipe;
 
-namespace ReadABit.Web.Integrations.Services
+namespace ReadABit.Core.Integrations.Services
 {
     public class UDPipeV1Service
     {
