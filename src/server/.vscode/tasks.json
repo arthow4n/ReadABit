@@ -34,7 +34,8 @@
             "command": "sh",
             "type": "shell",
             "args": [
-                "scripts/apply-migrations",
+                "scripts/apply-migrations.sh",
+                "${input:applyMigrationName}",
             ],
             "problemMatcher": [],
         },
@@ -80,6 +81,11 @@
         {
             "id": "addMigrationName",
             "description": "Name of migration that will be created",
+            "type": "promptString",
+        },
+        {
+            "id": "applyMigrationName",
+            "description": "Target migration version that the database will be migrated to. Leave empty to apply all pending migrations. Enter 0 for reverting all migrations.",
             "type": "promptString",
         },
     ],
