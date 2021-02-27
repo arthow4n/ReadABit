@@ -27,14 +27,14 @@ namespace ReadABit.Web.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ArticleCollection> Get(Guid id)
+        public async Task<ArticleCollection> GetArticleCollection(Guid id)
         {
             // TODO: Refactor so it return 404 when not found.
             return await service.Get(id) ?? throw new ArgumentOutOfRangeException();
         }
 
         [HttpPost]
-        public async Task<Guid> Create(string name)
+        public async Task<Guid> CreateArticleCollection(string name)
         {
             var id = await service.Create(name);
             await SaveChangesAsync();

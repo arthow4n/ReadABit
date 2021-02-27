@@ -1,18 +1,20 @@
+using System;
 using Xunit;
 using ReadABit.Web.Controller;
 using System.Threading.Tasks;
 using Shouldly;
 using MediatR;
+using ReadABit.Web.Test.Helpers;
 
 namespace ReadABit.Web.Test
 {
-    public class ArticlesControllerTest
+    public class ArticlesControllerTest : TestBase<ArticlesController>
     {
         private readonly ArticlesController controller;
 
-        public ArticlesControllerTest(IMediator mediator)
+        public ArticlesControllerTest(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            this.controller = new ArticlesController(mediator);
+            controller = t1;
         }
 
         [Fact]

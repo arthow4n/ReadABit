@@ -1,20 +1,19 @@
+using System;
 using System.Threading.Tasks;
-using MediatR;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using ReadABit.Web.Controllers;
+using ReadABit.Web.Test.Helpers;
 using Shouldly;
 using Xunit;
 
 namespace ReadABit.Web.Test.Controllers
 {
-    public class ArticleCollectionsControllerTest
+    public class ArticleCollectionsControllerTest : TestBase<ArticleCollectionsController>
     {
         private readonly ArticleCollectionsController controller;
 
-        public ArticleCollectionsControllerTest(IMediator mediator)
+        public ArticleCollectionsControllerTest(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            this.controller = new ArticleCollectionsController(mediator);
+            controller = t1;
         }
 
         [Fact]
@@ -22,8 +21,8 @@ namespace ReadABit.Web.Test.Controllers
         {
             var name = "dummy";
 
-            var id = await controller.Create(name);
-            var created = await controller.Get(id);
+            var id = await controller.CreateArticleCollection(name);
+            var created = await controller.GetArticleCollection(id);
 
             created.Id.ShouldBe(id);
             created.Name.ShouldBe(name);
