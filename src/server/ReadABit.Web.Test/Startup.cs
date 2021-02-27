@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,8 @@ namespace ReadABit.Web.Test
                     options => options.UseNpgsql(configuration.GetConnectionString("CoreDbContext"),
                     x => x.MigrationsAssembly("ReadABit.Infrastructure")
                 ));
+
+            services.AddMediatR(typeof(Startup));
         }
     }
 }

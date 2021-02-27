@@ -10,11 +10,8 @@ namespace ReadABit.Web.Controller
 {
     public class ArticlesController : ApiControllerBase
     {
-        private readonly CoreDbContext context;
-
-        public ArticlesController(CoreDbContext context)
+        public ArticlesController(CoreDbContext context) : base(context)
         {
-            this.context = context;
         }
 
         [HttpGet("{id}")]
@@ -27,7 +24,7 @@ namespace ReadABit.Web.Controller
                 Title = "Hello world!",
             };
 
-            var article = await context.Articles.FindAsync(id);
+            var article = await dbContext.Articles.FindAsync(id);
 
             if (article == null)
             {

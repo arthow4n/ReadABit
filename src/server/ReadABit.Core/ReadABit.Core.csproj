@@ -2,11 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable> 
   </PropertyGroup>
 
   <ItemGroup>
     <None Update=".\Integrations\Ufal\UDPipe\models\**" CopyToOutputDirectory="PreserveNewest" />
     <!-- Copy dll to output root for easier loading without too much wrapper code. -->
     <None Update=".\Integrations\Ufal\UDPipe\runtime\udpipe_csharp.dll" CopyToOutputDirectory="PreserveNewest" Link="%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="9.0.0" />
   </ItemGroup>
 </Project>

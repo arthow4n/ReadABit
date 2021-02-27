@@ -1,4 +1,6 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
+using ReadABit.Infrastructure;
 
 namespace ReadABit.Web.Controller.Utils
 {
@@ -6,7 +8,15 @@ namespace ReadABit.Web.Controller.Utils
     // https://github.com/RicoSuter/NSwag/issues/1355
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class ApiControllerBase : ControllerBase
+    public abstract class ApiControllerBase : ControllerBase
     {
+        protected IServiceProvider serviceProvider => HttpContext.RequestServices;
+
+        protected readonly CoreDbContext dbContext;
+
+        public ApiControllerBase(CoreDbContext context)
+        {
+            this.dbContext = context;
+        }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ReadABit.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using MediatR;
 
 namespace ReadABit.Web
 {
@@ -21,7 +22,6 @@ namespace ReadABit.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddDbContext<CoreDbContext>(
                 options => options.UseNpgsql(Configuration.GetConnectionString("CoreDbContext"),
                 x => x.MigrationsAssembly("ReadABit.Infrastructure")
@@ -32,6 +32,8 @@ namespace ReadABit.Web
                 {
                     options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                 });
+
+            services.AddMediatR(typeof(Startup));
 
             services.AddSwaggerGen(c =>
             {
