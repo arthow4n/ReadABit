@@ -11,6 +11,7 @@ dotnet restore
 mkdir -p tmp
 cd tmp
 
+# Download and setup UDPipe
 curl -L --remote-name-all \
     # UDPipe binary & C# binding
     https://github.com/ufal/udpipe/releases/download/v1.2.0/udpipe-1.2.0-bin.zip \
@@ -23,6 +24,7 @@ cp -r ../udpipe-1.2.0-bin/bin-win64/csharp "${REPO_ROOT}/ReadABit.Web/Integratio
 cd "${REPO_ROOT}/ReadABit.Web/Integrations"
 mkdir -p Ufal/UDPipe/runtime
 mv udpipe_csharp.dll Ufal/UDPipe/runtime
-cp "${REPO_ROOT}/tmp/swedish-ud-1.2-160523.udpipe" Ufal/UDPipe/runtime
+mkdir -p Ufal/UDPipe/models
+cp "${REPO_ROOT}/tmp/swedish-ud-1.2-160523.udpipe" Ufal/UDPipe/models
 
 cd "${REPO_ROOT}"

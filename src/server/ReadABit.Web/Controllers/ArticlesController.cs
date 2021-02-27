@@ -40,11 +40,11 @@ namespace ReadABit.Web.Controller
         // TODO: Dummy controller, should be removed soon.
         [Route("Conllu")]
         [HttpGet]
-        public async Task<ActionResult> Conllu(string input = "")
+        public async Task<ContentResult> Conllu(string input = "")
         {
             var pipe = new UDPipeV1Service(UDPipeV1Service.ModelLanguage.Swedish);
             var conllu = pipe.ConvertToConllu(input);
-            return Ok(conllu);
+            return Content(conllu);
         }
     }
 }

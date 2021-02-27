@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadABit.Web", "ReadABit.We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadABit.Infrastructure", "ReadABit.Infrastructure\ReadABit.Infrastructure.csproj", "{3E206F5C-DDCB-4DAF-BCD4-8DA6646D778A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReadABit.Web.Test", "ReadABit.Web.Test\ReadABit.Web.Test.csproj", "{62301133-2CAB-44C6-BC29-8A4CD1719B26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,17 @@ Global
 		{3E206F5C-DDCB-4DAF-BCD4-8DA6646D778A}.Release|x64.Build.0 = Release|Any CPU
 		{3E206F5C-DDCB-4DAF-BCD4-8DA6646D778A}.Release|x86.ActiveCfg = Release|Any CPU
 		{3E206F5C-DDCB-4DAF-BCD4-8DA6646D778A}.Release|x86.Build.0 = Release|Any CPU
+		{62301133-2CAB-44C6-BC29-8A4CD1719B26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62301133-2CAB-44C6-BC29-8A4CD1719B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62301133-2CAB-44C6-BC29-8A4CD1719B26}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{62301133-2CAB-44C6-BC29-8A4CD1719B26}.Debug|x64.Build.0 = Debug|Any CPU
+		{62301133-2CAB-44C6-BC29-8A4CD1719B26}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{62301133-2CAB-44C6-BC29-8A4CD1719B26}.Debug|x86.Build.0 = Debug|Any CPU
+		{62301133-2CAB-44C6-BC29-8A4CD1719B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62301133-2CAB-44C6-BC29-8A4CD1719B26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62301133-2CAB-44C6-BC29-8A4CD1719B26}.Release|x64.ActiveCfg = Release|Any CPU
+		{62301133-2CAB-44C6-BC29-8A4CD1719B26}.Release|x64.Build.0 = Release|Any CPU
+		{62301133-2CAB-44C6-BC29-8A4CD1719B26}.Release|x86.ActiveCfg = Release|Any CPU
+		{62301133-2CAB-44C6-BC29-8A4CD1719B26}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

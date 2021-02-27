@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+    <UserSecretsId>0843d1de-9adb-4640-8ca6-a6b9410f1ac0</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+    <PackageReference Include="Shouldly" Version="4.0.3" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="Xunit.DependencyInjection" Version="7.1.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="1.3.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReadABit.Infrastructure\ReadABit.Infrastructure.csproj" />    
+    <ProjectReference Include="..\ReadABit.Web\ReadABit.Web.csproj" />
+  </ItemGroup>
+
+</Project>

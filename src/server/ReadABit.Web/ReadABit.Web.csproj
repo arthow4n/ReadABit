@@ -4,6 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable> 
     <UserSecretsId>42045c7f-18a8-4402-8f4a-361b89f4c904</UserSecretsId>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -28,7 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update=".\Integrations\Ufal\UDPipe\runtime\**" CopyToOutputDirectory="PreserveNewest"/>
-    <Content Include=".\Integrations\Ufal\UDPipe\runtime\swedish-ud-1.2-160523.udpipe" />
+    <None Update=".\Integrations\Ufal\UDPipe\models\**" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Copy dll to output root for easier loading without too much wrapper code. -->
+    <None Update=".\Integrations\Ufal\UDPipe\runtime\udpipe_csharp.dll" CopyToOutputDirectory="PreserveNewest" Link="%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

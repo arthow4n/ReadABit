@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Ufal.UDPipe;
 
 namespace ReadABit.Web.Integrations.Services
@@ -12,7 +13,13 @@ namespace ReadABit.Web.Integrations.Services
         public UDPipeV1Service(ModelLanguage lang)
         {
             var modelPath = Path.Join(
-                Program.UDPipeRuntimeDirPath,
+                Path.Join(
+                    Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location),
+                    "Integrations",
+                    "Ufal",
+                    "UDPipe",
+                    "models"
+                ),
                 ModelLanguageToFileNameMapping[lang]
             );
             Model model = Model.load(modelPath);
