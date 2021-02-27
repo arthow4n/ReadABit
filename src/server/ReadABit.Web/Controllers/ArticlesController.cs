@@ -1,10 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Integrations.Services;
-using ReadABit.Infrastructure;
 using ReadABit.Infrastructure.Models;
 using ReadABit.Web.Controller.Utils;
 
@@ -12,7 +10,7 @@ namespace ReadABit.Web.Controller
 {
     public class ArticlesController : ApiControllerBase
     {
-        public ArticlesController(IMediator mediator) : base(mediator)
+        public ArticlesController(IServiceProvider serviceProvider, IMediator mediator) : base(serviceProvider, mediator)
         {
         }
 

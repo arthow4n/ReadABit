@@ -16,7 +16,7 @@ namespace ReadABit.Web.Controller.Utils
     {
         protected readonly IMediator mediator;
 
-        protected ApiControllerBase(IMediator mediator)
+        protected ApiControllerBase(IServiceProvider serviceProvider, IMediator mediator)
         {
             this.mediator = mediator;
         }

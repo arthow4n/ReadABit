@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ReadABit.Core.Database.Commands;
 using ReadABit.Core.Services;
+using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
 using ReadABit.Web.Controller.Utils;
 
@@ -15,9 +14,9 @@ namespace ReadABit.Web.Controllers
     {
         private readonly ArticleCollectionService service;
 
-        public ArticleCollectionsController(IMediator mediator) : base(mediator)
+        public ArticleCollectionsController(IServiceProvider serviceProvider, IMediator mediator) : base(serviceProvider, mediator)
         {
-            this.service = new ArticleCollectionService(mediator);
+            this.service = DI.New<ArticleCollectionService>(serviceProvider);
         }
 
         [HttpGet]
