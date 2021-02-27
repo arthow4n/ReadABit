@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Infrastructure
@@ -12,6 +10,11 @@ namespace ReadABit.Infrastructure
         }
 
         public DbSet<Article> Articles => Set<Article>();
+        public DbSet<ArticleCollection> ArticleCollections => Set<ArticleCollection>();
 
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+        }
     }
 }

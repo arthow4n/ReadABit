@@ -5,6 +5,10 @@
     <Nullable>enable</Nullable> 
   </PropertyGroup>
 
+  <PropertyGroup>
+    <NoWarn>0162;1998</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Update=".\Integrations\Ufal\UDPipe\models\**" CopyToOutputDirectory="PreserveNewest" />
     <!-- Copy dll to output root for easier loading without too much wrapper code. -->
@@ -12,6 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ensure.That" Version="10.0.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
+    <ProjectReference Include="..\ReadABit.Infrastructure\ReadABit.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

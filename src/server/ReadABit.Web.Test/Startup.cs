@@ -1,11 +1,8 @@
-using System;
-using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ReadABit.Core.Services.Utils;
 using ReadABit.Infrastructure;
 
 namespace ReadABit.Web.Test
@@ -23,7 +20,14 @@ namespace ReadABit.Web.Test
                     x => x.MigrationsAssembly("ReadABit.Infrastructure")
                 ));
 
-            services.AddMediatR(typeof(Startup));
+            // TODO: Think about how to better deal with test DB
+            services
+                .BuildServiceProvider()
+                .GetRequiredService<CoreDbContext>()
+                .Database
+                .Migrate();
+
+            services.AddMediatR(typeof(ServiceBase));
         }
     }
 }

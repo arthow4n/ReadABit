@@ -1,8 +1,8 @@
 using Xunit;
 using ReadABit.Web.Controller;
-using ReadABit.Infrastructure;
 using System.Threading.Tasks;
 using Shouldly;
+using MediatR;
 
 namespace ReadABit.Web.Test
 {
@@ -10,9 +10,9 @@ namespace ReadABit.Web.Test
     {
         private readonly ArticlesController controller;
 
-        public ArticlesControllerTest(CoreDbContext context)
+        public ArticlesControllerTest(IMediator mediator)
         {
-            this.controller = new ArticlesController(context);
+            this.controller = new ArticlesController(mediator);
         }
 
         [Fact]

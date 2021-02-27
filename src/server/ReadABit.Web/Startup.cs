@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using ReadABit.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using MediatR;
+using ReadABit.Core.Services.Utils;
 
 namespace ReadABit.Web
 {
@@ -33,7 +34,7 @@ namespace ReadABit.Web
                     options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                 });
 
-            services.AddMediatR(typeof(Startup));
+            services.AddMediatR(typeof(ServiceBase));
 
             services.AddSwaggerGen(c =>
             {

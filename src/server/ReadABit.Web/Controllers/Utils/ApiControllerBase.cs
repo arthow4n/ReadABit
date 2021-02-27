@@ -1,5 +1,9 @@
 using System;
+using System.Threading.Tasks;
+using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ReadABit.Core.Database.Commands;
 using ReadABit.Infrastructure;
 
 namespace ReadABit.Web.Controller.Utils
@@ -10,13 +14,16 @@ namespace ReadABit.Web.Controller.Utils
     [ApiController]
     public abstract class ApiControllerBase : ControllerBase
     {
-        protected IServiceProvider serviceProvider => HttpContext.RequestServices;
+        protected readonly IMediator mediator;
 
-        protected readonly CoreDbContext dbContext;
-
-        public ApiControllerBase(CoreDbContext context)
+        protected ApiControllerBase(IMediator mediator)
         {
-            this.dbContext = context;
+            this.mediator = mediator;
+        }
+
+        protected async Task SaveChangesAsync()
+        {
+            await mediator.Send(new SaveChanges { });
         }
     }
 }

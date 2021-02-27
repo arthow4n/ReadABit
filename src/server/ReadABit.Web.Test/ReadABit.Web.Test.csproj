@@ -7,6 +7,10 @@
     <IsPackable>false</IsPackable>
     <UserSecretsId>0843d1de-9adb-4640-8ca6-a6b9410f1ac0</UserSecretsId>
   </PropertyGroup>
+  
+  <PropertyGroup>
+    <NoWarn>0162;1998</NoWarn>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />

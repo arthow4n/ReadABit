@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Integrations.Services;
 using ReadABit.Infrastructure;
@@ -10,7 +12,7 @@ namespace ReadABit.Web.Controller
 {
     public class ArticlesController : ApiControllerBase
     {
-        public ArticlesController(CoreDbContext context) : base(context)
+        public ArticlesController(IMediator mediator) : base(mediator)
         {
         }
 
@@ -23,15 +25,6 @@ namespace ReadABit.Web.Controller
                 Id = id,
                 Title = "Hello world!",
             };
-
-            var article = await dbContext.Articles.FindAsync(id);
-
-            if (article == null)
-            {
-                return NotFound();
-            }
-
-            return article;
         }
 
         // TODO: Dummy controller, should be removed soon.
