@@ -8,6 +8,7 @@ using ReadABit.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using MediatR;
 using ReadABit.Core.Services.Utils;
+using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Web
 {
@@ -24,9 +25,20 @@ namespace ReadABit.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<CoreDbContext>(
-                options => options.UseNpgsql(Configuration.GetConnectionString("CoreDbContext"),
-                x => x.MigrationsAssembly("ReadABit.Infrastructure")
-            ));
+                options => options.UseNpgsql(
+                    Configuration.GetConnectionString("CoreDbContext"),
+                    x => x.MigrationsAssembly("ReadABit.Infrastructure")
+                )
+            );
+
+            services
+                .AddDefaultIdentity<ApplicationUser>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                })
+                .AddEntityFrameworkStores<CoreDbContext>();
+            services.AddRazorPages();
+
             services
                 .AddControllers()
                 .AddNewtonsoftJson(options =>
@@ -61,6 +73,7 @@ namespace ReadABit.Web
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

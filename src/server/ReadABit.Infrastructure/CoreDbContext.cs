@@ -1,11 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Infrastructure
 {
-    public class CoreDbContext : DbContext
+    public class CoreDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
     {
-        public CoreDbContext(DbContextOptions<CoreDbContext> options) : base(options)
+        public CoreDbContext(DbContextOptions options) : base(options)
         {
         }
 
@@ -15,6 +18,7 @@ namespace ReadABit.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
