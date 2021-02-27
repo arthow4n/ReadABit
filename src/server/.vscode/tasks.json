@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "scripts/regenerate-client.sh",
+            "label": "regenerate-client",
             "command": "sh",
             "type": "shell",
             "args": [
@@ -11,7 +11,7 @@
             "problemMatcher": [],
         },
         {
-            "label": "scripts/init.sh",
+            "label": "init",
             "command": "sh",
             "type": "shell",
             "args": [
@@ -20,12 +20,21 @@
             "problemMatcher": [],
         },
         {
-            "label": "scripts/add-migration.sh",
+            "label": "add-migration",
             "command": "sh",
             "type": "shell",
             "args": [
                 "scripts/add-migration.sh",
                 "${input:addMigrationName}",
+            ],
+            "problemMatcher": [],
+        },
+        {
+            "label": "apply-migrations",
+            "command": "sh",
+            "type": "shell",
+            "args": [
+                "scripts/apply-migrations",
             ],
             "problemMatcher": [],
         },
