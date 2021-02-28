@@ -1,9 +1,9 @@
 using System;
 using MediatR;
 
-namespace ReadABit.Core.Database.Commands
+namespace ReadABit.Core.Commands
 {
-    public class CreateArticleCollection : IRequest<Guid>
+    public class ArticleCollectionCreate : IRequest<Guid>
     {
         public Guid UserId { get; set; }
         public string Name { get; set; } = "";

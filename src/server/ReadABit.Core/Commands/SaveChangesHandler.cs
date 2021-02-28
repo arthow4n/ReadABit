@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using ReadABit.Core.Database.Commands;
+using ReadABit.Core.Commands;
 using ReadABit.Infrastructure;
 
 namespace ReadABit.Core.Database.CommandHandlers

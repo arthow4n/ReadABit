@@ -2,23 +2,22 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using ReadABit.Core.Database.Commands;
 using EnsureThat;
 using ReadABit.Infrastructure;
 using ReadABit.Infrastructure.Models;
 
-namespace ReadABit.Core.Database.CommandHandlers
+namespace ReadABit.Core.Commands
 {
-    public class CreateArticleCollectionHandler : IRequestHandler<CreateArticleCollection, Guid>
+    public class ArticleCollectionCreateHandler : IRequestHandler<ArticleCollectionCreate, Guid>
     {
         private readonly CoreDbContext db;
 
-        public CreateArticleCollectionHandler(CoreDbContext db)
+        public ArticleCollectionCreateHandler(CoreDbContext db)
         {
             this.db = db;
         }
 
-        public async Task<Guid> Handle(CreateArticleCollection request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(ArticleCollectionCreate request, CancellationToken cancellationToken)
         {
             Ensure.That(request.Name, nameof(request.Name)).IsNotNullOrWhiteSpace();
 

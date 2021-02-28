@@ -1,10 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ReadABit.Core.Database.Commands;
-using ReadABit.Infrastructure;
+using ReadABit.Core.Commands;
 
 namespace ReadABit.Web.Controller.Utils
 {

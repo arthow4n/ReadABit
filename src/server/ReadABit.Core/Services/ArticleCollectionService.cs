@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
-using ReadABit.Core.Database.Commands;
+using ReadABit.Core.Commands;
 using ReadABit.Core.Services.Utils;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
@@ -22,7 +22,7 @@ namespace ReadABit.Core.Services
 
         public async Task<Guid> Create(string name)
         {
-            return await mediator.Send(new CreateArticleCollection
+            return await mediator.Send(new ArticleCollectionCreate
             {
                 UserId = requestContext.UserId!.Value,
                 Name = name,
@@ -31,7 +31,7 @@ namespace ReadABit.Core.Services
 
         public async Task<ArticleCollection?> Get(Guid id)
         {
-            return await mediator.Send(new GetArticleCollection
+            return await mediator.Send(new ArticleCollectionGet
             {
                 Id = id,
             });
