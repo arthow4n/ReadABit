@@ -1,12 +1,12 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "npm",
-			"script": "backend:regenerate-client",
-			"problemMatcher": [],
-			"label": "npm: backend:regenerate-client",
-			"detail": "Regenerate backend types for client."
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "backend:regenerate-client",
+      "problemMatcher": [],
+      "label": "npm: backend:regenerate-client",
+      "detail": "Regenerate backend types for client."
+    }
+  ]
 }
