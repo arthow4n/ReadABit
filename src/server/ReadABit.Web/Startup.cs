@@ -34,7 +34,15 @@ namespace ReadABit.Web
             services
                 .AddIdentity<ApplicationUser, ApplicationRole>(options =>
                 {
+                    // TODO: Enable maybe in production, it depends.
                     options.SignIn.RequireConfirmedAccount = false;
+                    // Use passphases please
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredUniqueChars = 0;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequiredLength = 0;
                 })
                 .AddEntityFrameworkStores<CoreDbContext>()
                 .AddDefaultTokenProviders()
@@ -76,7 +84,6 @@ namespace ReadABit.Web
             }
 
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -86,6 +93,7 @@ namespace ReadABit.Web
                     name: "default",
                     pattern: "{controller}/{action}/{id?}"
                 );
+                endpoints.MapRazorPages();
             });
         }
     }
