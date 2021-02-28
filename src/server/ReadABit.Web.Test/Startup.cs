@@ -1,3 +1,4 @@
+using System;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -33,12 +34,12 @@ namespace ReadABit.Web.Test
                 .AddEntityFrameworkStores<CoreDbContext>()
                 .AddDefaultTokenProviders();
 
-            // TODO: Think about how to better deal with test DB
-            services
+            var db = services
                 .BuildServiceProvider()
                 .GetRequiredService<CoreDbContext>()
-                .Database
-                .Migrate();
+                .Database;
+            db.EnsureDeleted();
+            db.EnsureCreated();
 
             services.AddScoped<IRequestContext, RequestContextMock>();
 
