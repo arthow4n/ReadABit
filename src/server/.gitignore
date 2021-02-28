@@ -446,3 +446,4 @@ tmp/
 ReadABit.Web/Integrations/Ufal/UDPipe
 
 **/appsettings.Development.json
+**/appsettings.Production.json

@@ -10,26 +10,33 @@ using MediatR;
 using ReadABit.Core.Services.Utils;
 using ReadABit.Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace ReadABit.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
+        private readonly IWebHostEnvironment _env;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<CoreDbContext>(
-                options => options.UseNpgsql(
-                    Configuration.GetConnectionString("CoreDbContext"),
-                    x => x.MigrationsAssembly("ReadABit.Infrastructure")
-                )
+                options =>
+                {
+                    options.UseNpgsql(
+                        Configuration.GetConnectionString("CoreDbContext"),
+                        x => x.MigrationsAssembly("ReadABit.Infrastructure")
+                    );
+                    options.UseOpenIddict<Guid>();
+                }
             );
             services
                 .AddIdentity<ApplicationUser, ApplicationRole>(options =>
@@ -47,8 +54,43 @@ namespace ReadABit.Web
                 .AddEntityFrameworkStores<CoreDbContext>()
                 .AddDefaultTokenProviders()
                 .AddDefaultUI();
-
             services.AddRazorPages();
+
+            services
+                .AddOpenIddict()
+                .AddCore(options =>
+                {
+                    options
+                        .UseEntityFrameworkCore()
+                        .UseDbContext<CoreDbContext>()
+                        .ReplaceDefaultEntities<Guid>();
+                })
+                .AddServer(options =>
+                {
+                    options.SetTokenEndpointUris("/connect/token");
+                    options.AllowClientCredentialsFlow();
+                    options
+                        .AddDevelopmentEncryptionCertificate()
+                        .AddDevelopmentSigningCertificate();
+                    var aspOptions =
+                        options
+                            .UseAspNetCore()
+                            .EnableTokenEndpointPassthrough();
+
+                    if (_env.IsDevelopment())
+                    {
+                        aspOptions.DisableTransportSecurityRequirement();
+                    }
+
+                    // Enfore OIDC Authorization Code Flow with PKCE since the clients are going to be native app or SPA
+                    options.RequireProofKeyForCodeExchange();
+
+                })
+                .AddValidation(options =>
+                {
+                    options.UseLocalServer();
+                });
+            services.AddHostedService<OpenIddictWorker>();
 
             services
                 .AddControllers()
