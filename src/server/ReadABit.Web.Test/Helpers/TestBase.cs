@@ -1,8 +1,5 @@
 using System;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 using ReadABit.Core.Utils;
-using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Web.Test.Helpers
 {
@@ -32,7 +29,7 @@ namespace ReadABit.Web.Test.Helpers
         protected readonly T1 t1;
         public TestBase(IServiceProvider serviceProvider, IRequestContext requestContext) : base(serviceProvider, requestContext)
         {
-            t1 = (T1)ActivatorUtilities.CreateInstance(serviceProvider, typeof(T1));
+            t1 = DI.New<T1>(serviceProvider);
         }
     }
 
@@ -44,7 +41,7 @@ namespace ReadABit.Web.Test.Helpers
         protected readonly T2 t2;
         public TestBase(IServiceProvider serviceProvider, IRequestContext requestContext) : base(serviceProvider, requestContext)
         {
-            t2 = (T2)ActivatorUtilities.CreateInstance(serviceProvider, typeof(T2));
+            t2 = DI.New<T2>(serviceProvider);
         }
     }
 
@@ -57,7 +54,7 @@ namespace ReadABit.Web.Test.Helpers
         protected readonly T3 t3;
         public TestBase(IServiceProvider serviceProvider, IRequestContext requestContext) : base(serviceProvider, requestContext)
         {
-            t3 = (T3)ActivatorUtilities.CreateInstance(serviceProvider, typeof(T3));
+            t3 = DI.New<T3>(serviceProvider);
         }
     }
 }
