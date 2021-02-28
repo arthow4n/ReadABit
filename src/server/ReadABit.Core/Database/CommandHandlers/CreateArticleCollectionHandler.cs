@@ -25,12 +25,13 @@ namespace ReadABit.Core.Database.CommandHandlers
             var articleCollection = new ArticleCollection
             {
                 Id = Guid.NewGuid(),
+                UserId = request.UserId,
                 Name = request.Name,
             };
 
             await db.AddAsync(articleCollection);
 
-            return articleCollection.Id; 
+            return articleCollection.Id;
         }
     }
 }

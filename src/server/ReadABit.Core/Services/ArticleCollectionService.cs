@@ -4,13 +4,14 @@ using System.Threading.Tasks;
 using MediatR;
 using ReadABit.Core.Database.Commands;
 using ReadABit.Core.Services.Utils;
+using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Services
 {
     public class ArticleCollectionService : ServiceBase
     {
-        public ArticleCollectionService(IMediator mediator) : base(mediator)
+        public ArticleCollectionService(IMediator mediator, IRequestContext requestContext) : base(mediator, requestContext)
         {
         }
 
@@ -23,6 +24,7 @@ namespace ReadABit.Core.Services
         {
             return await mediator.Send(new CreateArticleCollection
             {
+                UserId = requestContext.UserId!.Value,
                 Name = name,
             });
         }

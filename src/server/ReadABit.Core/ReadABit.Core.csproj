@@ -18,6 +18,7 @@
   <ItemGroup>
     <PackageReference Include="Ensure.That" Version="10.0.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
   </ItemGroup>
   
   <ItemGroup>

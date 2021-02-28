@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using ReadABit.Core.Utils;
 using ReadABit.Web.Controllers;
 using ReadABit.Web.Test.Helpers;
 using Shouldly;
@@ -9,11 +10,8 @@ namespace ReadABit.Web.Test.Controllers
 {
     public class ArticleCollectionsControllerTest : TestBase<ArticleCollectionsController>
     {
-        private readonly ArticleCollectionsController controller;
-
-        public ArticleCollectionsControllerTest(IServiceProvider serviceProvider) : base(serviceProvider)
+        public ArticleCollectionsControllerTest(IServiceProvider serviceProvider, IRequestContext requestContext) : base(serviceProvider, requestContext)
         {
-            controller = t1;
         }
 
         [Fact]
@@ -21,8 +19,8 @@ namespace ReadABit.Web.Test.Controllers
         {
             var name = "dummy";
 
-            var id = await controller.CreateArticleCollection(name);
-            var created = await controller.GetArticleCollection(id);
+            var id = await t1.CreateArticleCollection(name);
+            var created = await t1.GetArticleCollection(id);
 
             created.Id.ShouldBe(id);
             created.Name.ShouldBe(name);

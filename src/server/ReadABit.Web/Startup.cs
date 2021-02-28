@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using MediatR;
 using ReadABit.Core.Services.Utils;
 using ReadABit.Infrastructure.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace ReadABit.Web
 {
@@ -30,13 +31,15 @@ namespace ReadABit.Web
                     x => x.MigrationsAssembly("ReadABit.Infrastructure")
                 )
             );
-
             services
-                .AddDefaultIdentity<ApplicationUser>(options =>
+                .AddIdentity<ApplicationUser, ApplicationRole>(options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
                 })
-                .AddEntityFrameworkStores<CoreDbContext>();
+                .AddEntityFrameworkStores<CoreDbContext>()
+                .AddDefaultTokenProviders()
+                .AddDefaultUI();
+
             services.AddRazorPages();
 
             services
@@ -45,6 +48,7 @@ namespace ReadABit.Web
                 {
                     options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                 });
+            services.AddHttpContextAccessor();
 
             services.AddMediatR(typeof(ServiceBase));
 
