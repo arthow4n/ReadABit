@@ -16,7 +16,7 @@ export const LoginButton: React.FC = () => {
       redirectUri: makeRedirectUri(),
       scopes: ["openid", "profile", "email", "offline_access"],
     },
-    discovery
+    discovery,
   );
 
   return (

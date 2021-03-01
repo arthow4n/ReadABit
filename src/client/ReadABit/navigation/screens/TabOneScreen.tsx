@@ -9,7 +9,7 @@ import { api } from "../../integrations/backend/backend";
 export default function TabOneScreen() {
   const { isLoading, data, isError, error } = useQuery(
     ["articles", "00000000-0000-0000-0000-000000000000"],
-    () => api.articles_GetArticle("00000000-0000-0000-0000-000000000000")
+    () => api.articles_GetArticle("00000000-0000-0000-0000-000000000000"),
   );
 
   return (

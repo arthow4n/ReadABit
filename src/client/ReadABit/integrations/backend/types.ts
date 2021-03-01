@@ -11,7 +11,7 @@ export module Backend {
   export interface IClient {
     articles_GetArticle(id: string): Promise<Article>;
     articles_UDPipe(
-      q?: string | null | undefined
+      q?: string | null | undefined,
     ): Promise<FileResponse | null>;
   }
 
@@ -26,7 +26,7 @@ export module Backend {
 
     constructor(
       baseUrl?: string,
-      http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
+      http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> },
     ) {
       this.http = http ? http : <any>window;
       this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
@@ -72,7 +72,7 @@ export module Backend {
             "An unexpected server error occurred.",
             status,
             _responseText,
-            _headers
+            _headers,
           );
         });
       }
@@ -80,7 +80,7 @@ export module Backend {
     }
 
     articles_UDPipe(
-      q?: string | null | undefined
+      q?: string | null | undefined,
     ): Promise<FileResponse | null> {
       let url_ = this.baseUrl + "/api/v1/Articles/UDPipe?";
       if (q !== undefined && q !== null)
@@ -100,7 +100,7 @@ export module Backend {
     }
 
     protected processArticles_UDPipe(
-      response: Response
+      response: Response,
     ): Promise<FileResponse | null> {
       const status = response.status;
       let _headers: any = {};
@@ -132,7 +132,7 @@ export module Backend {
             "An unexpected server error occurred.",
             status,
             _responseText,
-            _headers
+            _headers,
           );
         });
       }
@@ -164,7 +164,7 @@ export module Backend {
       status: number,
       response: string,
       headers: { [key: string]: any },
-      result: any
+      result: any,
     ) {
       super();
 
@@ -187,7 +187,7 @@ export module Backend {
     status: number,
     response: string,
     headers: { [key: string]: any },
-    result?: any
+    result?: any,
   ): any {
     throw new BackendCallException(message, status, response, headers, result);
   }
