@@ -1,7 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Validation.AspNetCore;
 using ReadABit.Core.Integrations.Services;
 using ReadABit.Infrastructure.Models;
 using ReadABit.Web.Controller.Utils;
@@ -10,7 +11,7 @@ namespace ReadABit.Web.Controller
 {
     public class ArticlesController : ApiControllerBase
     {
-        public ArticlesController(IServiceProvider serviceProvider, IMediator mediator) : base(serviceProvider, mediator)
+        public ArticlesController(IServiceProvider serviceProvider) : base(serviceProvider)
         {
         }
 
@@ -28,11 +29,20 @@ namespace ReadABit.Web.Controller
         // TODO: Dummy controller, should be removed soon.
         [Route("Conllu")]
         [HttpGet]
-        public async Task<ContentResult> Conllu(string input = "")
+        public async Task<ActionResult<string>> Conllu(string input = "")
         {
             var pipe = new UDPipeV1Service(UDPipeV1Service.ModelLanguage.Swedish);
             var conllu = pipe.ConvertToConllu(input);
-            return Content(conllu);
+            return conllu;
+        }
+
+        // TODO: Dummy controller, should be removed soon.
+        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+        [HttpGet]
+        public async Task<ActionResult<ApplicationUser?>> GetUserInfo()
+        {
+            var user = await UserManager.FindByIdAsync(RequestContext.UserId.ToString());
+            return user;
         }
     }
 }

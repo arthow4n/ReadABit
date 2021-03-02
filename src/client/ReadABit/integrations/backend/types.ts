@@ -13,7 +13,8 @@ export module Backend {
 
 export interface IClient {
     articles_GetArticle(id: string): Promise<Article>;
-    articles_Conllu(input?: string | null | undefined): Promise<FileResponse | null>;
+    articles_Conllu(input?: string | null | undefined): Promise<string>;
+    articles_GetUserInfo(): Promise<ApplicationUser>;
     articleCollections_List(): Promise<ArticleCollection[]>;
     articleCollections_CreateArticleCollection(name?: string | null | undefined): Promise<string>;
     articleCollections_GetArticleCollection(id: string): Promise<ArticleCollection>;
@@ -79,18 +80,17 @@ export class Client implements IClient {
         return Promise.resolve<Article>(<any>null);
     }
 
-    articles_Conllu(input?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<FileResponse | null> {
+    articles_Conllu(input?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<string> {
         let url_ = this.baseUrl + "/api/v1/Articles/Conllu?";
         if (input !== undefined && input !== null)
             url_ += "input=" + encodeURIComponent("" + input) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
-            responseType: "blob",
             method: "GET",
             url: url_,
             headers: {
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             },
             cancelToken
         };
@@ -106,7 +106,7 @@ export class Client implements IClient {
         });
     }
 
-    protected processArticles_Conllu(response: AxiosResponse): Promise<FileResponse | null> {
+    protected processArticles_Conllu(response: AxiosResponse): Promise<string> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -116,16 +116,64 @@ export class Client implements IClient {
                 }
             }
         }
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers["content-disposition"] : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return Promise.resolve({ fileName: fileName, status: status, data: response.data as Blob, headers: _headers });
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<FileResponse | null>(<any>null);
+        return Promise.resolve<string>(<any>null);
+    }
+
+    articles_GetUserInfo(  cancelToken?: CancelToken | undefined): Promise<ApplicationUser> {
+        let url_ = this.baseUrl + "/api/v1/Articles";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticles_GetUserInfo(_response);
+        });
+    }
+
+    protected processArticles_GetUserInfo(response: AxiosResponse): Promise<ApplicationUser> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ApplicationUser>(<any>null);
     }
 
     articleCollections_List(  cancelToken?: CancelToken | undefined): Promise<ArticleCollection[]> {
@@ -309,13 +357,6 @@ export interface IdentityUserOfGuid {
 }
 
 export interface ApplicationUser extends IdentityUserOfGuid {
-}
-
-export interface FileResponse {
-    data: Blob;
-    status: number;
-    fileName?: string;
-    headers?: { [name: string]: any };
 }
 
 export class BackendCallException extends Error {

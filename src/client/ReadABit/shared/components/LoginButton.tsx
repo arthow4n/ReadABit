@@ -8,6 +8,7 @@ import {
 } from "expo-auth-session";
 
 import {
+  api,
   backendBaseUrl,
   configAuthorizationHeader,
 } from "../../integrations/backend/backend";
@@ -16,10 +17,23 @@ import {
   redirectUri,
   scopes,
 } from "../../integrations/backend/oidcConstants";
+import { useQuery } from "react-query";
 
 export const LoginButton: React.FC = () => {
+  const [isTokenReady, setIsTokenReady] = React.useState(false);
+  const getUserInfoQueryHandle = useQuery(
+    ["articles_GetUserInfo"],
+    () => api.articles_GetUserInfo(),
+    {
+      enabled: isTokenReady,
+      onSuccess: (data) => {
+        console.log(data);
+      },
+    },
+  );
+
   const discovery = useAutoDiscovery(backendBaseUrl);
-  const [request, result, promptAsync] = useAuthRequest(
+  const [authRequest, authResult, promptAsync] = useAuthRequest(
     {
       clientId,
       redirectUri,
@@ -30,17 +44,17 @@ export const LoginButton: React.FC = () => {
   );
 
   const exchangeCodeForToken = async () => {
-    if (result?.type !== "success" || !discovery) {
+    if (authResult?.type !== "success" || !discovery) {
       return;
     }
 
-    if (!request?.codeVerifier) {
+    if (!authRequest?.codeVerifier) {
       throw new Error(
         "Missing `code_verifier` from auth request. This is required for PKCE flow.",
       );
     }
 
-    if (!result.params.code) {
+    if (!authResult.params.code) {
       throw new Error(
         "Missing `code` from auth response. This is required for PKCE flow.",
       );
@@ -50,30 +64,39 @@ export const LoginButton: React.FC = () => {
       {
         clientId,
         redirectUri,
-        code: result.params.code,
+        code: authResult.params.code,
         scopes: scopes,
         extraParams: {
-          code_verifier: request.codeVerifier,
+          code_verifier: authRequest.codeVerifier,
         },
       },
       discovery,
     );
 
     await configAuthorizationHeader(tokenResponse);
+    setIsTokenReady(true);
   };
 
   React.useEffect(() => {
     exchangeCodeForToken();
-  }, [result]);
+  }, [authResult]);
+
+  if (isTokenReady) {
+    return (
+      <View>
+        <Text>getUserInfoQueryHandle</Text>
+        <Text>{JSON.stringify(getUserInfoQueryHandle.data)}</Text>
+      </View>
+    );
+  }
 
   return (
     <View>
       <Button
         title="Login!"
-        disabled={!request}
+        disabled={!authRequest}
         onPress={() => promptAsync()}
       />
-      {result && <Text>{JSON.stringify(result, null, 2)}</Text>}
     </View>
   );
 };

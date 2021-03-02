@@ -1,8 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Commands;
+using ReadABit.Core.Utils;
+using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Web.Controller.Utils
 {
@@ -12,16 +15,34 @@ namespace ReadABit.Web.Controller.Utils
     [ApiController]
     public abstract class ApiControllerBase : ControllerBase
     {
-        protected readonly IMediator mediator;
+        private readonly IServiceProvider _serviceProvider;
 
-        protected ApiControllerBase(IServiceProvider serviceProvider, IMediator mediator)
+        protected ApiControllerBase(IServiceProvider serviceProvider)
         {
-            this.mediator = mediator;
+            _serviceProvider = serviceProvider;
         }
+
+        protected IMediator Mediator => GetService<IMediator>();
+
+        protected IRequestContext RequestContext => GetService<IRequestContext>();
+
+        protected UserManager<ApplicationUser> UserManager => GetService<UserManager<ApplicationUser>>();
 
         protected async Task SaveChangesAsync()
         {
-            await mediator.Send(new SaveChanges { });
+            await Mediator.Send(new SaveChanges { });
+        }
+
+        private T GetService<T>()
+        {
+            var s = _serviceProvider.GetService(typeof(T));
+
+            if (s is not T)
+            {
+                throw new NullReferenceException($"Service not found: {typeof(T).FullName}");
+            }
+
+            return (T)s;
         }
     }
 }

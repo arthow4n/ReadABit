@@ -12,30 +12,30 @@ namespace ReadABit.Web.Controllers
 {
     public class ArticleCollectionsController : ApiControllerBase
     {
-        private readonly ArticleCollectionService service;
+        private readonly ArticleCollectionService _service;
 
-        public ArticleCollectionsController(IServiceProvider serviceProvider, IMediator mediator) : base(serviceProvider, mediator)
+        public ArticleCollectionsController(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            this.service = DI.New<ArticleCollectionService>(serviceProvider);
+            _service = DI.New<ArticleCollectionService>(serviceProvider);
         }
 
         [HttpGet]
         public async Task<List<ArticleCollection>> List()
         {
-            return await service.List();
+            return await _service.List();
         }
 
         [HttpGet("{id}")]
         public async Task<ArticleCollection> GetArticleCollection(Guid id)
         {
             // TODO: Refactor so it return 404 when not found.
-            return await service.Get(id) ?? throw new ArgumentOutOfRangeException();
+            return await _service.Get(id) ?? throw new ArgumentOutOfRangeException();
         }
 
         [HttpPost]
         public async Task<Guid> CreateArticleCollection(string name)
         {
-            var id = await service.Create(name);
+            var id = await _service.Create(name);
             await SaveChangesAsync();
             return id;
         }
