@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Primitives;
+using NSwag.Annotations;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
 using ReadABit.Infrastructure.Models;
@@ -23,6 +24,7 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 // Ref: https://github.com/openiddict/openiddict-samples/blob/dev/samples/Velusia/Velusia.Server/Controllers/AuthorizationController.cs
 namespace ReadABit.Web.Controllers
 {
+    [OpenApiIgnore]
     public class OidcAuthorizationController : Microsoft.AspNetCore.Mvc.Controller
     {
         private readonly IOpenIddictApplicationManager _applicationManager;

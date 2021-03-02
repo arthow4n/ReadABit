@@ -61,7 +61,7 @@
       "moduleName": "Backend",
       "namespace": "",
       "typeScriptVersion": 2.7,
-      "template": "Fetch",
+      "template": "Axios",
       "promiseType": "Promise",
       "httpClass": "HttpClient",
       "withCredentials": false,

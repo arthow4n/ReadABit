@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NSwag.Annotations;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
 using ReadABit.Infrastructure.Models;
@@ -14,6 +15,7 @@ namespace ReadABit.Web.Controllers
 {
     // TODO: Code is a bit unorganized & mostly copy-pasted from the example below to get things up and running since that's more important than having nice-looking code before I fully understand how this works.
     // Ref https://github.com/openiddict/openiddict-samples/blob/dev/samples/Velusia/Velusia.Server/Controllers/UserinfoController.cs
+    [OpenApiIgnore]
     public class OidcUserInfoController : Microsoft.AspNetCore.Mvc.Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;

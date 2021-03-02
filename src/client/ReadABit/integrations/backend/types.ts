@@ -7,188 +7,347 @@
 //----------------------
 // ReSharper disable InconsistentNaming
 
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, CancelToken } from 'axios';
+
 export module Backend {
-  export interface IClient {
+
+export interface IClient {
     articles_GetArticle(id: string): Promise<Article>;
-    articles_UDPipe(
-      q?: string | null | undefined,
-    ): Promise<FileResponse | null>;
-  }
+    articles_Conllu(input?: string | null | undefined): Promise<FileResponse | null>;
+    articleCollections_List(): Promise<ArticleCollection[]>;
+    articleCollections_CreateArticleCollection(name?: string | null | undefined): Promise<string>;
+    articleCollections_GetArticleCollection(id: string): Promise<ArticleCollection>;
+}
 
-  export class Client implements IClient {
-    private http: {
-      fetch(url: RequestInfo, init?: RequestInit): Promise<Response>;
-    };
+export class Client implements IClient {
+    private instance: AxiosInstance;
     private baseUrl: string;
-    protected jsonParseReviver:
-      | ((key: string, value: any) => any)
-      | undefined = undefined;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-    constructor(
-      baseUrl?: string,
-      http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> },
-    ) {
-      this.http = http ? http : <any>window;
-      this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+        this.instance = instance ? instance : axios.create();
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
 
-    articles_GetArticle(id: string): Promise<Article> {
-      let url_ = this.baseUrl + "/api/v1/Articles/{id}";
-      if (id === undefined || id === null)
-        throw new Error("The parameter 'id' must be defined.");
-      url_ = url_.replace("{id}", encodeURIComponent("" + id));
-      url_ = url_.replace(/[?&]$/, "");
+    articles_GetArticle(id: string , cancelToken?: CancelToken | undefined): Promise<Article> {
+        let url_ = this.baseUrl + "/api/v1/Articles/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
 
-      let options_ = <RequestInit>{
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-        },
-      };
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
 
-      return this.http.fetch(url_, options_).then((_response: Response) => {
-        return this.processArticles_GetArticle(_response);
-      });
-    }
-
-    protected processArticles_GetArticle(response: Response): Promise<Article> {
-      const status = response.status;
-      let _headers: any = {};
-      if (response.headers && response.headers.forEach) {
-        response.headers.forEach((v: any, k: any) => (_headers[k] = v));
-      }
-      if (status === 200) {
-        return response.text().then((_responseText) => {
-          let result200: any = null;
-          result200 =
-            _responseText === ""
-              ? null
-              : <Article>JSON.parse(_responseText, this.jsonParseReviver);
-          return result200;
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticles_GetArticle(_response);
         });
-      } else if (status !== 200 && status !== 204) {
-        return response.text().then((_responseText) => {
-          return throwException(
-            "An unexpected server error occurred.",
-            status,
-            _responseText,
-            _headers,
-          );
-        });
-      }
-      return Promise.resolve<Article>(<any>null);
     }
 
-    articles_UDPipe(
-      q?: string | null | undefined,
-    ): Promise<FileResponse | null> {
-      let url_ = this.baseUrl + "/api/v1/Articles/UDPipe?";
-      if (q !== undefined && q !== null)
-        url_ += "q=" + encodeURIComponent("" + q) + "&";
-      url_ = url_.replace(/[?&]$/, "");
-
-      let options_ = <RequestInit>{
-        method: "GET",
-        headers: {
-          Accept: "application/octet-stream",
-        },
-      };
-
-      return this.http.fetch(url_, options_).then((_response: Response) => {
-        return this.processArticles_UDPipe(_response);
-      });
+    protected processArticles_GetArticle(response: AxiosResponse): Promise<Article> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<Article>(<any>null);
     }
 
-    protected processArticles_UDPipe(
-      response: Response,
-    ): Promise<FileResponse | null> {
-      const status = response.status;
-      let _headers: any = {};
-      if (response.headers && response.headers.forEach) {
-        response.headers.forEach((v: any, k: any) => (_headers[k] = v));
-      }
-      if (status === 200 || status === 206) {
-        const contentDisposition = response.headers
-          ? response.headers.get("content-disposition")
-          : undefined;
-        const fileNameMatch = contentDisposition
-          ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition)
-          : undefined;
-        const fileName =
-          fileNameMatch && fileNameMatch.length > 1
-            ? fileNameMatch[1]
-            : undefined;
-        return response.blob().then((blob) => {
-          return {
-            fileName: fileName,
-            data: blob,
-            status: status,
-            headers: _headers,
-          };
-        });
-      } else if (status !== 200 && status !== 204) {
-        return response.text().then((_responseText) => {
-          return throwException(
-            "An unexpected server error occurred.",
-            status,
-            _responseText,
-            _headers,
-          );
-        });
-      }
-      return Promise.resolve<FileResponse | null>(<any>null);
-    }
-  }
+    articles_Conllu(input?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<FileResponse | null> {
+        let url_ = this.baseUrl + "/api/v1/Articles/Conllu?";
+        if (input !== undefined && input !== null)
+            url_ += "input=" + encodeURIComponent("" + input) + "&";
+        url_ = url_.replace(/[?&]$/, "");
 
-  export interface Article {
+        let options_ = <AxiosRequestConfig>{
+            responseType: "blob",
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/octet-stream"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticles_Conllu(_response);
+        });
+    }
+
+    protected processArticles_Conllu(response: AxiosResponse): Promise<FileResponse | null> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200 || status === 206) {
+            const contentDisposition = response.headers ? response.headers["content-disposition"] : undefined;
+            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
+            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
+            return Promise.resolve({ fileName: fileName, status: status, data: response.data as Blob, headers: _headers });
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<FileResponse | null>(<any>null);
+    }
+
+    articleCollections_List(  cancelToken?: CancelToken | undefined): Promise<ArticleCollection[]> {
+        let url_ = this.baseUrl + "/api/v1/ArticleCollections";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticleCollections_List(_response);
+        });
+    }
+
+    protected processArticleCollections_List(response: AxiosResponse): Promise<ArticleCollection[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ArticleCollection[]>(<any>null);
+    }
+
+    articleCollections_CreateArticleCollection(name?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<string> {
+        let url_ = this.baseUrl + "/api/v1/ArticleCollections?";
+        if (name !== undefined && name !== null)
+            url_ += "name=" + encodeURIComponent("" + name) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticleCollections_CreateArticleCollection(_response);
+        });
+    }
+
+    protected processArticleCollections_CreateArticleCollection(response: AxiosResponse): Promise<string> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<string>(<any>null);
+    }
+
+    articleCollections_GetArticleCollection(id: string , cancelToken?: CancelToken | undefined): Promise<ArticleCollection> {
+        let url_ = this.baseUrl + "/api/v1/ArticleCollections/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticleCollections_GetArticleCollection(_response);
+        });
+    }
+
+    protected processArticleCollections_GetArticleCollection(response: AxiosResponse): Promise<ArticleCollection> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ArticleCollection>(<any>null);
+    }
+}
+
+export interface Article {
     id: string;
     title: string;
-  }
+    articleCollectionId: string;
+    articleCollection?: ArticleCollection | null;
+}
 
-  export interface FileResponse {
+export interface ArticleCollection {
+    id: string;
+    name: string;
+    articles?: Article[] | null;
+    userId: string;
+    user?: ApplicationUser | null;
+}
+
+export interface IdentityUserOfGuid {
+    id: string;
+    userName?: string | null;
+    normalizedUserName?: string | null;
+    email?: string | null;
+    normalizedEmail?: string | null;
+    emailConfirmed: boolean;
+    passwordHash?: string | null;
+    securityStamp?: string | null;
+    concurrencyStamp?: string | null;
+    phoneNumber?: string | null;
+    phoneNumberConfirmed: boolean;
+    twoFactorEnabled: boolean;
+    lockoutEnd?: Date | null;
+    lockoutEnabled: boolean;
+    accessFailedCount: number;
+}
+
+export interface ApplicationUser extends IdentityUserOfGuid {
+}
+
+export interface FileResponse {
     data: Blob;
     status: number;
     fileName?: string;
     headers?: { [name: string]: any };
-  }
+}
 
-  export class BackendCallException extends Error {
+export class BackendCallException extends Error {
     message: string;
     status: number;
     response: string;
-    headers: { [key: string]: any };
+    headers: { [key: string]: any; };
     result: any;
 
-    constructor(
-      message: string,
-      status: number,
-      response: string,
-      headers: { [key: string]: any },
-      result: any,
-    ) {
-      super();
+    constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
+        super();
 
-      this.message = message;
-      this.status = status;
-      this.response = response;
-      this.headers = headers;
-      this.result = result;
+        this.message = message;
+        this.status = status;
+        this.response = response;
+        this.headers = headers;
+        this.result = result;
     }
 
     protected isBackendCallException = true;
 
     static isBackendCallException(obj: any): obj is BackendCallException {
-      return obj.isBackendCallException === true;
+        return obj.isBackendCallException === true;
     }
-  }
+}
 
-  function throwException(
-    message: string,
-    status: number,
-    response: string,
-    headers: { [key: string]: any },
-    result?: any,
-  ): any {
+function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
     throw new BackendCallException(message, status, response, headers, result);
-  }
+}
+
+function isAxiosError(obj: any | undefined): obj is AxiosError {
+    return obj && obj.isAxiosError === true;
+}
+
 }
