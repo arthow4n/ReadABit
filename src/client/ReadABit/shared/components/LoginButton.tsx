@@ -3,18 +3,19 @@ import { View, Button, Text } from "react-native";
 import {
   useAutoDiscovery,
   useAuthRequest,
-  makeRedirectUri,
   ResponseType,
   exchangeCodeAsync,
 } from "expo-auth-session";
-import * as SecureStore from "expo-secure-store";
 
-import { backendBaseUrl } from "../../integrations/backend/backend";
-
-const clientId = "ReadABit";
-const authTokenStorageKey = "READABIT.OIDC_TOKEN_RESPONSE";
-const redirectUri = makeRedirectUri();
-const scopes = ["openid", "profile", "email", "offline_access"];
+import {
+  backendBaseUrl,
+  configAuthorizationHeader,
+} from "../../integrations/backend/backend";
+import {
+  clientId,
+  redirectUri,
+  scopes,
+} from "../../integrations/backend/oidcConstants";
 
 export const LoginButton: React.FC = () => {
   const discovery = useAutoDiscovery(backendBaseUrl);
@@ -58,19 +59,7 @@ export const LoginButton: React.FC = () => {
       discovery,
     );
 
-    if (!SecureStore.isAvailableAsync()) {
-      console.warn("SecureStore is unavailable. Auth tokens won't be saved.");
-      return;
-    }
-
-    await SecureStore.setItemAsync(
-      authTokenStorageKey,
-      JSON.stringify(tokenResponse),
-    );
-
-    // TODO: Apply the auth token to API client, consider using `axios`.
-    // TODO: Use refresh token.
-    // TODO: Load auth tokens on app load.
+    await configAuthorizationHeader(tokenResponse);
   };
 
   React.useEffect(() => {
