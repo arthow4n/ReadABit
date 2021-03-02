@@ -11,6 +11,7 @@ using ReadABit.Core.Services.Utils;
 using ReadABit.Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace ReadABit.Web
 {
@@ -38,6 +39,7 @@ namespace ReadABit.Web
                     options.UseOpenIddict<Guid>();
                 }
             );
+
             services
                 .AddIdentity<ApplicationUser, ApplicationRole>(options =>
                 {
@@ -50,6 +52,11 @@ namespace ReadABit.Web
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequireUppercase = false;
                     options.Password.RequiredLength = 0;
+
+                    // Ref: https://github.com/openiddict/openiddict-samples/blob/dev/samples/Velusia/Velusia.Server/Startup.cs
+                    options.ClaimsIdentity.UserNameClaimType = Claims.Name;
+                    options.ClaimsIdentity.UserIdClaimType = Claims.Subject;
+                    options.ClaimsIdentity.RoleClaimType = Claims.Role;
                 })
                 .AddEntityFrameworkStores<CoreDbContext>()
                 .AddDefaultTokenProviders()
@@ -67,15 +74,37 @@ namespace ReadABit.Web
                 })
                 .AddServer(options =>
                 {
-                    options.SetTokenEndpointUris("/connect/token");
-                    options.AllowClientCredentialsFlow();
+                    options
+                        .SetAuthorizationEndpointUris("/connect/authorize")
+                        .SetLogoutEndpointUris("/connect/logout")
+                        .SetTokenEndpointUris("/connect/token")
+                        .SetUserinfoEndpointUris("/connect/userinfo");
+                    options.RegisterScopes(
+                        Scopes.OpenId,
+                        Scopes.Email,
+                        Scopes.Profile,
+                        Scopes.OfflineAccess,
+                        Scopes.Roles
+                    );
+                    options
+                        .AllowAuthorizationCodeFlow()
+                        // Required by scope: offline_access
+                        // https://github.com/openiddict/openiddict-core/issues/835
+                        .AllowRefreshTokenFlow();
+
+                    // FIXME: Fix this so it works in production
                     options
                         .AddDevelopmentEncryptionCertificate()
                         .AddDevelopmentSigningCertificate();
+
                     var aspOptions =
                         options
                             .UseAspNetCore()
-                            .EnableTokenEndpointPassthrough();
+                            .EnableAuthorizationEndpointPassthrough()
+                            .EnableLogoutEndpointPassthrough()
+                            .EnableTokenEndpointPassthrough()
+                            .EnableUserinfoEndpointPassthrough()
+                            .EnableStatusCodePagesIntegration();
 
                     if (_env.IsDevelopment())
                     {
@@ -85,10 +114,16 @@ namespace ReadABit.Web
                     // Enfore OIDC Authorization Code Flow with PKCE since the clients are going to be native app or SPA
                     options.RequireProofKeyForCodeExchange();
 
+                    // TODO: Fix logout so it's possible to revoke tokens.
+                    options.UseReferenceAccessTokens();
+                    options.UseReferenceRefreshTokens();
                 })
                 .AddValidation(options =>
                 {
                     options.UseLocalServer();
+                    options.UseAspNetCore();
+                    options.EnableAuthorizationEntryValidation();
+                    options.EnableTokenEntryValidation();
                 });
             services.AddHostedService<OpenIddictWorker>();
 

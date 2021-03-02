@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,11 +15,13 @@ namespace ReadABit.Web
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _env;
 
-        public OpenIddictWorker(IServiceProvider serviceProvider, IConfiguration configuration)
+        public OpenIddictWorker(IServiceProvider serviceProvider, IConfiguration configuration, IWebHostEnvironment env)
         {
             _serviceProvider = serviceProvider;
             _configuration = configuration;
+            _env = env;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -27,8 +30,14 @@ namespace ReadABit.Web
 
             var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
-            if (await manager.FindByClientIdAsync("ReadABit") == null)
+            // FIXME: Find a better way to seed this in production
+            if (_env.IsDevelopment())
             {
+                var existing = await manager.FindByClientIdAsync("ReadABit");
+                if (existing is not null)
+                {
+                    await manager.DeleteAsync(existing);
+                }
                 await manager.CreateAsync(new OpenIddictApplicationDescriptor
                 {
                     ClientId = "ReadABit",
@@ -57,8 +66,8 @@ namespace ReadABit.Web
                     },
                     Requirements =
                     {
-                        Requirements.Features.ProofKeyForCodeExchange
-                    }
+                        Requirements.Features.ProofKeyForCodeExchange,
+                    },
                 });
             }
         }

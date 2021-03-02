@@ -1,16 +1,19 @@
 import * as React from "react";
-import { StyleSheet } from "react-native";
+import { Button, StyleSheet } from "react-native";
 import { useQuery } from "react-query";
 
 import EditScreenInfo from "../../shared/components/EditScreenInfo";
 import { Text, View } from "../../shared/components/Themed";
 import { api } from "../../integrations/backend/backend";
+import { LoginButton } from "../../shared/components/LoginButton";
 
 export default function TabOneScreen() {
   const { isLoading, data, isError, error } = useQuery(
     ["articles", "00000000-0000-0000-0000-000000000000"],
     () => api.articles_GetArticle("00000000-0000-0000-0000-000000000000"),
   );
+
+  const [k, setK] = React.useState(0);
 
   return (
     <View style={styles.container}>
@@ -23,7 +26,8 @@ export default function TabOneScreen() {
       {isLoading && <Text>useQuery is isLoading...</Text>}
       {data && <Text>{data.title}</Text>}
       {isError && <Text>{JSON.stringify(error)}</Text>}
-      <EditScreenInfo path="/screens/TabOneScreen.tsx" />
+      <Button title="Reload button" onPress={() => setK((x) => x + 1)} />
+      <LoginButton key={k} />
     </View>
   );
 }
