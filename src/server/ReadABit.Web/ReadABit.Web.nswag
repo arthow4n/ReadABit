@@ -114,7 +114,7 @@
       "enumNameGeneratorType": null,
       "serviceHost": "",
       "serviceSchemes": null,
-      "output": "../../client/ReadABit/integrations/backend/types.ts",
+      "output": "../../client/src/integrations/backend/types.ts",
       "newLineBehavior": "CRLF"
     }
   }

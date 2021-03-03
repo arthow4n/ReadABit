@@ -2,6 +2,7 @@ import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
+import { registerRootComponent } from 'expo';
 import { StatusBar } from 'expo-status-bar';
 
 import { Navigation } from './navigation';
@@ -11,7 +12,7 @@ import { useColorScheme } from './shared/hooks/useColorScheme';
 const queryClient = new QueryClient();
 
 // eslint-disable-next-line
-export default function App() {
+function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
 
@@ -27,3 +28,5 @@ export default function App() {
     </SafeAreaProvider>
   );
 }
+
+registerRootComponent(App);
