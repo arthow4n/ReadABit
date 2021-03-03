@@ -21,7 +21,12 @@ namespace ReadABit.Core.Utils
             {
                 if (_userId is null)
                 {
-                    Guid.TryParse(_userManager.GetUserId(_httpContextAccessor.HttpContext.User), out var _userId);
+                    var success = Guid.TryParse(_userManager.GetUserId(_httpContextAccessor.HttpContext.User), out var userId);
+                    if (success)
+                    {
+                        _userId = userId;
+                        return userId;
+                    }
                 };
                 return _userId;
             }

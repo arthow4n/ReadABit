@@ -1,5 +1,6 @@
 import * as React from "react";
-import { View, Button, Text } from "react-native";
+import { useQuery } from "react-query";
+import { Button } from "react-native";
 import {
   useAutoDiscovery,
   useAuthRequest,
@@ -17,7 +18,7 @@ import {
   redirectUri,
   scopes,
 } from "../../integrations/backend/oidcConstants";
-import { useQuery } from "react-query";
+import { View, Text } from "./Themed";
 
 export const LoginButton: React.FC = () => {
   const [isTokenReady, setIsTokenReady] = React.useState(false);
@@ -81,11 +82,12 @@ export const LoginButton: React.FC = () => {
     exchangeCodeForToken();
   }, [authResult]);
 
+  console.log(getUserInfoQueryHandle.data);
   if (isTokenReady) {
     return (
       <View>
         <Text>getUserInfoQueryHandle</Text>
-        <Text>{JSON.stringify(getUserInfoQueryHandle.data)}</Text>
+        <Text>{JSON.stringify(getUserInfoQueryHandle)}</Text>
       </View>
     );
   }

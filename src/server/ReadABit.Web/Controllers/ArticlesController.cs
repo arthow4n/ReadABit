@@ -39,10 +39,10 @@ namespace ReadABit.Web.Controller
         // TODO: Dummy controller, should be removed soon.
         [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
         [HttpGet]
-        public async Task<ActionResult<ApplicationUser?>> GetUserInfo()
+        public async Task<ActionResult<Guid>> GetUserInfo()
         {
             var user = await UserManager.FindByIdAsync(RequestContext.UserId.ToString());
-            return user;
+            return user.Id;
         }
     }
 }

@@ -15,12 +15,20 @@ export const backendBaseUrl = `http://${
 }:5000`;
 
 const axiosIntance = axios.create();
+// Get rid of the default transform because it overrides NSWag's transform.
+axiosIntance.defaults.transformResponse = [];
+
 let tokenResponse: TokenResponse | null = null;
 
 export const configAuthorizationHeader = async (
   t: TokenResponse,
   shouldSave = true,
 ) => {
+  // This is for ensuring class methods exist on the object since we are going to use them.
+  if (!(t instanceof TokenResponse)) {
+    t = new TokenResponse(t);
+  }
+
   tokenResponse = t;
   axiosIntance.defaults.headers.common[
     "Authorization"
@@ -34,7 +42,7 @@ export const configAuthorizationHeader = async (
   if (shouldSave) {
     await SecureStore.setItemAsync(
       authTokenStorageKey,
-      JSON.stringify(tokenResponse),
+      JSON.stringify(tokenResponse.getRequestConfig()),
     );
   }
 };
@@ -44,7 +52,18 @@ export const tryLoadingAuthToken = async () => {
   if (!storedJson) {
     return;
   }
-  configAuthorizationHeader(JSON.parse(storedJson), false);
+
+  try {
+    await configAuthorizationHeader(
+      new TokenResponse(JSON.parse(storedJson)),
+      false,
+    );
+  } catch (e) {
+    console.warn(
+      `tryLoadingAuthToken: Malformed JSON found in storage, value: ${storedJson}`,
+    );
+    await SecureStore.deleteItemAsync(authTokenStorageKey);
+  }
 };
 
 const innerClient = new Backend.Client(backendBaseUrl, axiosIntance);

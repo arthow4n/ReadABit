@@ -14,7 +14,7 @@ export module Backend {
 export interface IClient {
     articles_GetArticle(id: string): Promise<Article>;
     articles_Conllu(input?: string | null | undefined): Promise<string>;
-    articles_GetUserInfo(): Promise<ApplicationUser>;
+    articles_GetUserInfo(): Promise<string>;
     articleCollections_List(): Promise<ArticleCollection[]>;
     articleCollections_CreateArticleCollection(name?: string | null | undefined): Promise<string>;
     articleCollections_GetArticleCollection(id: string): Promise<ArticleCollection>;
@@ -129,7 +129,7 @@ export class Client implements IClient {
         return Promise.resolve<string>(<any>null);
     }
 
-    articles_GetUserInfo(  cancelToken?: CancelToken | undefined): Promise<ApplicationUser> {
+    articles_GetUserInfo(  cancelToken?: CancelToken | undefined): Promise<string> {
         let url_ = this.baseUrl + "/api/v1/Articles";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -153,7 +153,7 @@ export class Client implements IClient {
         });
     }
 
-    protected processArticles_GetUserInfo(response: AxiosResponse): Promise<ApplicationUser> {
+    protected processArticles_GetUserInfo(response: AxiosResponse): Promise<string> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -173,7 +173,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<ApplicationUser>(<any>null);
+        return Promise.resolve<string>(<any>null);
     }
 
     articleCollections_List(  cancelToken?: CancelToken | undefined): Promise<ArticleCollection[]> {

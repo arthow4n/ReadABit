@@ -12,6 +12,7 @@ using ReadABit.Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using static OpenIddict.Abstractions.OpenIddictConstants;
+using ReadABit.Core.Utils;
 
 namespace ReadABit.Web
 {
@@ -134,6 +135,7 @@ namespace ReadABit.Web
                     options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                 });
             services.AddHttpContextAccessor();
+            services.AddScoped<IRequestContext, RequestContext>();
 
             services.AddMediatR(typeof(ServiceBase));
 
