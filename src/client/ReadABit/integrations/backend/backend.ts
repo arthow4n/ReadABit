@@ -107,7 +107,8 @@ export const api = new Proxy(innerClient, {
 
       if (currentToken.shouldRefresh()) {
         // Ensure there's only one ongoing token refresh request
-        ongoingRefreshTokenPromise ??= refreshToken(currentToken);
+        ongoingRefreshTokenPromise =
+          ongoingRefreshTokenPromise ?? refreshToken(currentToken);
         await ongoingRefreshTokenPromise;
       }
 
