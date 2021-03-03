@@ -18,7 +18,9 @@ const axiosIntance = axios.create();
 // Get rid of the default transform because it overrides NSWag's transform.
 axiosIntance.defaults.transformResponse = [];
 
-let tokenResponse: TokenResponse | null = null;
+let currentToken: TokenResponse | null = null;
+
+const secureStoreAvailabePromise = SecureStore.isAvailableAsync();
 
 export const configAuthorizationHeader = async (
   t: TokenResponse,
@@ -29,12 +31,12 @@ export const configAuthorizationHeader = async (
     t = new TokenResponse(t);
   }
 
-  tokenResponse = t;
+  currentToken = t;
   axiosIntance.defaults.headers.common[
     "Authorization"
   ] = `Bearer ${t.accessToken}`;
 
-  if (!SecureStore.isAvailableAsync()) {
+  if (!(await secureStoreAvailabePromise)) {
     console.warn("SecureStore is unavailable. Auth tokens won't be saved.");
     return;
   }
@@ -42,13 +44,16 @@ export const configAuthorizationHeader = async (
   if (shouldSave) {
     await SecureStore.setItemAsync(
       authTokenStorageKey,
-      JSON.stringify(tokenResponse.getRequestConfig()),
+      // `getRequestConfig()` returns the params needed for `new TokenResponse()`
+      JSON.stringify(currentToken.getRequestConfig()),
     );
   }
 };
 
 export const tryLoadingAuthToken = async () => {
-  const storedJson = await SecureStore.getItemAsync(authTokenStorageKey);
+  const storedJson = await SecureStore.getItemAsync(authTokenStorageKey).catch(
+    () => "",
+  );
   if (!storedJson) {
     return;
   }
@@ -68,12 +73,28 @@ export const tryLoadingAuthToken = async () => {
 
 const innerClient = new Backend.Client(backendBaseUrl, axiosIntance);
 
+let ongoingRefreshTokenPromise: Promise<void> | null = null;
+
+const refreshToken = async (t: TokenResponse) => {
+  const discovery = await fetchDiscoveryAsync(backendBaseUrl);
+  const newTokenResponse = await t.refreshAsync(
+    {
+      clientId,
+      scopes,
+    },
+    discovery,
+  );
+
+  await configAuthorizationHeader(newTokenResponse);
+  ongoingRefreshTokenPromise = null;
+};
+
 // FIXME: Fix the template of types.ts instead of doing it like this.
 export const api = new Proxy(innerClient, {
   get(t, p, r) {
     const actual = Reflect.get(t, p, r);
 
-    // Assuming every proprty that has a `_` in it and doesn't start with `process` is an API call and filter them away, this is not cool, I know.
+    // Assuming every property that has a `_` in it and doesn't start with `process` is an API call and filter them away, this is not cool, I know.
     if (!(typeof p === "string" && /^(?!process).+_.+/.test(p))) {
       return actual;
     }
@@ -82,26 +103,17 @@ export const api = new Proxy(innerClient, {
       throw new Error("Please fix the hack in backend.ts.");
     }
 
-    // Refresh the tokens before sending actual the API call.
     return async (...args: any[]) => {
-      if (tokenResponse === null) {
+      if (currentToken === null) {
         throw new Error(
-          "Calling backend API without valid token, did you forget to call `configAuthorizationHeader`?",
+          "Calling backend API without a valid token. Did you forget to call `configAuthorizationHeader`?",
         );
       }
 
-      // TODO: Confirm the refresh flow actually works
-      if (tokenResponse.shouldRefresh()) {
-        const discovery = await fetchDiscoveryAsync(backendBaseUrl);
-        const newTokenResponse = await tokenResponse.refreshAsync(
-          {
-            clientId,
-            scopes,
-          },
-          discovery,
-        );
-
-        await configAuthorizationHeader(newTokenResponse);
+      if (currentToken.shouldRefresh()) {
+        // Ensure there's only one ongoing token refresh request
+        ongoingRefreshTokenPromise ??= refreshToken(currentToken);
+        await ongoingRefreshTokenPromise;
       }
 
       return actual.call(innerClient, ...args);
