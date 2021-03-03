@@ -1,29 +1,31 @@
-import * as React from "react";
-import { useQuery } from "react-query";
-import { Button } from "react-native";
+import * as React from 'react';
+import { Button } from 'react-native';
+import { useQuery } from 'react-query';
+
 import {
   useAutoDiscovery,
   useAuthRequest,
   ResponseType,
   exchangeCodeAsync,
-} from "expo-auth-session";
+} from 'expo-auth-session';
+
+import { View, Text } from './Themed';
 
 import {
   api,
   backendBaseUrl,
   configAuthorizationHeader,
-} from "../../integrations/backend/backend";
+} from '../../integrations/backend/backend';
 import {
   clientId,
   redirectUri,
   scopes,
-} from "../../integrations/backend/oidcConstants";
-import { View, Text } from "./Themed";
+} from '../../integrations/backend/oidcConstants';
 
 export const LoginButton: React.FC = () => {
   const [isTokenReady, setIsTokenReady] = React.useState(false);
   const getUserInfoQueryHandle = useQuery(
-    ["articles_GetUserInfo"],
+    ['articles_GetUserInfo'],
     () => api.articles_GetUserInfo(),
     {
       enabled: isTokenReady,
@@ -45,19 +47,19 @@ export const LoginButton: React.FC = () => {
   );
 
   const exchangeCodeForToken = async () => {
-    if (authResult?.type !== "success" || !discovery) {
+    if (authResult?.type !== 'success' || !discovery) {
       return;
     }
 
     if (!authRequest?.codeVerifier) {
       throw new Error(
-        "Missing `code_verifier` from auth request. This is required for PKCE flow.",
+        'Missing `code_verifier` from auth request. This is required for PKCE flow.',
       );
     }
 
     if (!authResult.params.code) {
       throw new Error(
-        "Missing `code` from auth response. This is required for PKCE flow.",
+        'Missing `code` from auth response. This is required for PKCE flow.',
       );
     }
 
@@ -66,7 +68,7 @@ export const LoginButton: React.FC = () => {
         clientId,
         redirectUri,
         code: authResult.params.code,
-        scopes: scopes,
+        scopes,
         extraParams: {
           code_verifier: authRequest.codeVerifier,
         },

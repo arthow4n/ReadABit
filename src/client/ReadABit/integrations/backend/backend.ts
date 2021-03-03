@@ -1,17 +1,14 @@
-import axios from "axios";
-import {
-  DiscoveryDocument,
-  fetchDiscoveryAsync,
-  TokenResponse,
-} from "expo-auth-session";
-import Constants from "expo-constants";
-import * as SecureStore from "expo-secure-store";
-import { authTokenStorageKey, clientId, scopes } from "./oidcConstants";
-import { Backend } from "./types";
+import axios from 'axios';
+import { fetchDiscoveryAsync, TokenResponse } from 'expo-auth-session';
+import Constants from 'expo-constants';
+import * as SecureStore from 'expo-secure-store';
+
+import { authTokenStorageKey, clientId, scopes } from './oidcConstants';
+import { Backend } from './types';
 
 // TODO: Make this compatible with production env.
 export const backendBaseUrl = `http://${
-  (Constants.manifest.debuggerHost ?? "localhost").split(":")[0]
+  (Constants.manifest.debuggerHost ?? 'localhost').split(':')[0]
 }:5000`;
 
 const axiosIntance = axios.create();
@@ -27,14 +24,9 @@ export const configAuthorizationHeader = async (
   shouldSave = true,
 ) => {
   // This is for ensuring class methods exist on the object since we are going to use them.
-  if (!(t instanceof TokenResponse)) {
-    t = new TokenResponse(t);
-  }
+  currentToken = t instanceof TokenResponse ? t : new TokenResponse(t);
 
-  currentToken = t;
-  axiosIntance.defaults.headers.common[
-    "Authorization"
-  ] = `Bearer ${t.accessToken}`;
+  axiosIntance.defaults.headers.common.Authorization = `Bearer ${t.accessToken}`;
 
   if (!(await secureStoreAvailabePromise)) {
     console.warn("SecureStore is unavailable. Auth tokens won't be saved.");
@@ -52,7 +44,7 @@ export const configAuthorizationHeader = async (
 
 export const tryLoadingAuthToken = async () => {
   const storedJson = await SecureStore.getItemAsync(authTokenStorageKey).catch(
-    () => "",
+    () => '',
   );
   if (!storedJson) {
     return;
@@ -94,19 +86,22 @@ export const api = new Proxy(innerClient, {
   get(t, p, r) {
     const actual = Reflect.get(t, p, r);
 
-    // Assuming every property that has a `_` in it and doesn't start with `process` is an API call and filter them away, this is not cool, I know.
-    if (!(typeof p === "string" && /^(?!process).+_.+/.test(p))) {
+    // Assuming every API function:
+    // - has a `_` in it
+    // - doesn't start with `process`
+    // and filter non-API calls away, this is not cool, I know.
+    if (!(typeof p === 'string' && /^(?!process).+_.+/.test(p))) {
       return actual;
     }
 
-    if (typeof actual !== "function") {
-      throw new Error("Please fix the hack in backend.ts.");
+    if (typeof actual !== 'function') {
+      throw new Error('Please fix the hack in backend.ts.');
     }
 
     return async (...args: any[]) => {
       if (currentToken === null) {
         throw new Error(
-          "Calling backend API without a valid token. Did you forget to call `configAuthorizationHeader`?",
+          'Calling backend API without a valid token. Did you forget to call `configAuthorizationHeader`?',
         );
       }
 

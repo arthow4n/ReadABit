@@ -1,0 +1,6 @@
+# Configs in root directory
+*.config.js
+.*.js
+
+# NSwag generated file
+integrations/backend/types.ts

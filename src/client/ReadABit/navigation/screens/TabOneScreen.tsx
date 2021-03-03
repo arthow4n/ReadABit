@@ -1,15 +1,32 @@
-import * as React from "react";
-import { Button, StyleSheet } from "react-native";
-import { useQuery } from "react-query";
+import * as React from 'react';
+import { Button, StyleSheet } from 'react-native';
+import { useQuery } from 'react-query';
 
-import { Text, View } from "../../shared/components/Themed";
-import { api } from "../../integrations/backend/backend";
-import { LoginButton } from "../../shared/components/LoginButton";
+import { api } from '../../integrations/backend/backend';
+import { LoginButton } from '../../shared/components/LoginButton';
+import { Text, View } from '../../shared/components/Themed';
 
-export default function TabOneScreen() {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  separator: {
+    marginVertical: 30,
+    height: 1,
+    width: '80%',
+  },
+});
+
+export function TabOneScreen() {
   const { isLoading, data, isError, error } = useQuery(
-    ["articles", "00000000-0000-0000-0000-000000000000"],
-    () => api.articles_GetArticle("00000000-0000-0000-0000-000000000000"),
+    ['articles', '00000000-0000-0000-0000-000000000000'],
+    () => api.articles_GetArticle('00000000-0000-0000-0000-000000000000'),
   );
 
   const [k, setK] = React.useState(0);
@@ -30,20 +47,3 @@ export default function TabOneScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
-});
