@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Utils;
+using ReadABit.Infrastructure.Models;
 using ReadABit.Web.Controllers;
 using ReadABit.Web.Test.Helpers;
 using Shouldly;
@@ -19,8 +21,11 @@ namespace ReadABit.Web.Test.Controllers
         {
             var name = "dummy";
 
-            var id = await T1.CreateArticleCollection(name);
-            var created = await T1.GetArticleCollection(id);
+            var result = (await T1.CreateArticleCollection(name)).ShouldBeOfType<CreatedAtActionResult>();
+            var id = result.Value.ShouldBeOfType<ArticleCollection>().Id;
+            var created =
+                (await T1.GetArticleCollection(id)).ShouldBeOfType<OkObjectResult>()
+                .Value.ShouldBeOfType<ArticleCollection>();
 
             created.Id.ShouldBe(id);
             created.Name.ShouldBe(name);

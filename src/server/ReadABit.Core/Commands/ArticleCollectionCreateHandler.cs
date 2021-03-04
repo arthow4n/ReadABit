@@ -8,7 +8,7 @@ using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public class ArticleCollectionCreateHandler : IRequestHandler<ArticleCollectionCreate, Guid>
+    public class ArticleCollectionCreateHandler : IRequestHandler<ArticleCollectionCreate, ArticleCollection>
     {
         private readonly CoreDbContext _db;
 
@@ -17,7 +17,7 @@ namespace ReadABit.Core.Commands
             _db = db;
         }
 
-        public async Task<Guid> Handle(ArticleCollectionCreate request, CancellationToken cancellationToken)
+        public async Task<ArticleCollection> Handle(ArticleCollectionCreate request, CancellationToken cancellationToken)
         {
             Ensure.That(request.Name, nameof(request.Name)).IsNotNullOrWhiteSpace();
 
@@ -30,7 +30,7 @@ namespace ReadABit.Core.Commands
 
             await _db.AddAsync(articleCollection);
 
-            return articleCollection.Id;
+            return articleCollection;
         }
     }
 }

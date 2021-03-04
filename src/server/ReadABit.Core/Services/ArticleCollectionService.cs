@@ -20,7 +20,7 @@ namespace ReadABit.Core.Services
             throw new NotImplementedException();
         }
 
-        public async Task<Guid> Create(string name)
+        public async Task<ArticleCollection> Create(string name)
         {
             return await Mediator.Send(new ArticleCollectionCreate
             {

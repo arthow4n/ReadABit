@@ -16,7 +16,7 @@ export interface IClient {
     articles_Conllu(input?: string | null | undefined): Promise<string>;
     articles_GetUserInfo(): Promise<string>;
     articleCollections_List(): Promise<ArticleCollection[]>;
-    articleCollections_CreateArticleCollection(name?: string | null | undefined): Promise<string>;
+    articleCollections_CreateArticleCollection(name?: string | null | undefined): Promise<ArticleCollection>;
     articleCollections_GetArticleCollection(id: string): Promise<ArticleCollection>;
 }
 
@@ -216,6 +216,12 @@ export class Client implements IClient {
             let resultData200  = _responseText;
             result200 = JSON.parse(resultData200);
             return result200;
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = JSON.parse(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -223,7 +229,7 @@ export class Client implements IClient {
         return Promise.resolve<ArticleCollection[]>(<any>null);
     }
 
-    articleCollections_CreateArticleCollection(name?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<string> {
+    articleCollections_CreateArticleCollection(name?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<ArticleCollection> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections?";
         if (name !== undefined && name !== null)
             url_ += "name=" + encodeURIComponent("" + name) + "&";
@@ -249,7 +255,7 @@ export class Client implements IClient {
         });
     }
 
-    protected processArticleCollections_CreateArticleCollection(response: AxiosResponse): Promise<string> {
+    protected processArticleCollections_CreateArticleCollection(response: AxiosResponse): Promise<ArticleCollection> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -259,17 +265,17 @@ export class Client implements IClient {
                 }
             }
         }
-        if (status === 200) {
+        if (status === 201) {
             const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = JSON.parse(resultData200);
-            return result200;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = JSON.parse(resultData201);
+            return result201;
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
-        return Promise.resolve<string>(<any>null);
+        return Promise.resolve<ArticleCollection>(<any>null);
     }
 
     articleCollections_GetArticleCollection(id: string , cancelToken?: CancelToken | undefined): Promise<ArticleCollection> {
@@ -315,6 +321,12 @@ export class Client implements IClient {
             let resultData200  = _responseText;
             result200 = JSON.parse(resultData200);
             return result200;
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = JSON.parse(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
         } else if (status !== 200 && status !== 204) {
             const _responseText = response.data;
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -357,6 +369,15 @@ export interface IdentityUserOfGuid {
 }
 
 export interface ApplicationUser extends IdentityUserOfGuid {
+}
+
+export interface ProblemDetails {
+    type?: string | null;
+    title?: string | null;
+    status?: number | null;
+    detail?: string | null;
+    instance?: string | null;
+    extensions?: { [key: string]: any; } | null;
 }
 
 export class BackendCallException extends Error {

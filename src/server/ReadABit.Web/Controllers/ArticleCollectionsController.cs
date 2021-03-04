@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Services;
 using ReadABit.Core.Utils;
@@ -19,24 +21,38 @@ namespace ReadABit.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<List<ArticleCollection>> List()
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ArticleCollection>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> List()
         {
-            return await _service.List();
+            var list = await _service.List();
+            return Ok(list);
         }
 
         [HttpGet("{id}")]
-        public async Task<ArticleCollection> GetArticleCollection(Guid id)
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ArticleCollection))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetArticleCollection(Guid id)
         {
-            // TODO: Refactor so it return 404 when not found.
-            return await _service.Get(id) ?? throw new ArgumentOutOfRangeException();
+            var articleCollection = await _service.Get(id);
+            if (articleCollection is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(articleCollection);
         }
 
         [HttpPost]
-        public async Task<Guid> CreateArticleCollection(string name)
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ArticleCollection))]
+        public async Task<IActionResult> CreateArticleCollection(string name)
         {
-            var id = await _service.Create(name);
+            var created = await _service.Create(name);
             await SaveChangesAsync();
-            return id;
+            return CreatedAtAction(nameof(GetArticleCollection), new { id = created.Id }, created);
         }
     }
 }
