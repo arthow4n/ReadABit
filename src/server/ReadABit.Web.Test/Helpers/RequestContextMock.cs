@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using System;
 using Microsoft.AspNetCore.Identity;
 using ReadABit.Core.Utils;

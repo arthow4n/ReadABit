@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ReadABit.Core.Utils;
 
 namespace ReadABit.Web.Test.Helpers

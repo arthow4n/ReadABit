@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -63,12 +63,12 @@ namespace ReadABit.Web.Controllers
                 if (request.HasPrompt(Prompts.None))
                 {
                     return Forbid(
-                         authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-                         properties: new AuthenticationProperties(new Dictionary<string, string?>
-                         {
-                             [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.LoginRequired,
-                             [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "The user is not logged in."
-                         }));
+                        authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+                        properties: new AuthenticationProperties(new Dictionary<string, string?>
+                        {
+                            [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.LoginRequired,
+                            [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "The user is not logged in."
+                        }));
                 }
 
                 return Challenge(

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.AspNetCore.Identity;
 
 namespace ReadABit.Infrastructure.Models

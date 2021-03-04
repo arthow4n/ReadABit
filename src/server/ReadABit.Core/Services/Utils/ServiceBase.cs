@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using ReadABit.Core.Utils;
 
 namespace ReadABit.Core.Services.Utils
