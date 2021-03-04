@@ -443,10 +443,13 @@ $RECYCLE.BIN/
 
 
 tmp/
-ReadABit.Web/Integrations/Ufal/UDPipe
 
+# Actual appsettings
 **/appsettings.Development.json
 **/appsettings.Production.json
 
 # VS Code interactive notebook
 **/*.ipynb
+
+# External dependencies
+UDPipe/
