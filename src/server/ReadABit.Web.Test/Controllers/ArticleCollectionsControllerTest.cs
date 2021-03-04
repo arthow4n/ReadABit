@@ -19,8 +19,8 @@ namespace ReadABit.Web.Test.Controllers
         {
             var name = "dummy";
 
-            var id = await t1.CreateArticleCollection(name);
-            var created = await t1.GetArticleCollection(id);
+            var id = await T1.CreateArticleCollection(name);
+            var created = await T1.GetArticleCollection(id);
 
             created.Id.ShouldBe(id);
             created.Name.ShouldBe(name);

@@ -11,16 +11,16 @@ namespace ReadABit.Core.Commands
 {
     public class ArticleCollectionGetHandler : IRequestHandler<ArticleCollectionGet, ArticleCollection?>
     {
-        private readonly CoreDbContext db;
+        private readonly CoreDbContext _db;
 
         public ArticleCollectionGetHandler(CoreDbContext db)
         {
-            this.db = db;
+            _db = db;
         }
 
         public async Task<ArticleCollection?> Handle(ArticleCollectionGet request, CancellationToken cancellationToken)
         {
-            return await db.ArticleCollections
+            return await _db.ArticleCollections
                 .Where(ac => ac.Id == request.Id)
                 .SingleOrDefaultAsync();
         }

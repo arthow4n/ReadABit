@@ -7,11 +7,11 @@ namespace ReadABit.Core.Services.Utils
     {
         public ServiceBase(IMediator mediator, IRequestContext requestContext)
         {
-            this.mediator = mediator;
-            this.requestContext = requestContext;
+            Mediator = mediator;
+            RequestContext = requestContext;
         }
 
-        protected readonly IMediator mediator;
-        protected readonly IRequestContext requestContext;
+        protected readonly IMediator Mediator;
+        protected readonly IRequestContext RequestContext;
     }
 }

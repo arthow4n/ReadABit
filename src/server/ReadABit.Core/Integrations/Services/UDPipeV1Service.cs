@@ -8,7 +8,7 @@ namespace ReadABit.Core.Integrations.Services
 {
     public class UDPipeV1Service
     {
-        private readonly Pipeline pipeline;
+        private readonly Pipeline _pipeline;
 
         public UDPipeV1Service(ModelLanguage lang)
         {
@@ -22,8 +22,8 @@ namespace ReadABit.Core.Integrations.Services
                 ),
                 ModelLanguageToFileNameMapping[lang]
             );
-            Model model = Model.load(modelPath);
-            Pipeline pipeline = new Pipeline(
+            var model = Model.load(modelPath);
+            var pipeline = new Pipeline(
                 model,
                 "tokenize",
                 Pipeline.DEFAULT,
@@ -31,15 +31,15 @@ namespace ReadABit.Core.Integrations.Services
                 "conllu"
             );
 
-            this.pipeline = pipeline;
+            _pipeline = pipeline;
         }
 
         /// <returns>CoNLL-U annotaion of the input. See https://universaldependencies.org/format.html for full spec.</returns>
         public string ConvertToConllu(string input)
         {
-            ProcessingError error = new ProcessingError();
+            var error = new ProcessingError();
 
-            string processed = pipeline.process(input, error);
+            var processed = _pipeline.process(input, error);
 
             if (error.occurred())
             {
@@ -54,7 +54,7 @@ namespace ReadABit.Core.Integrations.Services
             Swedish,
         }
 
-        private static Dictionary<ModelLanguage, string> ModelLanguageToFileNameMapping => new Dictionary<ModelLanguage, string>
+        private static Dictionary<ModelLanguage, string> ModelLanguageToFileNameMapping => new()
         {
             { ModelLanguage.Swedish, "swedish-ud-1.2-160523.udpipe" },
         };

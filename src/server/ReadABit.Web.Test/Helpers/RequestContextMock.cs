@@ -27,11 +27,11 @@ namespace ReadABit.Web.Test.Helpers
                 throw new Exception(string.Join("; ", r.Errors.Select(x => $"{x.Code}: {x.Description}")));
             }
 
-            CurrentUser = _userManager.FindByNameAsync(userName).GetAwaiter().GetResult();
+            _currentUser = _userManager.FindByNameAsync(userName).GetAwaiter().GetResult();
         }
 
-        private UserManager<ApplicationUser> _userManager;
-        private ApplicationUser? CurrentUser;
-        public Guid? UserId { get => CurrentUser!.Id; set => throw new NotSupportedException(); }
+        private readonly UserManager<ApplicationUser> _userManager;
+        private ApplicationUser? _currentUser;
+        public Guid? UserId { get => _currentUser!.Id; set => throw new NotSupportedException(); }
     }
 }

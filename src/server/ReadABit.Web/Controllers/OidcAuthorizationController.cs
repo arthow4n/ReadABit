@@ -366,7 +366,7 @@ namespace ReadABit.Web.Controllers
             return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
         }
 
-        private IEnumerable<string> GetDestinations(Claim claim, ClaimsPrincipal principal)
+        private static IEnumerable<string> GetDestinations(Claim claim, ClaimsPrincipal principal)
         {
             switch (claim.Type)
             {

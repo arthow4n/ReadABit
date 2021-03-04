@@ -17,7 +17,7 @@ namespace ReadABit.Web.Test
         [Fact]
         public async Task Conllu_Runs()
         {
-            var response = await t1.Conllu("Hallå värld!");
+            var response = await T1.Conllu("Hallå värld!");
             response.Value.ShouldContain("# text = hallå värld");
         }
     }

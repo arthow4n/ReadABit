@@ -10,11 +10,11 @@ namespace ReadABit.Core.Commands
 {
     public class ArticleCollectionCreateHandler : IRequestHandler<ArticleCollectionCreate, Guid>
     {
-        private readonly CoreDbContext db;
+        private readonly CoreDbContext _db;
 
         public ArticleCollectionCreateHandler(CoreDbContext db)
         {
-            this.db = db;
+            _db = db;
         }
 
         public async Task<Guid> Handle(ArticleCollectionCreate request, CancellationToken cancellationToken)
@@ -28,7 +28,7 @@ namespace ReadABit.Core.Commands
                 Name = request.Name,
             };
 
-            await db.AddAsync(articleCollection);
+            await _db.AddAsync(articleCollection);
 
             return articleCollection.Id;
         }

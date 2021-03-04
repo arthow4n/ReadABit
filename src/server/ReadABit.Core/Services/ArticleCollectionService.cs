@@ -22,16 +22,16 @@ namespace ReadABit.Core.Services
 
         public async Task<Guid> Create(string name)
         {
-            return await mediator.Send(new ArticleCollectionCreate
+            return await Mediator.Send(new ArticleCollectionCreate
             {
-                UserId = requestContext.UserId!.Value,
+                UserId = RequestContext.UserId!.Value,
                 Name = name,
             });
         }
 
         public async Task<ArticleCollection?> Get(Guid id)
         {
-            return await mediator.Send(new ArticleCollectionGet
+            return await Mediator.Send(new ArticleCollectionGet
             {
                 Id = id,
             });
