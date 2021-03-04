@@ -1,4 +1,6 @@
 import * as React from 'react';
+
+import { useTranslation } from 'react-i18next';
 import { Button } from 'react-native';
 import { useQuery } from 'react-query';
 
@@ -23,6 +25,7 @@ import {
 } from '../../integrations/backend/oidcConstants';
 
 export const LoginButton: React.FC = () => {
+  const { t } = useTranslation();
   const [isTokenReady, setIsTokenReady] = React.useState(false);
   const getUserInfoQueryHandle = useQuery(
     ['articles_GetUserInfo'],
@@ -84,7 +87,6 @@ export const LoginButton: React.FC = () => {
     exchangeCodeForToken();
   }, [authResult]);
 
-  console.log(getUserInfoQueryHandle.data);
   if (isTokenReady) {
     return (
       <View>
@@ -97,7 +99,7 @@ export const LoginButton: React.FC = () => {
   return (
     <View>
       <Button
-        title="Login!"
+        title={t('Login')}
         disabled={!authRequest}
         onPress={() => promptAsync()}
       />

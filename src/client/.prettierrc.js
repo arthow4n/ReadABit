@@ -1,6 +1,14 @@
 module.exports = {
   trailingComma: 'all',
   singleQuote: true,
-  importOrder: ['^react', '^[^@.].*', '^@', '^[.]/', '^[.][.]/', '.*'],
+  importOrder: [
+    '^react$',
+    '^react',
+    '^[^@.].*',
+    '^@',
+    '^[.]/',
+    '^[.][.]/',
+    '.*',
+  ],
   importOrderSeparation: true,
 };
