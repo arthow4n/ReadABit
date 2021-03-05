@@ -27,16 +27,6 @@ import {
 export const LoginButton: React.FC = () => {
   const { t } = useTranslation();
   const [isTokenReady, setIsTokenReady] = React.useState(false);
-  const getUserInfoQueryHandle = useQuery(
-    ['articles_GetUserInfo'],
-    () => api.articles_GetUserInfo(),
-    {
-      enabled: isTokenReady,
-      onSuccess: (data) => {
-        console.log(data);
-      },
-    },
-  );
 
   const discovery = useAutoDiscovery(backendBaseUrl);
   const [authRequest, authResult, promptAsync] = useAuthRequest(
@@ -88,12 +78,7 @@ export const LoginButton: React.FC = () => {
   }, [authResult]);
 
   if (isTokenReady) {
-    return (
-      <View>
-        <Text>getUserInfoQueryHandle</Text>
-        <Text>{JSON.stringify(getUserInfoQueryHandle)}</Text>
-      </View>
-    );
+    return null;
   }
 
   return (

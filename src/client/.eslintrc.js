@@ -15,5 +15,7 @@ module.exports = {
     'operator-linebreak': 'off',
     'object-curly-newline': 'off',
     '@typescript-eslint/no-unused-vars': ['warn'],
+    'implicit-arrow-linebreak': 'off',
+    'function-paren-newline': 'off',
   },
 };

@@ -1,6 +1,7 @@
 import * as React from 'react';
+
 import { Button, StyleSheet } from 'react-native';
-import { useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 
 import { api } from '../../integrations/backend/backend';
 import { LoginButton } from '../../shared/components/LoginButton';
@@ -24,12 +25,9 @@ const styles = StyleSheet.create({
 });
 
 export function TabOneScreen() {
-  const { isLoading, data, isError, error } = useQuery(
-    ['articles', '00000000-0000-0000-0000-000000000000'],
-    () => api.articles_GetArticle('00000000-0000-0000-0000-000000000000'),
+  const { mutate } = useMutation(
+    api.articleCollections_CreateArticleCollection,
   );
-
-  const [k, setK] = React.useState(0);
 
   return (
     <View style={styles.container}>
@@ -39,11 +37,11 @@ export function TabOneScreen() {
         lightColor="#eee"
         darkColor="rgba(255,255,255,0.1)"
       />
-      {isLoading && <Text>useQuery is isLoading...</Text>}
-      {data && <Text>{data.title}</Text>}
-      {isError && <Text>{JSON.stringify(error)}</Text>}
-      <Button title="Reload button" onPress={() => setK((x) => x + 1)} />
-      <LoginButton key={k} />
+      <Button
+        title="Test create article collection"
+        onPress={() => mutate({ languageCode: '', name: 'Test' })}
+      />
+      <LoginButton />
     </View>
   );
 }
