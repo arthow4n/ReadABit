@@ -20,7 +20,7 @@ namespace ReadABit.Web.Test
                 .AddUserSecrets<Startup>()
                 .Build();
 
-            services.AddDbContext<CoreDbContext>(
+            services.AddDbContext<UnsafeCoreDbContext>(
                 options => options.UseNpgsql(
                     configuration.GetConnectionString("CoreDbContext"),
                     x => x.MigrationsAssembly("ReadABit.Infrastructure")
@@ -31,17 +31,18 @@ namespace ReadABit.Web.Test
                 {
                     options.SignIn.RequireConfirmedAccount = false;
                 })
-                .AddEntityFrameworkStores<CoreDbContext>()
+                .AddEntityFrameworkStores<UnsafeCoreDbContext>()
                 .AddDefaultTokenProviders();
 
             var db = services
                 .BuildServiceProvider()
-                .GetRequiredService<CoreDbContext>()
+                .GetRequiredService<UnsafeCoreDbContext>()
                 .Database;
             db.EnsureDeleted();
             db.EnsureCreated();
 
             services.AddScoped<IRequestContext, RequestContextMock>();
+            services.AddScoped<DB, DB>();
 
             services.AddMediatR(typeof(ServiceBase));
         }

@@ -6,9 +6,12 @@ using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Infrastructure
 {
-    public class CoreDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
+    /// <summary>
+    /// The root DbContext. Avoid using this when possible since it's more easy to forget filtering the query by user when directly using this.
+    /// </summary>
+    public class UnsafeCoreDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
     {
-        public CoreDbContext(DbContextOptions options) : base(options)
+        public UnsafeCoreDbContext(DbContextOptions options) : base(options)
         {
         }
 

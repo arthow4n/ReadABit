@@ -8,7 +8,7 @@ using ReadABit.Infrastructure;
 
 namespace ReadABit.Infrastructure.Migrations
 {
-    [DbContext(typeof(CoreDbContext))]
+    [DbContext(typeof(UnsafeCoreDbContext))]
     partial class CoreDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

@@ -6,6 +6,8 @@ namespace ReadABit.Core.Commands
 {
     public class ArticleCollectionGet : IRequest<ArticleCollection?>
     {
-        public Guid Id { get; set; } = Guid.Empty;
+        public Guid Id { get; set; }
+
+        public Guid UserId { get; set; }
     }
 }

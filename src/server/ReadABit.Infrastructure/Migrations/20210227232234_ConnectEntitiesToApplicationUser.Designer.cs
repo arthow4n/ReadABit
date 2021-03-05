@@ -9,7 +9,7 @@ using ReadABit.Infrastructure;
 
 namespace ReadABit.Infrastructure.Migrations
 {
-    [DbContext(typeof(CoreDbContext))]
+    [DbContext(typeof(UnsafeCoreDbContext))]
     [Migration("20210227232234_ConnectEntitiesToApplicationUser")]
     partial class ConnectEntitiesToApplicationUser
     {

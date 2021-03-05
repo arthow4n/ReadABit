@@ -3,16 +3,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using EnsureThat;
-using ReadABit.Infrastructure;
 using ReadABit.Infrastructure.Models;
+using ReadABit.Core.Utils;
 
 namespace ReadABit.Core.Commands
 {
     public class ArticleCollectionCreateHandler : IRequestHandler<ArticleCollectionCreate, ArticleCollection>
     {
-        private readonly CoreDbContext _db;
+        private readonly DB _db;
 
-        public ArticleCollectionCreateHandler(CoreDbContext db)
+        public ArticleCollectionCreateHandler(DB db)
         {
             _db = db;
         }
@@ -28,7 +28,7 @@ namespace ReadABit.Core.Commands
                 Name = request.Name,
             };
 
-            await _db.AddAsync(articleCollection);
+            await _db.Unsafe.AddAsync(articleCollection);
 
             return articleCollection;
         }

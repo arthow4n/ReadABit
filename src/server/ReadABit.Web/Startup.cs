@@ -30,7 +30,7 @@ namespace ReadABit.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<CoreDbContext>(
+            services.AddDbContext<UnsafeCoreDbContext>(
                 options =>
                 {
                     options.UseNpgsql(
@@ -59,7 +59,7 @@ namespace ReadABit.Web
                     options.ClaimsIdentity.UserIdClaimType = Claims.Subject;
                     options.ClaimsIdentity.RoleClaimType = Claims.Role;
                 })
-                .AddEntityFrameworkStores<CoreDbContext>()
+                .AddEntityFrameworkStores<UnsafeCoreDbContext>()
                 .AddDefaultTokenProviders()
                 .AddDefaultUI();
             services.AddRazorPages();
@@ -70,7 +70,7 @@ namespace ReadABit.Web
                 {
                     options
                         .UseEntityFrameworkCore()
-                        .UseDbContext<CoreDbContext>()
+                        .UseDbContext<UnsafeCoreDbContext>()
                         .ReplaceDefaultEntities<Guid>();
                 })
                 .AddServer(options =>
@@ -136,6 +136,7 @@ namespace ReadABit.Web
                 });
             services.AddHttpContextAccessor();
             services.AddScoped<IRequestContext, RequestContext>();
+            services.AddScoped<DB, DB>();
 
             services.AddMediatR(typeof(ServiceBase));
 

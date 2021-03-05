@@ -9,7 +9,7 @@ using ReadABit.Infrastructure;
 
 namespace ReadABit.Infrastructure.Migrations
 {
-    [DbContext(typeof(CoreDbContext))]
+    [DbContext(typeof(UnsafeCoreDbContext))]
     [Migration("20210228203455_AddOpenIddict")]
     partial class AddOpenIddict
     {

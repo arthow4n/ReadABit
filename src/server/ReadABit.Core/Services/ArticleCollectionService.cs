@@ -20,20 +20,21 @@ namespace ReadABit.Core.Services
             throw new NotImplementedException();
         }
 
-        public async Task<ArticleCollection> Create(string name)
+        public async Task<ArticleCollection> Create(string name, Guid? userId = null)
         {
             return await Mediator.Send(new ArticleCollectionCreate
             {
-                UserId = RequestContext.UserId!.Value,
                 Name = name,
+                UserId = userId ?? RequestContext.UserId!.Value,
             });
         }
 
-        public async Task<ArticleCollection?> Get(Guid id)
+        public async Task<ArticleCollection?> Get(Guid id, Guid? userId = null)
         {
             return await Mediator.Send(new ArticleCollectionGet
             {
                 Id = id,
+                UserId = userId ?? RequestContext.UserId!.Value,
             });
         }
     }
