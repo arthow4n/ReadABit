@@ -6,9 +6,7 @@ namespace ReadABit.Infrastructure.Models
 {
     public class ArticleCollection
     {
-        [Required]
         public Guid Id { get; set; }
-        [Required]
         public Guid UserId { get; set; }
         public ApplicationUser User { get; set; }
 
