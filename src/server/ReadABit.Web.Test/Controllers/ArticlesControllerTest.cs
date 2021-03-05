@@ -14,11 +14,11 @@ namespace ReadABit.Web.Test
         {
         }
 
-        [Fact]
-        public async Task Conllu_Runs()
-        {
-            var response = await T1.Conllu("Hallå värld!");
-            response.Value.ShouldContain("# text = hallå värld");
-        }
+        // [Fact]
+        // public async Task Conllu_Runs()
+        // {
+        //     var response = await T1.Conllu("Hallå värld!");
+        //     response.Value.ShouldContain("# text = hallå värld");
+        // }
     }
 }

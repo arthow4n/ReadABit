@@ -1,62 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
 using Ufal.UDPipe;
 
 namespace ReadABit.Core.Integrations.Services
 {
-    public class UDPipeV1Service
+    public static class UDPipeV1Service
     {
-        private readonly Pipeline _pipeline;
-
-        public UDPipeV1Service(ModelLanguage lang)
+        /// <param name="twoLetterISOLanguageName"><see cref="CultureInfo.TwoLetterISOLanguageName" /></param>
+        /// <param name="input">Text content of the input.</param>
+        /// <returns>CoNLL-U annotaion of the input. See https://universaldependencies.org/format.html for full spec.</returns>
+        public static string ToConllu(string twoLetterISOLanguageName, string input)
         {
-            var modelPath = Path.Join(
-                Path.Join(
-                    Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location),
-                    "Integrations",
-                    "Ufal",
-                    "UDPipe",
-                    "models"
-                ),
-                ModelLanguageToFileNameMapping[lang]
-            );
-            var model = Model.load(modelPath);
             var pipeline = new Pipeline(
-                model,
+                LanguageToModelMapping[twoLetterISOLanguageName],
                 "tokenize",
                 Pipeline.DEFAULT,
                 Pipeline.DEFAULT,
                 "conllu"
             );
 
-            _pipeline = pipeline;
-        }
-
-        /// <returns>CoNLL-U annotaion of the input. See https://universaldependencies.org/format.html for full spec.</returns>
-        public string ConvertToConllu(string input)
-        {
             var error = new ProcessingError();
-
-            var processed = _pipeline.process(input, error);
+            var processed = pipeline.process(input, error);
 
             if (error.occurred())
             {
-                throw new Exception(error.message);
+                throw new UDPipeException(error.message);
             }
 
             return processed;
         }
 
-        public enum ModelLanguage
+        private static ReadOnlyDictionary<string, Model> LanguageToModelMapping => new(new Dictionary<string, Model>
         {
-            Swedish,
+            { "sv", LoadModel("swedish-ud-1.2-160523.udpipe") },
+        });
+
+        private static Model LoadModel(string modelName)
+        {
+            var modelPath = Path.Join(
+                Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location),
+                "Integrations",
+                "Ufal",
+                "UDPipe",
+                "models",
+                modelName
+            );
+
+            return Model.load(modelPath);
         }
 
-        private static Dictionary<ModelLanguage, string> ModelLanguageToFileNameMapping => new()
+        public class UDPipeException : Exception
         {
-            { ModelLanguage.Swedish, "swedish-ud-1.2-160523.udpipe" },
-        };
+            public UDPipeException(string? message) : base(message)
+            {
+            }
+        }
     }
 }
