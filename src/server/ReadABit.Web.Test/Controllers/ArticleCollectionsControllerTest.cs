@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ReadABit.Core.Commands;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
 using ReadABit.Web.Controllers;
@@ -23,7 +24,13 @@ namespace ReadABit.Web.Test.Controllers
             var languageCode = "sv";
             var name = "dummy";
 
-            var creationResult = (await T1.CreateArticleCollection(languageCode, name)).ShouldBeOfType<CreatedAtActionResult>();
+            var creationResult =
+                (await T1.CreateArticleCollection(new ArticleCollectionCreate
+                {
+                    Name = name,
+                    LanguageCode = languageCode
+                }))
+                .ShouldBeOfType<CreatedAtActionResult>();
             var createdId = creationResult.Value.ShouldBeOfType<ArticleCollection>().Id;
 
             (await List()).Count.ShouldBe(1);

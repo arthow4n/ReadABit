@@ -13,6 +13,7 @@ using System;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using ReadABit.Core.Utils;
 using ReadABit.Core.Commands;
+using FluentValidation.AspNetCore;
 
 namespace ReadABit.Web
 {
@@ -130,6 +131,10 @@ namespace ReadABit.Web
 
             services
                 .AddControllers()
+                .AddFluentValidation(x =>
+                {
+                    x.RegisterValidatorsFromAssemblyContaining<SaveChanges>();
+                })
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());

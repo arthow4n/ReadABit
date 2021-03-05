@@ -12,12 +12,10 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Ca
 export module Backend {
 
 export interface IClient {
-    articles_GetArticle(id: string): Promise<Article>;
-    articles_Conllu(input?: string | null | undefined): Promise<string>;
-    articles_GetUserInfo(): Promise<string>;
     articleCollections_ListArticleCollections(): Promise<ArticleCollection[]>;
-    articleCollections_CreateArticleCollection(name?: string | null | undefined): Promise<ArticleCollection>;
+    articleCollections_CreateArticleCollection(request: ArticleCollectionCreate): Promise<ArticleCollection>;
     articleCollections_GetArticleCollection(id: string): Promise<ArticleCollection>;
+    articleCollections_UpdateArticleCollection(id: string, languageCode?: string | null | undefined, name?: string | null | undefined): Promise<void>;
     articleCollections_DeleteArticleCollection(id: string): Promise<void>;
 }
 
@@ -29,152 +27,6 @@ export class Client implements IClient {
     constructor(baseUrl?: string, instance?: AxiosInstance) {
         this.instance = instance ? instance : axios.create();
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-    }
-
-    articles_GetArticle(id: string , cancelToken?: CancelToken | undefined): Promise<Article> {
-        let url_ = this.baseUrl + "/api/v1/Articles/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <AxiosRequestConfig>{
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processArticles_GetArticle(_response);
-        });
-    }
-
-    protected processArticles_GetArticle(response: AxiosResponse): Promise<Article> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = JSON.parse(resultData200);
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<Article>(<any>null);
-    }
-
-    articles_Conllu(input?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<string> {
-        let url_ = this.baseUrl + "/api/v1/Articles/Conllu?";
-        if (input !== undefined && input !== null)
-            url_ += "input=" + encodeURIComponent("" + input) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <AxiosRequestConfig>{
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processArticles_Conllu(_response);
-        });
-    }
-
-    protected processArticles_Conllu(response: AxiosResponse): Promise<string> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = JSON.parse(resultData200);
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<string>(<any>null);
-    }
-
-    articles_GetUserInfo(  cancelToken?: CancelToken | undefined): Promise<string> {
-        let url_ = this.baseUrl + "/api/v1/Articles";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <AxiosRequestConfig>{
-            method: "GET",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processArticles_GetUserInfo(_response);
-        });
-    }
-
-    protected processArticles_GetUserInfo(response: AxiosResponse): Promise<string> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = JSON.parse(resultData200);
-            return result200;
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<string>(<any>null);
     }
 
     articleCollections_ListArticleCollections(  cancelToken?: CancelToken | undefined): Promise<ArticleCollection[]> {
@@ -230,16 +82,18 @@ export class Client implements IClient {
         return Promise.resolve<ArticleCollection[]>(<any>null);
     }
 
-    articleCollections_CreateArticleCollection(name?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<ArticleCollection> {
-        let url_ = this.baseUrl + "/api/v1/ArticleCollections?";
-        if (name !== undefined && name !== null)
-            url_ += "name=" + encodeURIComponent("" + name) + "&";
+    articleCollections_CreateArticleCollection(request: ArticleCollectionCreate , cancelToken?: CancelToken | undefined): Promise<ArticleCollection> {
+        let url_ = this.baseUrl + "/api/v1/ArticleCollections";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(request);
+
         let options_ = <AxiosRequestConfig>{
+            data: content_,
             method: "POST",
             url: url_,
             headers: {
+                "Content-Type": "application/json",
                 "Accept": "application/json"
             },
             cancelToken
@@ -335,6 +189,62 @@ export class Client implements IClient {
         return Promise.resolve<ArticleCollection>(<any>null);
     }
 
+    articleCollections_UpdateArticleCollection(id: string, languageCode?: string | null | undefined, name?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/v1/ArticleCollections/{id}?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (languageCode !== undefined && languageCode !== null)
+            url_ += "languageCode=" + encodeURIComponent("" + languageCode) + "&";
+        if (name !== undefined && name !== null)
+            url_ += "name=" + encodeURIComponent("" + name) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "PUT",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticleCollections_UpdateArticleCollection(_response);
+        });
+    }
+
+    protected processArticleCollections_UpdateArticleCollection(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(<any>null);
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = JSON.parse(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(<any>null);
+    }
+
     articleCollections_DeleteArticleCollection(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections/{id}";
         if (id === undefined || id === null)
@@ -388,19 +298,13 @@ export class Client implements IClient {
     }
 }
 
-export interface Article {
-    id: string;
-    title: string;
-    articleCollectionId: string;
-    articleCollection?: ArticleCollection | null;
-}
-
 export interface ArticleCollection {
     id: string;
-    name: string;
-    articles?: Article[] | null;
     userId: string;
     user?: ApplicationUser | null;
+    name: string;
+    languageCode: string;
+    articles?: Article[] | null;
 }
 
 export interface IdentityUserOfGuid {
@@ -424,6 +328,15 @@ export interface IdentityUserOfGuid {
 export interface ApplicationUser extends IdentityUserOfGuid {
 }
 
+export interface Article {
+    id: string;
+    articleCollectionId: string;
+    articleCollection?: ArticleCollection | null;
+    name: string;
+    text: string;
+    conllu: string;
+}
+
 export interface ProblemDetails {
     type?: string | null;
     title?: string | null;
@@ -431,6 +344,11 @@ export interface ProblemDetails {
     detail?: string | null;
     instance?: string | null;
     extensions?: { [key: string]: any; } | null;
+}
+
+export interface ArticleCollectionCreate {
+    name: string;
+    languageCode: string;
 }
 
 export class BackendCallException extends Error {

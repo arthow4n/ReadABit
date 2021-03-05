@@ -53,14 +53,9 @@ namespace ReadABit.Web.Controllers
         [HttpPost]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ArticleCollection))]
-        public async Task<IActionResult> CreateArticleCollection(string languageCode, string name)
+        public async Task<IActionResult> CreateArticleCollection(ArticleCollectionCreate request)
         {
-            var created = await Mediator.Send(new ArticleCollectionCreate
-            {
-                UserId = RequestUserId,
-                Name = name,
-                LanguageCode = languageCode,
-            });
+            var created = await Mediator.Send(request with { UserId = RequestUserId });
             await SaveChangesAsync();
             return CreatedAtAction(nameof(GetArticleCollection), new { id = created.Id }, created);
         }
