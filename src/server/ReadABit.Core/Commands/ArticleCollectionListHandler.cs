@@ -21,8 +21,8 @@ namespace ReadABit.Core.Commands
         public async Task<List<ArticleCollection>> Handle(ArticleCollectionList request, CancellationToken cancellationToken)
         {
             return await _db
-                .ArticleCollectionOfUser(request.UserId)
-                .ToListAsync();
+                .ArticleCollectionsOfUser(request.UserId)
+                .ToListAsync(cancellationToken: cancellationToken);
         }
     }
 }

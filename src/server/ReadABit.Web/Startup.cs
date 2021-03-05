@@ -7,12 +7,12 @@ using Microsoft.OpenApi.Models;
 using ReadABit.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using MediatR;
-using ReadABit.Core.Services.Utils;
 using ReadABit.Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using ReadABit.Core.Utils;
+using ReadABit.Core.Commands;
 
 namespace ReadABit.Web
 {
@@ -138,7 +138,7 @@ namespace ReadABit.Web
             services.AddScoped<IRequestContext, RequestContext>();
             services.AddScoped<DB, DB>();
 
-            services.AddMediatR(typeof(ServiceBase));
+            services.AddMediatR(typeof(SaveChanges));
 
             services.AddSwaggerGen(c =>
             {

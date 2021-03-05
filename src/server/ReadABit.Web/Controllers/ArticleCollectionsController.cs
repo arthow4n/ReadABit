@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Commands;
-using ReadABit.Core.Services;
-using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
 using ReadABit.Web.Controller.Utils;
 
@@ -14,11 +12,9 @@ namespace ReadABit.Web.Controllers
 {
     public class ArticleCollectionsController : ApiControllerBase
     {
-        private readonly ArticleCollectionService _service;
 
         public ArticleCollectionsController(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _service = DI.New<ArticleCollectionService>(serviceProvider);
         }
 
         [HttpGet]
@@ -57,15 +53,39 @@ namespace ReadABit.Web.Controllers
         [HttpPost]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ArticleCollection))]
-        public async Task<IActionResult> CreateArticleCollection(string name)
+        public async Task<IActionResult> CreateArticleCollection(string languageCode, string name)
         {
             var created = await Mediator.Send(new ArticleCollectionCreate
             {
-                Name = name,
                 UserId = RequestUserId,
+                Name = name,
+                LanguageCode = languageCode,
             });
             await SaveChangesAsync();
             return CreatedAtAction(nameof(GetArticleCollection), new { id = created.Id }, created);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateArticleCollection(Guid id, string languageCode, string name)
+        {
+            var found = await Mediator.Send(new ArticleCollectionUpdate
+            {
+                Id = id,
+                UserId = RequestUserId,
+                Name = name,
+                LanguageCode = languageCode,
+            });
+
+            if (!found)
+            {
+                return NotFound();
+            }
+
+            await SaveChangesAsync();
+            return NoContent();
         }
 
         [HttpDelete("{id}")]

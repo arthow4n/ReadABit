@@ -1,10 +1,9 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ReadABit.Core.Services.Utils;
+using ReadABit.Core.Commands;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure;
 using ReadABit.Infrastructure.Models;
@@ -44,7 +43,7 @@ namespace ReadABit.Web.Test
             services.AddScoped<IRequestContext, RequestContextMock>();
             services.AddScoped<DB, DB>();
 
-            services.AddMediatR(typeof(ServiceBase));
+            services.AddMediatR(typeof(SaveChanges));
         }
     }
 }

@@ -21,7 +21,7 @@ namespace ReadABit.Core.Utils
             return _coreDbContext.Articles.Where(a => a.ArticleCollection.UserId == userId);
         }
 
-        public IQueryable<ArticleCollection> ArticleCollectionOfUser(Guid userId)
+        public IQueryable<ArticleCollection> ArticleCollectionsOfUser(Guid userId)
         {
             return _coreDbContext.ArticleCollections.Where(a => a.UserId == userId);
         }

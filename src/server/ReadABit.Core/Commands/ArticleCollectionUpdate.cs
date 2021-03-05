@@ -1,13 +1,17 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
+using System;
 using MediatR;
-using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public class ArticleCollectionCreate : IRequest<ArticleCollection>
+    public class ArticleCollectionUpdate : IRequest<bool>
     {
+        public Guid Id { get; set; }
+
         public Guid UserId { get; set; }
+        [Required]
         public string Name { get; set; } = "";
+        [Required]
         public string LanguageCode { get; set; } = "";
     }
 }

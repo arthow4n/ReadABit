@@ -20,15 +20,17 @@ namespace ReadABit.Core.Commands
         public async Task<ArticleCollection> Handle(ArticleCollectionCreate request, CancellationToken cancellationToken)
         {
             Ensure.That(request.Name, nameof(request.Name)).IsNotNullOrWhiteSpace();
+            Ensure.That(LanguageCode.IsValid(request.LanguageCode), $"{nameof(request.LanguageCode)} is valid").IsTrue();
 
             var articleCollection = new ArticleCollection
             {
                 Id = Guid.NewGuid(),
                 UserId = request.UserId,
                 Name = request.Name,
+                LanguageCode = request.LanguageCode,
             };
 
-            await _db.Unsafe.AddAsync(articleCollection);
+            await _db.Unsafe.AddAsync(articleCollection, cancellationToken);
 
             return articleCollection;
         }

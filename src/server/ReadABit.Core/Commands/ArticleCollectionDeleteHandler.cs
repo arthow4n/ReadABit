@@ -19,7 +19,10 @@ namespace ReadABit.Core.Commands
 
         public async Task<bool> Handle(ArticleCollectionDelete request, CancellationToken cancellationToken)
         {
-            var target = await _db.ArticleCollectionOfUser(request.UserId).Where(ac => ac.Id == request.Id).SingleOrDefaultAsync();
+            var target = await _db.ArticleCollectionsOfUser(request.UserId)
+                                  .Where(ac => ac.Id == request.Id)
+                                  .SingleOrDefaultAsync(cancellationToken: cancellationToken);
+
             if (target is null)
             {
                 return false;
