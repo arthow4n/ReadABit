@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ReadABit.Core.Commands;
 using ReadABit.Core.Services;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
@@ -26,7 +27,10 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ListArticleCollections()
         {
-            var list = await _service.List();
+            var list = await Mediator.Send(new ArticleCollectionList
+            {
+                UserId = RequestUserId,
+            });
             return Ok(list);
         }
 
@@ -36,7 +40,12 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetArticleCollection(Guid id)
         {
-            var articleCollection = await _service.Get(id);
+            var articleCollection = await Mediator.Send(new ArticleCollectionGet
+            {
+                Id = id,
+                UserId = RequestUserId,
+            });
+
             if (articleCollection is null)
             {
                 return NotFound();
@@ -50,7 +59,11 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ArticleCollection))]
         public async Task<IActionResult> CreateArticleCollection(string name)
         {
-            var created = await _service.Create(name);
+            var created = await Mediator.Send(new ArticleCollectionCreate
+            {
+                Name = name,
+                UserId = RequestUserId,
+            });
             await SaveChangesAsync();
             return CreatedAtAction(nameof(GetArticleCollection), new { id = created.Id }, created);
         }
@@ -61,7 +74,12 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteArticleCollection(Guid id)
         {
-            var found = await _service.Delete(id);
+            var found = await Mediator.Send(new ArticleCollectionDelete
+            {
+                Id = id,
+                UserId = RequestUserId,
+            });
+
             if (!found)
             {
                 return NotFound();

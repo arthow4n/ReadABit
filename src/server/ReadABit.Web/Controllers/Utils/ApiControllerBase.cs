@@ -26,6 +26,11 @@ namespace ReadABit.Web.Controller.Utils
 
         protected IRequestContext RequestContext => GetService<IRequestContext>();
 
+        /// <summary>
+        /// This should only be used in actions with [Authorize] because it asserts the user ID is not null.
+        /// </summary>
+        protected Guid RequestUserId => RequestContext.UserId!.Value;
+
         protected UserManager<ApplicationUser> UserManager => GetService<UserManager<ApplicationUser>>();
 
         protected async Task SaveChangesAsync()
