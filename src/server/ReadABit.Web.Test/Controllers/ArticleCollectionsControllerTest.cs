@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Utils;
@@ -17,18 +18,31 @@ namespace ReadABit.Web.Test.Controllers
         }
 
         [Fact]
-        public async Task Create_Succeeds()
+        public async Task CRUD_Succeeds()
         {
             var name = "dummy";
 
-            var result = (await T1.CreateArticleCollection(name)).ShouldBeOfType<CreatedAtActionResult>();
-            var id = result.Value.ShouldBeOfType<ArticleCollection>().Id;
+            var creationResult = (await T1.CreateArticleCollection(name)).ShouldBeOfType<CreatedAtActionResult>();
+            var createdId = creationResult.Value.ShouldBeOfType<ArticleCollection>().Id;
+
+            (await List()).Count.ShouldBe(1);
+
             var created =
-                (await T1.GetArticleCollection(id)).ShouldBeOfType<OkObjectResult>()
+                (await T1.GetArticleCollection(createdId)).ShouldBeOfType<OkObjectResult>()
                 .Value.ShouldBeOfType<ArticleCollection>();
 
-            created.Id.ShouldBe(id);
+            created.Id.ShouldBe(createdId);
             created.Name.ShouldBe(name);
+
+            (await T1.DeleteArticleCollection(createdId)).ShouldBeOfType<NoContentResult>();
+            (await List()).Count.ShouldBe(0);
+            (await T1.GetArticleCollection(createdId)).ShouldBeOfType<NotFoundResult>();
+        }
+
+        private async Task<List<ArticleCollection>> List()
+        {
+            return (await T1.ListArticleCollections()).ShouldBeOfType<OkObjectResult>()
+                .Value.ShouldBeOfType<List<ArticleCollection>>();
         }
     }
 }

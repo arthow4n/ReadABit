@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using ReadABit.Core.Utils;
 
 namespace ReadABit.Core.Services.Utils
@@ -13,5 +14,6 @@ namespace ReadABit.Core.Services.Utils
 
         protected readonly IMediator Mediator;
         protected readonly IRequestContext RequestContext;
+        protected Guid RequestUserId => RequestContext.UserId!.Value;
     }
 }

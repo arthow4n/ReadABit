@@ -24,7 +24,7 @@ namespace ReadABit.Web.Controllers
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ArticleCollection>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> ListArticleCollections()
         {
             var list = await _service.List();
             return Ok(list);
@@ -53,6 +53,22 @@ namespace ReadABit.Web.Controllers
             var created = await _service.Create(name);
             await SaveChangesAsync();
             return CreatedAtAction(nameof(GetArticleCollection), new { id = created.Id }, created);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteArticleCollection(Guid id)
+        {
+            var found = await _service.Delete(id);
+            if (!found)
+            {
+                return NotFound();
+            }
+
+            await SaveChangesAsync();
+            return NoContent();
         }
     }
 }

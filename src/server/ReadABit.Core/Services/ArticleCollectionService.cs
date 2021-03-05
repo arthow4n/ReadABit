@@ -15,9 +15,12 @@ namespace ReadABit.Core.Services
         {
         }
 
-        public async Task<List<ArticleCollection>> List()
+        public async Task<List<ArticleCollection>> List(Guid? userId = null)
         {
-            throw new NotImplementedException();
+            return await Mediator.Send(new ArticleCollectionList
+            {
+                UserId = userId ?? RequestUserId,
+            });
         }
 
         public async Task<ArticleCollection> Create(string name, Guid? userId = null)
@@ -25,7 +28,7 @@ namespace ReadABit.Core.Services
             return await Mediator.Send(new ArticleCollectionCreate
             {
                 Name = name,
-                UserId = userId ?? RequestContext.UserId!.Value,
+                UserId = userId ?? RequestUserId,
             });
         }
 
@@ -34,7 +37,16 @@ namespace ReadABit.Core.Services
             return await Mediator.Send(new ArticleCollectionGet
             {
                 Id = id,
-                UserId = userId ?? RequestContext.UserId!.Value,
+                UserId = userId ?? RequestUserId,
+            });
+        }
+
+        public async Task<bool> Delete(Guid id, Guid? userId = null)
+        {
+            return await Mediator.Send(new ArticleCollectionDelete
+            {
+                Id = id,
+                UserId = userId ?? RequestUserId,
             });
         }
     }

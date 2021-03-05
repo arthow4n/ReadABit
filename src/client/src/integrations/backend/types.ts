@@ -15,9 +15,10 @@ export interface IClient {
     articles_GetArticle(id: string): Promise<Article>;
     articles_Conllu(input?: string | null | undefined): Promise<string>;
     articles_GetUserInfo(): Promise<string>;
-    articleCollections_List(): Promise<ArticleCollection[]>;
+    articleCollections_ListArticleCollections(): Promise<ArticleCollection[]>;
     articleCollections_CreateArticleCollection(name?: string | null | undefined): Promise<ArticleCollection>;
     articleCollections_GetArticleCollection(id: string): Promise<ArticleCollection>;
+    articleCollections_DeleteArticleCollection(id: string): Promise<void>;
 }
 
 export class Client implements IClient {
@@ -176,7 +177,7 @@ export class Client implements IClient {
         return Promise.resolve<string>(<any>null);
     }
 
-    articleCollections_List(  cancelToken?: CancelToken | undefined): Promise<ArticleCollection[]> {
+    articleCollections_ListArticleCollections(  cancelToken?: CancelToken | undefined): Promise<ArticleCollection[]> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -196,11 +197,11 @@ export class Client implements IClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processArticleCollections_List(_response);
+            return this.processArticleCollections_ListArticleCollections(_response);
         });
     }
 
-    protected processArticleCollections_List(response: AxiosResponse): Promise<ArticleCollection[]> {
+    protected processArticleCollections_ListArticleCollections(response: AxiosResponse): Promise<ArticleCollection[]> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -332,6 +333,58 @@ export class Client implements IClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<ArticleCollection>(<any>null);
+    }
+
+    articleCollections_DeleteArticleCollection(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/v1/ArticleCollections/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticleCollections_DeleteArticleCollection(_response);
+        });
+    }
+
+    protected processArticleCollections_DeleteArticleCollection(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(<any>null);
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = JSON.parse(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<void>(<any>null);
     }
 }
 
