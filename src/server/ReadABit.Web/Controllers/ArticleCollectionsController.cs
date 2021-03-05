@@ -18,9 +18,9 @@ namespace ReadABit.Web.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ArticleCollection>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> ListArticleCollections()
         {
             var list = await Mediator.Send(new ArticleCollectionList
@@ -31,9 +31,9 @@ namespace ReadABit.Web.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ArticleCollection))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> GetArticleCollection(Guid id)
         {
             var articleCollection = await Mediator.Send(new ArticleCollectionGet
@@ -51,8 +51,8 @@ namespace ReadABit.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ArticleCollection))]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> CreateArticleCollection(ArticleCollectionCreate request)
         {
             var created = await Mediator.Send(request with { UserId = RequestUserId });
@@ -61,9 +61,9 @@ namespace ReadABit.Web.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> UpdateArticleCollection(Guid id, string languageCode, string name)
         {
             var found = await Mediator.Send(new ArticleCollectionUpdate
@@ -84,9 +84,9 @@ namespace ReadABit.Web.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
         public async Task<IActionResult> DeleteArticleCollection(Guid id)
         {
             var found = await Mediator.Send(new ArticleCollectionDelete

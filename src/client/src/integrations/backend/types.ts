@@ -75,11 +75,13 @@ export class Client implements IClient {
             let resultData404  = _responseText;
             result404 = JSON.parse(resultData404);
             return throwException("A server side error occurred.", status, _responseText, _headers, result404);
-        } else if (status !== 200 && status !== 204) {
+        } else {
             const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
-        return Promise.resolve<ArticleCollection[]>(<any>null);
     }
 
     articleCollections_CreateArticleCollection(request: ArticleCollectionCreate , cancelToken?: CancelToken | undefined): Promise<ArticleCollection> {
@@ -126,11 +128,13 @@ export class Client implements IClient {
             let resultData201  = _responseText;
             result201 = JSON.parse(resultData201);
             return result201;
-        } else if (status !== 200 && status !== 204) {
+        } else {
             const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
-        return Promise.resolve<ArticleCollection>(<any>null);
     }
 
     articleCollections_GetArticleCollection(id: string , cancelToken?: CancelToken | undefined): Promise<ArticleCollection> {
@@ -182,11 +186,13 @@ export class Client implements IClient {
             let resultData404  = _responseText;
             result404 = JSON.parse(resultData404);
             return throwException("A server side error occurred.", status, _responseText, _headers, result404);
-        } else if (status !== 200 && status !== 204) {
+        } else {
             const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
-        return Promise.resolve<ArticleCollection>(<any>null);
     }
 
     articleCollections_UpdateArticleCollection(id: string, languageCode?: string | null | undefined, name?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<void> {
@@ -238,11 +244,13 @@ export class Client implements IClient {
             let resultData404  = _responseText;
             result404 = JSON.parse(resultData404);
             return throwException("A server side error occurred.", status, _responseText, _headers, result404);
-        } else if (status !== 200 && status !== 204) {
+        } else {
             const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
-        return Promise.resolve<void>(<any>null);
     }
 
     articleCollections_DeleteArticleCollection(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
@@ -290,11 +298,13 @@ export class Client implements IClient {
             let resultData404  = _responseText;
             result404 = JSON.parse(resultData404);
             return throwException("A server side error occurred.", status, _responseText, _headers, result404);
-        } else if (status !== 200 && status !== 204) {
+        } else {
             const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
-        return Promise.resolve<void>(<any>null);
     }
 }
 
