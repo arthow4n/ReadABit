@@ -1,14 +1,15 @@
 ﻿using System;
 using MediatR;
 using Newtonsoft.Json;
+using NSwag.Annotations;
 
 namespace ReadABit.Core.Commands
 {
     public record ArticleCollectionDelete : IRequest<bool>
     {
-        [JsonIgnore]
+        [OpenApiIgnore, JsonIgnore]
         public Guid Id { get; set; }
-        [JsonIgnore]
+        [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; set; }
     }
 }

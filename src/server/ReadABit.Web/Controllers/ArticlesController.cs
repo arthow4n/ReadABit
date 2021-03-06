@@ -20,7 +20,7 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Article>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> ListArticles(ArticleList request)
+        public async Task<IActionResult> ListArticles([FromQuery] ArticleList request)
         {
             var list = await Mediator.Send(request with
             {
@@ -33,9 +33,9 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Article))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetArticle(Guid id)
+        public async Task<IActionResult> GetArticle(Guid id, [FromQuery] ArticleGet request)
         {
-            var article = await Mediator.Send(new ArticleGet
+            var article = await Mediator.Send(request with
             {
                 Id = id,
                 UserId = RequestUserId,
@@ -54,7 +54,10 @@ namespace ReadABit.Web.Controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> CreateArticle(ArticleCreate request)
         {
-            var created = await Mediator.Send(request with { UserId = RequestUserId });
+            var created = await Mediator.Send(request with
+            {
+                UserId = RequestUserId,
+            });
             await SaveChangesAsync();
             return CreatedAtAction(nameof(GetArticle), new { id = created.Id }, created);
         }
@@ -65,7 +68,11 @@ namespace ReadABit.Web.Controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> UpdateArticle(Guid id, ArticleUpdate request)
         {
-            var found = await Mediator.Send(request with { Id = id, UserId = RequestUserId });
+            var found = await Mediator.Send(request with
+            {
+                Id = id,
+                UserId = RequestUserId,
+            });
 
             if (!found)
             {
@@ -80,9 +87,9 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> DeleteArticle(Guid id)
+        public async Task<IActionResult> DeleteArticle(Guid id, [FromQuery] ArticleDelete request)
         {
-            var found = await Mediator.Send(new ArticleDelete
+            var found = await Mediator.Send(request with
             {
                 Id = id,
                 UserId = RequestUserId,

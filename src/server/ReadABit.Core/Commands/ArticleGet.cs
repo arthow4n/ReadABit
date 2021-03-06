@@ -1,15 +1,16 @@
 ﻿using System;
 using MediatR;
 using Newtonsoft.Json;
+using NSwag.Annotations;
 using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
     public record ArticleGet : IRequest<Article?>
     {
-        [JsonIgnore]
+        [OpenApiIgnore, JsonIgnore]
         public Guid Id { get; set; }
-        [JsonIgnore]
+        [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; set; }
     }
 }

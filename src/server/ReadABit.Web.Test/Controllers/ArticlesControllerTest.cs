@@ -69,9 +69,9 @@ namespace ReadABit.Web.Test.Controllers
             updated.Conllu.ShouldContain("# text = Hallå värld!");
             updated.Conllu.ShouldMatchApproved(c => c.WithDiscriminator("Updated"));
 
-            (await T1.DeleteArticle(createdId)).ShouldBeOfType<NoContentResult>();
+            (await T1.DeleteArticle(createdId, new ArticleDelete { })).ShouldBeOfType<NoContentResult>();
             (await List(articleCollectionId)).Count.ShouldBe(0);
-            (await T1.GetArticle(createdId)).ShouldBeOfType<NotFoundResult>();
+            (await T1.GetArticle(createdId, new ArticleGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
         private async Task<List<Article>> List(Guid articleCollectionId)
@@ -82,7 +82,7 @@ namespace ReadABit.Web.Test.Controllers
 
         private async Task<Article> Get(Guid id)
         {
-            return (await T1.GetArticle(id)).ShouldBeOfType<OkObjectResult>()
+            return (await T1.GetArticle(id, new ArticleGet { })).ShouldBeOfType<OkObjectResult>()
                 .Value.ShouldBeOfType<Article>();
         }
     }

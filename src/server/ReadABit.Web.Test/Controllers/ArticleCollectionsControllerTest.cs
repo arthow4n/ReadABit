@@ -58,20 +58,20 @@ namespace ReadABit.Web.Test.Controllers
             updated.LanguageCode.ShouldBe(updatedLanguadeCode);
             updated.Public.ShouldBe(false);
 
-            (await T1.DeleteArticleCollection(createdId)).ShouldBeOfType<NoContentResult>();
+            (await T1.DeleteArticleCollection(createdId, new ArticleCollectionDelete { })).ShouldBeOfType<NoContentResult>();
             (await List()).Count.ShouldBe(0);
-            (await T1.GetArticleCollection(createdId)).ShouldBeOfType<NotFoundResult>();
+            (await T1.GetArticleCollection(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
         private async Task<List<ArticleCollection>> List()
         {
-            return (await T1.ListArticleCollections()).ShouldBeOfType<OkObjectResult>()
+            return (await T1.ListArticleCollections(new ArticleCollectionList { })).ShouldBeOfType<OkObjectResult>()
                 .Value.ShouldBeOfType<List<ArticleCollection>>();
         }
 
         private async Task<ArticleCollection> Get(Guid id)
         {
-            return (await T1.GetArticleCollection(id)).ShouldBeOfType<OkObjectResult>()
+            return (await T1.GetArticleCollection(id, new ArticleCollectionGet { })).ShouldBeOfType<OkObjectResult>()
                 .Value.ShouldBeOfType<ArticleCollection>();
         }
     }

@@ -1,14 +1,15 @@
 ﻿using System;
 using FluentValidation;
-using Newtonsoft.Json;
 using ReadABit.Infrastructure.Models;
 using MediatR;
+using NSwag.Annotations;
+using Newtonsoft.Json;
 
 namespace ReadABit.Core.Commands
 {
     public record ArticleCollectionCreate : IRequest<ArticleCollection>
     {
-        [JsonIgnore]
+        [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; set; }
         public string Name { get; set; } = "";
         public string LanguageCode { get; set; } = "";

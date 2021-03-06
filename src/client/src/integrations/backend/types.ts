@@ -17,7 +17,7 @@ export interface IClient {
     articleCollections_GetArticleCollection(id: string): Promise<ArticleCollection>;
     articleCollections_UpdateArticleCollection(id: string, request: ArticleCollectionUpdate): Promise<void>;
     articleCollections_DeleteArticleCollection(id: string): Promise<void>;
-    articles_ListArticles(request: ArticleList): Promise<Article[]>;
+    articles_ListArticles(articleCollectionId?: string | undefined): Promise<Article[]>;
     articles_CreateArticle(request: ArticleCreate): Promise<Article>;
     articles_GetArticle(id: string): Promise<Article>;
     articles_UpdateArticle(id: string, request: ArticleUpdate): Promise<void>;
@@ -312,18 +312,18 @@ export class Client implements IClient {
         }
     }
 
-    articles_ListArticles(request: ArticleList , cancelToken?: CancelToken | undefined): Promise<Article[]> {
-        let url_ = this.baseUrl + "/api/v1/Articles";
+    articles_ListArticles(articleCollectionId?: string | undefined , cancelToken?: CancelToken | undefined): Promise<Article[]> {
+        let url_ = this.baseUrl + "/api/v1/Articles?";
+        if (articleCollectionId === null)
+            throw new Error("The parameter 'articleCollectionId' cannot be null.");
+        else if (articleCollectionId !== undefined)
+            url_ += "ArticleCollectionId=" + encodeURIComponent("" + articleCollectionId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(request);
-
         let options_ = <AxiosRequestConfig>{
-            data: content_,
             method: "GET",
             url: url_,
             headers: {
-                "Content-Type": "application/json",
                 "Accept": "application/json"
             },
             cancelToken
@@ -602,6 +602,7 @@ export interface ArticleCollection {
     name: string;
     languageCode: string;
     articles?: Article[] | null;
+    public: boolean;
 }
 
 export interface IdentityUserOfGuid {
@@ -646,15 +647,13 @@ export interface ProblemDetails {
 export interface ArticleCollectionCreate {
     name: string;
     languageCode: string;
+    public: boolean;
 }
 
 export interface ArticleCollectionUpdate {
     name: string;
     languageCode: string;
-}
-
-export interface ArticleList {
-    articleCollectionId: string;
+    public: boolean;
 }
 
 export interface ArticleCreate {

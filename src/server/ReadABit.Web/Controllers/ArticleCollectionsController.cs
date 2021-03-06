@@ -20,9 +20,9 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ArticleCollection>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> ListArticleCollections()
+        public async Task<IActionResult> ListArticleCollections([FromQuery] ArticleCollectionList request)
         {
-            var list = await Mediator.Send(new ArticleCollectionList
+            var list = await Mediator.Send(request with
             {
                 UserId = RequestUserId,
             });
@@ -33,9 +33,9 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ArticleCollection))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetArticleCollection(Guid id)
+        public async Task<IActionResult> GetArticleCollection(Guid id, [FromQuery] ArticleCollectionGet request)
         {
-            var articleCollection = await Mediator.Send(new ArticleCollectionGet
+            var articleCollection = await Mediator.Send(request with
             {
                 Id = id,
                 UserId = RequestUserId,
@@ -87,9 +87,9 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> DeleteArticleCollection(Guid id)
+        public async Task<IActionResult> DeleteArticleCollection(Guid id, [FromQuery] ArticleCollectionDelete request)
         {
-            var found = await Mediator.Send(new ArticleCollectionDelete
+            var found = await Mediator.Send(request with
             {
                 Id = id,
                 UserId = RequestUserId,
