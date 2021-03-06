@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System;
+﻿using System;
 using MediatR;
 using Newtonsoft.Json;
 using FluentValidation;
@@ -21,7 +20,7 @@ namespace ReadABit.Core.Commands
         public ArticleCollectionUpdateValidator()
         {
             RuleFor(x => x.Name).NotEmpty();
-            RuleFor(x => x.LanguageCode).NotEmpty();
+            RuleFor(x => x.LanguageCode).MustBeValidLanguageCode();
         }
     }
 }

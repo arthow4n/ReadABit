@@ -19,7 +19,7 @@ namespace ReadABit.Core.Commands
         public ArticleCollectionCreateValidator()
         {
             RuleFor(x => x.Name).NotEmpty();
-            RuleFor(x => x.LanguageCode).NotEmpty();
+            RuleFor(x => x.LanguageCode).MustBeValidLanguageCode();
         }
     }
 }
