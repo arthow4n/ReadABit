@@ -11,11 +11,9 @@ namespace ReadABit.Infrastructure.Models
         public ApplicationUser User { get; set; }
         [Required]
         public string Name { get; set; }
-
         /// <summary>
         /// <see cref="CultureInfo.TwoLetterISOLanguageName" />
         /// </summary>
-        /// <value></value>
         [Required]
         public string LanguageCode { get; set; }
         public List<Article> Articles { get; set; }
