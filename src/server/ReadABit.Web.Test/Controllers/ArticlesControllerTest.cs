@@ -26,6 +26,7 @@ namespace ReadABit.Web.Test.Controllers
                 {
                     LanguageCode = "sv",
                     Name = "collection",
+                    Public = false,
                 }))
                     .ShouldBeOfType<CreatedAtActionResult>()
                     .Value.ShouldBeOfType<ArticleCollection>().Id;
@@ -44,20 +45,35 @@ namespace ReadABit.Web.Test.Controllers
 
             (await List(articleCollectionId)).Count.ShouldBe(1);
 
-            var created = await Get(createdId);
+            // Article in private article collection should not be accessible by another user.
+            using (AnotherUser)
+            {
+                (await T1.GetArticle(createdId, new ArticleGet { })).ShouldBeOfType<NotFoundResult>();
+            }
 
-            created.Id.ShouldBe(createdId);
-            created.Name.ShouldBe(name);
-            created.Text.ShouldBe(text);
-            created.Conllu.ShouldContain("# text = Hallå!");
-            created.Conllu.ShouldMatchApproved(c => c.WithDiscriminator("Created"));
+            await T2.UpdateArticleCollection(articleCollectionId, new ArticleCollectionUpdate { Public = true });
+
+            // Article in public article collection should be accessible by another user.
+            using (AnotherUser)
+            {
+                var created = await Get(createdId);
+                created.Id.ShouldBe(createdId);
+                created.Name.ShouldBe(name);
+                created.Text.ShouldBe(text);
+                created.Conllu.ShouldContain("# text = Hallå!");
+                created.Conllu.ShouldMatchApproved(c => c.WithDiscriminator("CreatedConllu"));
+
+                (await T1.UpdateArticle(createdId, new ArticleUpdate
+                {
+                    Name = "another",
+                    Text = "another",
+                })).ShouldBeOfType<NotFoundResult>();
+            }
 
             var updatedName = "updated";
             var upadtedText = "Hallå värld!";
-
             await T1.UpdateArticle(createdId, new ArticleUpdate
             {
-                Id = createdId,
                 Name = updatedName,
                 Text = upadtedText,
             });
@@ -67,7 +83,13 @@ namespace ReadABit.Web.Test.Controllers
             updated.Name.ShouldBe(updatedName);
             updated.Text.ShouldBe(upadtedText);
             updated.Conllu.ShouldContain("# text = Hallå värld!");
-            updated.Conllu.ShouldMatchApproved(c => c.WithDiscriminator("Updated"));
+            updated.Conllu.ShouldMatchApproved(c => c.WithDiscriminator("UpdatedConllu"));
+
+            using (AnotherUser)
+            {
+                (await T1.DeleteArticle(createdId, new ArticleDelete { })).ShouldBeOfType<NotFoundResult>();
+            }
+            (await List(articleCollectionId)).Count.ShouldBe(1);
 
             (await T1.DeleteArticle(createdId, new ArticleDelete { })).ShouldBeOfType<NoContentResult>();
             (await List(articleCollectionId)).Count.ShouldBe(0);

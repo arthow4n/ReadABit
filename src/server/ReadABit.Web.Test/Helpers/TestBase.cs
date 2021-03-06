@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Transactions;
 using ReadABit.Core.Utils;
 
@@ -10,17 +11,59 @@ namespace ReadABit.Web.Test.Helpers
         {
             if (requestContext is not RequestContextMock)
             {
-                throw new NotSupportedException();
+                throw new Exception("Did you forget to setup dependency injection with `services.AddScoped<IRequestContext, RequestContextMock>();`?");
             }
-            _requestContext = (RequestContextMock)requestContext;
-            _requestContext.SignIn();
+            RequestContext = (RequestContextMock)requestContext;
+            RequestContext.SignInWithDefaultUser().GetAwaiter().GetResult();
             ServiceProvider = serviceProvider;
 
             _ts = new TransactionScope(asyncFlowOption: TransactionScopeAsyncFlowOption.Enabled);
         }
 
-        private readonly RequestContextMock _requestContext;
+        protected readonly RequestContextMock RequestContext;
         protected readonly IServiceProvider ServiceProvider;
+        protected ScopedAnotherUser AnotherUser
+        {
+            get
+            {
+                return new ScopedAnotherUser(RequestContext);
+            }
+        }
+
+        protected class ScopedAnotherUser : IDisposable
+        {
+            private bool _disposedValue;
+            private readonly RequestContextMock _requestContext;
+
+            public ScopedAnotherUser(RequestContextMock requestContext)
+            {
+                _requestContext = requestContext;
+                _requestContext.SignInWithAnotherUser().GetAwaiter().GetResult();
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!_disposedValue)
+                {
+                    if (disposing)
+                    {
+                        _requestContext.SignInWithDefaultUser().GetAwaiter().GetResult();
+                    }
+
+                    _disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
+            }
+        }
+
+
+
         private readonly TransactionScope _ts;
         private bool _disposedValue;
 

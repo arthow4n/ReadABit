@@ -37,11 +37,20 @@ namespace ReadABit.Web.Test.Controllers
             (await List(languageCode)).Count.ShouldBe(1);
 
             var created = await Get(createdId);
-
             created.Id.ShouldBe(createdId);
             created.Name.ShouldBe(name);
             created.LanguageCode.ShouldBe(languageCode);
             created.Public.ShouldBe(true);
+
+            using (AnotherUser)
+            {
+                (await T1.UpdateArticleCollection(createdId, new ArticleCollectionUpdate
+                {
+                    LanguageCode = "en",
+                    Name = "another",
+                    Public = false,
+                })).ShouldBeOfType<NotFoundResult>();
+            }
 
             var updatedName = "updated";
             var updatedLanguadeCode = "en";
@@ -59,6 +68,14 @@ namespace ReadABit.Web.Test.Controllers
             updated.Public.ShouldBe(false);
 
             (await List("en")).Count.ShouldBe(1);
+
+            // Another user shouldn't be able to see the article collection because it's not public
+            using (AnotherUser)
+            {
+                (await List("en")).Count.ShouldBe(0);
+                (await T1.GetArticleCollection(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();
+            }
+
             (await T1.DeleteArticleCollection(createdId, new ArticleCollectionDelete { })).ShouldBeOfType<NoContentResult>();
             (await List("en")).Count.ShouldBe(0);
             (await T1.GetArticleCollection(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();

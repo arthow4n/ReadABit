@@ -3,6 +3,7 @@ using System;
 using Microsoft.AspNetCore.Identity;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
+using System.Threading.Tasks;
 
 namespace ReadABit.Web.Test.Helpers
 {
@@ -13,24 +14,43 @@ namespace ReadABit.Web.Test.Helpers
             _userManager = userManager;
         }
 
-        public void SignIn(string? userName = null)
+        public async Task SignIn(string userName)
         {
-            userName ??= $"default-{Guid.NewGuid()}";
-            var r = _userManager.CreateAsync(new ApplicationUser
+            var existing = await _userManager.FindByNameAsync(userName);
+
+            if (existing is not null)
+            {
+                _currentUser = existing;
+                return;
+            }
+
+            var r = await _userManager.CreateAsync(new ApplicationUser
             {
                 UserName = userName,
-                Email = "example@localhost",
-            }).GetAwaiter().GetResult();
+                Email = $"{userName}@localhost",
+            });
 
             if (!r.Succeeded)
             {
                 throw new Exception(string.Join("; ", r.Errors.Select(x => $"{x.Code}: {x.Description}")));
             }
 
-            _currentUser = _userManager.FindByNameAsync(userName).GetAwaiter().GetResult();
+            _currentUser = await _userManager.FindByNameAsync(userName);
+        }
+
+        public Task SignInWithDefaultUser()
+        {
+            return SignIn(_defaultUserName);
+        }
+
+        public Task SignInWithAnotherUser()
+        {
+            return SignIn(_anotherUserName);
         }
 
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly string _defaultUserName = $"default-{Guid.NewGuid()}";
+        private readonly string _anotherUserName = $"another-{Guid.NewGuid()}";
         private ApplicationUser? _currentUser;
         public Guid? UserId { get => _currentUser!.Id; set => throw new NotSupportedException(); }
     }
