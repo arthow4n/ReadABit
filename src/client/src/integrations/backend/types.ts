@@ -651,9 +651,9 @@ export interface ArticleCollectionCreate {
 }
 
 export interface ArticleCollectionUpdate {
-    name: string;
-    languageCode: string;
-    public: boolean;
+    name?: string | null;
+    languageCode?: string | null;
+    public?: boolean | null;
 }
 
 export interface ArticleCreate {
@@ -662,8 +662,8 @@ export interface ArticleCreate {
 }
 
 export interface ArticleUpdate {
-    name: string;
-    text: string;
+    name?: string | null;
+    text?: string | null;
 }
 
 export class BackendCallException extends Error {

@@ -12,16 +12,16 @@ namespace ReadABit.Core.Commands
         public Guid UserId { get; set; }
         [OpenApiIgnore, JsonIgnore]
         public Guid Id { get; set; }
-        public string Name { get; set; } = "";
-        public string Text { get; set; } = "";
+        public string? Name { get; set; }
+        public string? Text { get; set; }
     }
 
     public class ArticleUpdateValidator : AbstractValidator<ArticleUpdate>
     {
         public ArticleUpdateValidator()
         {
-            RuleFor(x => x.Name).NotEmpty();
-            RuleFor(x => x.Text).NotEmpty();
+            RuleFor(x => x.Name).NotEmpty().When(x => x.Name is not null);
+            RuleFor(x => x.Text).NotEmpty().When(x => x.Text is not null);
         }
     }
 }

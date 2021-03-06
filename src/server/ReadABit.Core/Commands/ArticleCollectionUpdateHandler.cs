@@ -32,9 +32,9 @@ namespace ReadABit.Core.Commands
                 return false;
             }
 
-            articleCollection.LanguageCode = request.LanguageCode;
-            articleCollection.Name = request.Name;
-            articleCollection.Public = request.Public;
+            articleCollection.LanguageCode = request.LanguageCode ?? articleCollection.LanguageCode;
+            articleCollection.Name = request.Name ?? articleCollection.Name;
+            articleCollection.Public = request.Public ?? articleCollection.Public;
 
             return true;
         }
