@@ -8,6 +8,7 @@ using ReadABit.Infrastructure.Models;
 using ReadABit.Core.Utils;
 using ReadABit.Core.Integrations.Services;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation;
 
 namespace ReadABit.Core.Commands
 {
@@ -22,8 +23,7 @@ namespace ReadABit.Core.Commands
 
         public async Task<Article> Handle(ArticleCreate request, CancellationToken cancellationToken)
         {
-            Ensure.That(request.Name, nameof(request.Name)).IsNotNullOrWhiteSpace();
-            Ensure.That(request.Text, nameof(request.Text)).IsNotNullOrWhiteSpace();
+            new ArticleCreateValidator().ValidateAndThrow(request);
 
             var articleCollection =
                 await _db.ArticleCollectionsOfUser(request.UserId)

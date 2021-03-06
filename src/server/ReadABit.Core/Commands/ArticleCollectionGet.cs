@@ -9,7 +9,6 @@ namespace ReadABit.Core.Commands
     {
         [JsonIgnore]
         public Guid Id { get; set; }
-
         [JsonIgnore]
         public Guid UserId { get; set; }
     }

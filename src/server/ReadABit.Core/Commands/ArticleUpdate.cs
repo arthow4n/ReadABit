@@ -6,19 +6,19 @@ using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public record ArticleCreate : IRequest<Article>
+    public record ArticleUpdate : IRequest<bool>
     {
         [JsonIgnore]
         public Guid UserId { get; set; }
         [JsonIgnore]
-        public Guid ArticleCollectionId { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; } = "";
         public string Text { get; set; } = "";
     }
 
-    public class ArticleCreateValidator : AbstractValidator<ArticleCreate>
+    public class ArticleUpdateValidator : AbstractValidator<ArticleUpdate>
     {
-        public ArticleCreateValidator()
+        public ArticleUpdateValidator()
         {
             RuleFor(x => x.Name).NotEmpty();
             RuleFor(x => x.Text).NotEmpty();
