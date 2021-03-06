@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Transactions;
 using ReadABit.Core.Utils;
 
 namespace ReadABit.Web.Test.Helpers
 {
-    public class TestBase
+    public class TestBase : IDisposable
     {
         public TestBase(IServiceProvider serviceProvider, IRequestContext requestContext)
         {
@@ -14,11 +15,34 @@ namespace ReadABit.Web.Test.Helpers
             _requestContext = (RequestContextMock)requestContext;
             _requestContext.SignIn();
             ServiceProvider = serviceProvider;
+
+            _ts = new TransactionScope(asyncFlowOption: TransactionScopeAsyncFlowOption.Enabled);
         }
 
         private readonly RequestContextMock _requestContext;
         protected readonly IServiceProvider ServiceProvider;
+        private readonly TransactionScope _ts;
+        private bool _disposedValue;
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _ts.Dispose();
+                }
+
+                _disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 
     /// <summary>

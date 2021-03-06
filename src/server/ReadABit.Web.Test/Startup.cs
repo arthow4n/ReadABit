@@ -37,7 +37,6 @@ namespace ReadABit.Web.Test
                 .BuildServiceProvider()
                 .GetRequiredService<UnsafeCoreDbContext>()
                 .Database;
-            db.EnsureDeleted();
             db.EnsureCreated();
 
             services.AddScoped<IRequestContext, RequestContextMock>();
