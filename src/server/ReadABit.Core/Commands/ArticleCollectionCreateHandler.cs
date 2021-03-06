@@ -25,7 +25,7 @@ namespace ReadABit.Core.Commands
             {
                 Id = Guid.NewGuid(),
                 UserId = request.UserId,
-                Name = request.Name,
+                Name = request.Name.Trim(),
                 LanguageCode = request.LanguageCode,
                 Public = request.Public,
             };

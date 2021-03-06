@@ -38,7 +38,7 @@ namespace ReadABit.Core.Commands
                 return false;
             }
 
-            article.Article.Name = request.Name ?? article.Article.Name;
+            article.Article.Name = request.Name is not null ? request.Name.Trim() : article.Article.Name;
             article.Article.Text = request.Text ?? article.Article.Text;
             article.Article.Conllu =
                 request.Text is null ?

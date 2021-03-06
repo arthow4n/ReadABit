@@ -39,7 +39,7 @@ namespace ReadABit.Core.Commands
             {
                 Id = Guid.NewGuid(),
                 ArticleCollectionId = articleCollection.Id,
-                Name = request.Name,
+                Name = request.Name.Trim(),
                 Text = request.Text,
                 Conllu = UDPipeV1Service.ToConllu(articleCollection.LanguageCode, request.Text),
             };

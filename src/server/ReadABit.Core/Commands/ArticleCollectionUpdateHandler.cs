@@ -32,8 +32,8 @@ namespace ReadABit.Core.Commands
                 return false;
             }
 
+            articleCollection.Name = request.Name is not null ? request.Name.Trim() : articleCollection.Name;
             articleCollection.LanguageCode = request.LanguageCode ?? articleCollection.LanguageCode;
-            articleCollection.Name = request.Name ?? articleCollection.Name;
             articleCollection.Public = request.Public ?? articleCollection.Public;
 
             return true;
