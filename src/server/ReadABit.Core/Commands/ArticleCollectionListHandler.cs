@@ -22,6 +22,7 @@ namespace ReadABit.Core.Commands
         {
             return await _db
                 .ArticleCollectionsOfUserOrPublic(request.UserId)
+                .AsNoTracking()
                 .ToListAsync(cancellationToken: cancellationToken);
         }
     }

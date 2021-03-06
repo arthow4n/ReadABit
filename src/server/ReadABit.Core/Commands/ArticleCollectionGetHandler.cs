@@ -21,6 +21,7 @@ namespace ReadABit.Core.Commands
         {
             return await _db
                 .ArticleCollectionsOfUserOrPublic(request.UserId)
+                .AsNoTracking()
                 .Where(ac => ac.Id == request.Id)
                 .SingleOrDefaultAsync(cancellationToken: cancellationToken);
         }
