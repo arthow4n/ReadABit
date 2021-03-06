@@ -1,9 +1,8 @@
-﻿using System.Data;
-using System;
+﻿using System;
 using FluentValidation;
-using MediatR;
 using Newtonsoft.Json;
 using ReadABit.Infrastructure.Models;
+using MediatR;
 
 namespace ReadABit.Core.Commands
 {

@@ -43,7 +43,11 @@ namespace ReadABit.Web.Test.Controllers
 
             var updatedName = "updated";
             var updatedLanguadeCode = "en";
-            await T1.UpdateArticleCollection(createdId, updatedLanguadeCode, updatedName);
+            await T1.UpdateArticleCollection(createdId, new ArticleCollectionUpdate
+            {
+                LanguageCode = updatedLanguadeCode,
+                Name = updatedName,
+            });
 
             var updated = await Get(createdId);
             updated.Id.ShouldBe(createdId);

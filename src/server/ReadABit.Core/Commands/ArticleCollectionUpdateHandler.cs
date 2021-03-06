@@ -4,6 +4,8 @@ using MediatR;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ReadABit.Core.Utils;
+using EnsureThat;
+using FluentValidation;
 
 namespace ReadABit.Core.Commands
 {
@@ -18,6 +20,8 @@ namespace ReadABit.Core.Commands
 
         public async Task<bool> Handle(ArticleCollectionUpdate request, CancellationToken cancellationToken)
         {
+            new ArticleCollectionUpdateValidator().ValidateAndThrow(request);
+
             var articleCollection = await _db
                 .ArticleCollectionsOfUser(request.UserId)
                 .Where(ac => ac.Id == request.Id)

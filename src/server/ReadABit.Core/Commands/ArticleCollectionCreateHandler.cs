@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using EnsureThat;
 using ReadABit.Infrastructure.Models;
 using ReadABit.Core.Utils;
+using FluentValidation;
 
 namespace ReadABit.Core.Commands
 {
@@ -19,8 +19,7 @@ namespace ReadABit.Core.Commands
 
         public async Task<ArticleCollection> Handle(ArticleCollectionCreate request, CancellationToken cancellationToken)
         {
-            Ensure.That(request.Name, nameof(request.Name)).IsNotNullOrWhiteSpace();
-            Ensure.That(LanguageCode.IsValid(request.LanguageCode), $"{nameof(request.LanguageCode)} is valid").IsTrue();
+            new ArticleCollectionCreateValidator().ValidateAndThrow(request);
 
             var articleCollection = new ArticleCollection
             {

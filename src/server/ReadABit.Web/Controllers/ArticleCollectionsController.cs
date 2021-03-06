@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Commands;
@@ -64,15 +63,9 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> UpdateArticleCollection(Guid id, string languageCode, string name)
+        public async Task<IActionResult> UpdateArticleCollection(Guid id, ArticleCollectionUpdate request)
         {
-            var found = await Mediator.Send(new ArticleCollectionUpdate
-            {
-                Id = id,
-                UserId = RequestUserId,
-                Name = name,
-                LanguageCode = languageCode,
-            });
+            var found = await Mediator.Send(request with { Id = id, UserId = RequestUserId });
 
             if (!found)
             {
