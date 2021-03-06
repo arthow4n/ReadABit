@@ -1,0 +1,7 @@
+# newdoc
+# newpar
+# sent_id = 1
+# text = Hallå!
+1	Hallå	Hallå	ADV	AB	_	0	root	_	SpaceAfter=No
+2	!	!	PUNCT	MAD	_	1	punct	_	SpacesAfter=\n
+

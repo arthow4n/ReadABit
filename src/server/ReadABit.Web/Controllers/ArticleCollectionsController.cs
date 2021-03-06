@@ -54,7 +54,10 @@ namespace ReadABit.Web.Controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> CreateArticleCollection(ArticleCollectionCreate request)
         {
-            var created = await Mediator.Send(request with { UserId = RequestUserId });
+            var created = await Mediator.Send(request with
+            {
+                UserId = RequestUserId,
+            });
             await SaveChangesAsync();
             return CreatedAtAction(nameof(GetArticleCollection), new { id = created.Id }, created);
         }
@@ -65,7 +68,11 @@ namespace ReadABit.Web.Controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> UpdateArticleCollection(Guid id, ArticleCollectionUpdate request)
         {
-            var found = await Mediator.Send(request with { Id = id, UserId = RequestUserId });
+            var found = await Mediator.Send(request with
+            {
+                Id = id,
+                UserId = RequestUserId,
+            });
 
             if (!found)
             {

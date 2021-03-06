@@ -15,8 +15,13 @@ export interface IClient {
     articleCollections_ListArticleCollections(): Promise<ArticleCollection[]>;
     articleCollections_CreateArticleCollection(request: ArticleCollectionCreate): Promise<ArticleCollection>;
     articleCollections_GetArticleCollection(id: string): Promise<ArticleCollection>;
-    articleCollections_UpdateArticleCollection(id: string, languageCode?: string | null | undefined, name?: string | null | undefined): Promise<void>;
+    articleCollections_UpdateArticleCollection(id: string, request: ArticleCollectionUpdate): Promise<void>;
     articleCollections_DeleteArticleCollection(id: string): Promise<void>;
+    articles_ListArticles(request: ArticleList): Promise<Article[]>;
+    articles_CreateArticle(request: ArticleCreate): Promise<Article>;
+    articles_GetArticle(id: string): Promise<Article>;
+    articles_UpdateArticle(id: string, request: ArticleUpdate): Promise<void>;
+    articles_DeleteArticle(id: string): Promise<void>;
 }
 
 export class Client implements IClient {
@@ -195,21 +200,21 @@ export class Client implements IClient {
         }
     }
 
-    articleCollections_UpdateArticleCollection(id: string, languageCode?: string | null | undefined, name?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/v1/ArticleCollections/{id}?";
+    articleCollections_UpdateArticleCollection(id: string, request: ArticleCollectionUpdate , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/v1/ArticleCollections/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        if (languageCode !== undefined && languageCode !== null)
-            url_ += "languageCode=" + encodeURIComponent("" + languageCode) + "&";
-        if (name !== undefined && name !== null)
-            url_ += "name=" + encodeURIComponent("" + name) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(request);
+
         let options_ = <AxiosRequestConfig>{
+            data: content_,
             method: "PUT",
             url: url_,
             headers: {
+                "Content-Type": "application/json",
             },
             cancelToken
         };
@@ -306,6 +311,288 @@ export class Client implements IClient {
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
+
+    articles_ListArticles(request: ArticleList , cancelToken?: CancelToken | undefined): Promise<Article[]> {
+        let url_ = this.baseUrl + "/api/v1/Articles";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_ = <AxiosRequestConfig>{
+            data: content_,
+            method: "GET",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticles_ListArticles(_response);
+        });
+    }
+
+    protected processArticles_ListArticles(response: AxiosResponse): Promise<Article[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = JSON.parse(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    articles_CreateArticle(request: ArticleCreate , cancelToken?: CancelToken | undefined): Promise<Article> {
+        let url_ = this.baseUrl + "/api/v1/Articles";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_ = <AxiosRequestConfig>{
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticles_CreateArticle(_response);
+        });
+    }
+
+    protected processArticles_CreateArticle(response: AxiosResponse): Promise<Article> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = JSON.parse(resultData201);
+            return result201;
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    articles_GetArticle(id: string , cancelToken?: CancelToken | undefined): Promise<Article> {
+        let url_ = this.baseUrl + "/api/v1/Articles/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticles_GetArticle(_response);
+        });
+    }
+
+    protected processArticles_GetArticle(response: AxiosResponse): Promise<Article> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = JSON.parse(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    articles_UpdateArticle(id: string, request: ArticleUpdate , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/v1/Articles/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_ = <AxiosRequestConfig>{
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticles_UpdateArticle(_response);
+        });
+    }
+
+    protected processArticles_UpdateArticle(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(<any>null);
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = JSON.parse(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    articles_DeleteArticle(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/v1/Articles/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticles_DeleteArticle(_response);
+        });
+    }
+
+    protected processArticles_DeleteArticle(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(<any>null);
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = JSON.parse(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
 }
 
 export interface ArticleCollection {
@@ -359,6 +646,25 @@ export interface ProblemDetails {
 export interface ArticleCollectionCreate {
     name: string;
     languageCode: string;
+}
+
+export interface ArticleCollectionUpdate {
+    name: string;
+    languageCode: string;
+}
+
+export interface ArticleList {
+    articleCollectionId: string;
+}
+
+export interface ArticleCreate {
+    name: string;
+    text: string;
+}
+
+export interface ArticleUpdate {
+    name: string;
+    text: string;
 }
 
 export class BackendCallException extends Error {
