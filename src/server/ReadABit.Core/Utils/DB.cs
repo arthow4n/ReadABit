@@ -20,10 +20,17 @@ namespace ReadABit.Core.Utils
         {
             return _coreDbContext.Articles.Where(a => a.ArticleCollection.UserId == userId);
         }
-
+        public IQueryable<Article> ArticlesOfUserOrPublic(Guid userId)
+        {
+            return _coreDbContext.Articles.Where(a => a.ArticleCollection.Public || a.ArticleCollection.UserId == userId);
+        }
         public IQueryable<ArticleCollection> ArticleCollectionsOfUser(Guid userId)
         {
-            return _coreDbContext.ArticleCollections.Where(a => a.UserId == userId);
+            return _coreDbContext.ArticleCollections.Where(ac => ac.UserId == userId);
+        }
+        public IQueryable<ArticleCollection> ArticleCollectionsOfUserOrPublic(Guid userId)
+        {
+            return _coreDbContext.ArticleCollections.Where(ac => ac.Public || ac.UserId == userId);
         }
     }
 }

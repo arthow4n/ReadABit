@@ -20,7 +20,7 @@ namespace ReadABit.Core.Commands
         public async Task<ArticleCollection?> Handle(ArticleCollectionGet request, CancellationToken cancellationToken)
         {
             return await _db
-                .ArticleCollectionsOfUser(request.UserId)
+                .ArticleCollectionsOfUserOrPublic(request.UserId)
                 .Where(ac => ac.Id == request.Id)
                 .SingleOrDefaultAsync(cancellationToken: cancellationToken);
         }

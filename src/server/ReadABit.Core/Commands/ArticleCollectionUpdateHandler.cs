@@ -34,6 +34,7 @@ namespace ReadABit.Core.Commands
 
             articleCollection.LanguageCode = request.LanguageCode;
             articleCollection.Name = request.Name;
+            articleCollection.Public = request.Public;
 
             return true;
         }

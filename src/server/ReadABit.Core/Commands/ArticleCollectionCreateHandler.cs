@@ -27,6 +27,7 @@ namespace ReadABit.Core.Commands
                 UserId = request.UserId,
                 Name = request.Name,
                 LanguageCode = request.LanguageCode,
+                Public = request.Public,
             };
 
             await _db.Unsafe.AddAsync(articleCollection, cancellationToken);

@@ -12,6 +12,7 @@ namespace ReadABit.Core.Commands
         public Guid UserId { get; set; }
         public string Name { get; set; } = "";
         public string LanguageCode { get; set; } = "";
+        public bool Public { get; set; }
     }
 
     public class ArticleCollectionCreateValidator : AbstractValidator<ArticleCollectionCreate>

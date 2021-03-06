@@ -28,7 +28,8 @@ namespace ReadABit.Web.Test.Controllers
                 (await T1.CreateArticleCollection(new ArticleCollectionCreate
                 {
                     Name = name,
-                    LanguageCode = languageCode
+                    LanguageCode = languageCode,
+                    Public = true,
                 }))
                 .ShouldBeOfType<CreatedAtActionResult>();
             var createdId = creationResult.Value.ShouldBeOfType<ArticleCollection>().Id;
@@ -40,6 +41,7 @@ namespace ReadABit.Web.Test.Controllers
             created.Id.ShouldBe(createdId);
             created.Name.ShouldBe(name);
             created.LanguageCode.ShouldBe(languageCode);
+            created.Public.ShouldBe(true);
 
             var updatedName = "updated";
             var updatedLanguadeCode = "en";
@@ -47,12 +49,14 @@ namespace ReadABit.Web.Test.Controllers
             {
                 LanguageCode = updatedLanguadeCode,
                 Name = updatedName,
+                Public = false,
             });
 
             var updated = await Get(createdId);
             updated.Id.ShouldBe(createdId);
             updated.Name.ShouldBe(updatedName);
             updated.LanguageCode.ShouldBe(updatedLanguadeCode);
+            updated.Public.ShouldBe(false);
 
             (await T1.DeleteArticleCollection(createdId)).ShouldBeOfType<NoContentResult>();
             (await List()).Count.ShouldBe(0);
