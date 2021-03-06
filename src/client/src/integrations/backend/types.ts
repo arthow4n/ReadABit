@@ -12,7 +12,7 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Ca
 export module Backend {
 
 export interface IClient {
-    articleCollections_ListArticleCollections(): Promise<ArticleCollection[]>;
+    articleCollections_ListArticleCollections(filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, filter_LanguageCode?: string | null | undefined): Promise<ArticleCollection[]>;
     articleCollections_CreateArticleCollection(request: ArticleCollectionCreate): Promise<ArticleCollection>;
     articleCollections_GetArticleCollection(id: string): Promise<ArticleCollection>;
     articleCollections_UpdateArticleCollection(id: string, request: ArticleCollectionUpdate): Promise<void>;
@@ -34,8 +34,14 @@ export class Client implements IClient {
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
 
-    articleCollections_ListArticleCollections(  cancelToken?: CancelToken | undefined): Promise<ArticleCollection[]> {
-        let url_ = this.baseUrl + "/api/v1/ArticleCollections";
+    articleCollections_ListArticleCollections(filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, filter_LanguageCode?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<ArticleCollection[]> {
+        let url_ = this.baseUrl + "/api/v1/ArticleCollections?";
+        if (filter_OwnedByUserId !== undefined && filter_OwnedByUserId !== null)
+            url_ += "Filter.OwnedByUserId=" + encodeURIComponent("" + filter_OwnedByUserId) + "&";
+        if (filter_Name !== undefined && filter_Name !== null)
+            url_ += "Filter.Name=" + encodeURIComponent("" + filter_Name) + "&";
+        if (filter_LanguageCode !== undefined && filter_LanguageCode !== null)
+            url_ += "Filter.LanguageCode=" + encodeURIComponent("" + filter_LanguageCode) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{

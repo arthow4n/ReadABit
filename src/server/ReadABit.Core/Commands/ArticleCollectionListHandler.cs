@@ -23,6 +23,9 @@ namespace ReadABit.Core.Commands
             return await _db
                 .ArticleCollectionsOfUserOrPublic(request.UserId)
                 .AsNoTracking()
+                .Where(ac => ac.LanguageCode == request.Filter.LanguageCode)
+                .Where(ac => request.Filter.OwnedByUserId == null || ac.UserId == request.Filter.OwnedByUserId)
+                .Where(ac => string.IsNullOrWhiteSpace(request.Filter.Name) || ac.Name.StartsWith(request.Filter.Name))
                 .ToListAsync(cancellationToken: cancellationToken);
         }
     }

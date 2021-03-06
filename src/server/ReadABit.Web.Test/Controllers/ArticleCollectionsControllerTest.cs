@@ -34,7 +34,7 @@ namespace ReadABit.Web.Test.Controllers
                 .ShouldBeOfType<CreatedAtActionResult>();
             var createdId = creationResult.Value.ShouldBeOfType<ArticleCollection>().Id;
 
-            (await List()).Count.ShouldBe(1);
+            (await List(languageCode)).Count.ShouldBe(1);
 
             var created = await Get(createdId);
 
@@ -58,15 +58,26 @@ namespace ReadABit.Web.Test.Controllers
             updated.LanguageCode.ShouldBe(updatedLanguadeCode);
             updated.Public.ShouldBe(false);
 
+            (await List("en")).Count.ShouldBe(1);
             (await T1.DeleteArticleCollection(createdId, new ArticleCollectionDelete { })).ShouldBeOfType<NoContentResult>();
-            (await List()).Count.ShouldBe(0);
+            (await List("en")).Count.ShouldBe(0);
             (await T1.GetArticleCollection(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
-        private async Task<List<ArticleCollection>> List()
+        private async Task<List<ArticleCollection>> List(string languageCode)
         {
-            return (await T1.ListArticleCollections(new ArticleCollectionList { })).ShouldBeOfType<OkObjectResult>()
-                .Value.ShouldBeOfType<List<ArticleCollection>>();
+            return
+                (await T1.ListArticleCollections(
+                    new ArticleCollectionList
+                    {
+                        Filter = new ArticleCollectionListFilter
+                        {
+                            LanguageCode = languageCode,
+                        },
+                    }))
+                    .ShouldBeOfType<OkObjectResult>()
+                    .Value
+                    .ShouldBeOfType<List<ArticleCollection>>();
         }
 
         private async Task<ArticleCollection> Get(Guid id)

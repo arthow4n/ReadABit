@@ -11,5 +11,16 @@ namespace ReadABit.Core.Commands
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; set; }
+
+        public ArticleCollectionListFilter Filter { get; set; } = new ArticleCollectionListFilter { };
+    }
+
+    public class ArticleCollectionListFilter
+    {
+        public Guid? OwnedByUserId { get; set; }
+
+        public string? Name { get; set; }
+
+        public string LanguageCode { get; set; } = "";
     }
 }
