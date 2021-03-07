@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure;
@@ -19,6 +20,7 @@ namespace ReadABit.Web.Test
                 .AddUserSecrets<Startup>()
                 .Build();
 
+            NpgsqlConnection.GlobalTypeMapper.UseNodaTime();
             services.AddDbContext<UnsafeCoreDbContext>(
                 options => options.UseNpgsql(
                     configuration.GetConnectionString("CoreDbContext"),

@@ -14,6 +14,9 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 using ReadABit.Core.Utils;
 using ReadABit.Core.Commands;
 using FluentValidation.AspNetCore;
+using NodaTime.Serialization.JsonNet;
+using NodaTime;
+using Npgsql;
 
 namespace ReadABit.Web
 {
@@ -31,6 +34,7 @@ namespace ReadABit.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            NpgsqlConnection.GlobalTypeMapper.UseNodaTime();
             services.AddDbContext<UnsafeCoreDbContext>(
                 options =>
                 {
@@ -138,6 +142,7 @@ namespace ReadABit.Web
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                    options.SerializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
                 });
             services.AddHttpContextAccessor();
             services.AddScoped<IRequestContext, RequestContext>();
