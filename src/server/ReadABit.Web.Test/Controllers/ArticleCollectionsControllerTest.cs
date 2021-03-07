@@ -41,7 +41,7 @@ namespace ReadABit.Web.Test.Controllers
             created.LanguageCode.ShouldBe(languageCode);
             created.Public.ShouldBe(true);
 
-            using (AnotherUser)
+            using (User(2))
             {
                 (await T1.UpdateArticleCollection(createdId, new ArticleCollectionUpdate
                 {
@@ -68,7 +68,7 @@ namespace ReadABit.Web.Test.Controllers
             (await List("en")).Count.ShouldBe(1);
 
             // Another user shouldn't be able to see the article collection because it's not public
-            using (AnotherUser)
+            using (User(2))
             {
                 (await List("en")).Count.ShouldBe(0);
                 (await T1.GetArticleCollection(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();

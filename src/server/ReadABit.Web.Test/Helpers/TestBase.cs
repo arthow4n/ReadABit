@@ -13,21 +13,26 @@ namespace ReadABit.Web.Test.Helpers
             {
                 throw new Exception("Did you forget to setup dependency injection with `services.AddScoped<IRequestContext, RequestContextMock>();`?");
             }
-            RequestContext = (RequestContextMock)requestContext;
-            RequestContext.SignInWithDefaultUser().GetAwaiter().GetResult();
-            ServiceProvider = serviceProvider;
-
             _ts = new TransactionScope(asyncFlowOption: TransactionScopeAsyncFlowOption.Enabled);
+
+            RequestContext = (RequestContextMock)requestContext;
+            RequestContext.SignInWithUser(1).GetAwaiter().GetResult();
+            ServiceProvider = serviceProvider;
         }
 
         protected readonly RequestContextMock RequestContext;
         protected readonly IServiceProvider ServiceProvider;
-        protected ScopedAnotherUser AnotherUser
+        protected ScopedAnotherUser User(int userNo)
         {
-            get
+            if (userNo < 2)
             {
-                return new ScopedAnotherUser(RequestContext);
+                throw new ArgumentOutOfRangeException(
+                    nameof(userNo),
+                    "The first user in test environment is 1 instead of 0 to avoid ambiguity when writing/reading tests." +
+                    "Besides, you are user 1 by default when you are not in a using (User()) {} block."
+                );
             }
+            return new ScopedAnotherUser(RequestContext, userNo);
         }
 
         protected class ScopedAnotherUser : IDisposable
@@ -35,10 +40,10 @@ namespace ReadABit.Web.Test.Helpers
             private bool _disposedValue;
             private readonly RequestContextMock _requestContext;
 
-            public ScopedAnotherUser(RequestContextMock requestContext)
+            public ScopedAnotherUser(RequestContextMock requestContext, int userNo)
             {
                 _requestContext = requestContext;
-                _requestContext.SignInWithAnotherUser().GetAwaiter().GetResult();
+                _requestContext.SignInWithUser(userNo).GetAwaiter().GetResult();
             }
 
             protected virtual void Dispose(bool disposing)
@@ -47,7 +52,7 @@ namespace ReadABit.Web.Test.Helpers
                 {
                     if (disposing)
                     {
-                        _requestContext.SignInWithDefaultUser().GetAwaiter().GetResult();
+                        _requestContext.SignInWithUser(1).GetAwaiter().GetResult();
                     }
 
                     _disposedValue = true;

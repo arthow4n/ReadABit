@@ -14,7 +14,7 @@ namespace ReadABit.Web.Test.Helpers
             _userManager = userManager;
         }
 
-        public async Task SignIn(string userName)
+        private async Task SignIn(string userName)
         {
             var existing = await _userManager.FindByNameAsync(userName);
 
@@ -38,19 +38,12 @@ namespace ReadABit.Web.Test.Helpers
             _currentUser = await _userManager.FindByNameAsync(userName);
         }
 
-        public Task SignInWithDefaultUser()
+        public Task SignInWithUser(int userNo)
         {
-            return SignIn(_defaultUserName);
-        }
-
-        public Task SignInWithAnotherUser()
-        {
-            return SignIn(_anotherUserName);
+            return SignIn($"user-{userNo}");
         }
 
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly string _defaultUserName = $"default-{Guid.NewGuid()}";
-        private readonly string _anotherUserName = $"another-{Guid.NewGuid()}";
         private ApplicationUser? _currentUser;
         public Guid? UserId { get => _currentUser!.Id; set => throw new NotSupportedException(); }
     }

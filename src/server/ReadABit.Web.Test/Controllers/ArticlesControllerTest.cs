@@ -46,7 +46,7 @@ namespace ReadABit.Web.Test.Controllers
             (await List(articleCollectionId)).Count.ShouldBe(1);
 
             // Article in private article collection should not be accessible by another user.
-            using (AnotherUser)
+            using (User(2))
             {
                 (await T1.GetArticle(createdId, new ArticleGet { })).ShouldBeOfType<NotFoundResult>();
             }
@@ -54,7 +54,7 @@ namespace ReadABit.Web.Test.Controllers
             await T2.UpdateArticleCollection(articleCollectionId, new ArticleCollectionUpdate { Public = true });
 
             // Article in public article collection should be accessible by another user.
-            using (AnotherUser)
+            using (User(2))
             {
                 var created = await Get(createdId);
                 created.Name.ShouldBe(name);
@@ -83,7 +83,7 @@ namespace ReadABit.Web.Test.Controllers
             updated.Conllu.ShouldContain("# text = Hallå värld!");
             updated.Conllu.ShouldMatchApproved(c => c.WithDiscriminator("UpdatedConllu"));
 
-            using (AnotherUser)
+            using (User(2))
             {
                 (await T1.DeleteArticle(createdId, new ArticleDelete { })).ShouldBeOfType<NotFoundResult>();
             }
