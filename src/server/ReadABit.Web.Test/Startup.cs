@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NodaTime;
 using Npgsql;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Utils;
@@ -19,6 +20,9 @@ namespace ReadABit.Web.Test
             var configuration = new ConfigurationBuilder()
                 .AddUserSecrets<Startup>()
                 .Build();
+
+            // TODO: Consider replacing this with a fake clock
+            services.AddSingleton<IClock>(SystemClock.Instance);
 
             NpgsqlConnection.GlobalTypeMapper.UseNodaTime();
             services.AddDbContext<UnsafeCoreDbContext>(
