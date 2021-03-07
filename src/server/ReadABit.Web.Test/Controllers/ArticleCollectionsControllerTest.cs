@@ -37,7 +37,6 @@ namespace ReadABit.Web.Test.Controllers
             (await List(languageCode)).Count.ShouldBe(1);
 
             var created = await Get(createdId);
-            created.Id.ShouldBe(createdId);
             created.Name.ShouldBe(name);
             created.LanguageCode.ShouldBe(languageCode);
             created.Public.ShouldBe(true);
@@ -62,7 +61,6 @@ namespace ReadABit.Web.Test.Controllers
             });
 
             var updated = await Get(createdId);
-            updated.Id.ShouldBe(createdId);
             updated.Name.ShouldBe(updatedName);
             updated.LanguageCode.ShouldBe(updatedLanguadeCode);
             updated.Public.ShouldBe(false);

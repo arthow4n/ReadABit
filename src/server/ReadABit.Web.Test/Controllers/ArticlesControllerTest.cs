@@ -57,7 +57,6 @@ namespace ReadABit.Web.Test.Controllers
             using (AnotherUser)
             {
                 var created = await Get(createdId);
-                created.Id.ShouldBe(createdId);
                 created.Name.ShouldBe(name);
                 created.Text.ShouldBe(text);
                 created.Conllu.ShouldContain("# text = Hallå!");
@@ -79,7 +78,6 @@ namespace ReadABit.Web.Test.Controllers
             });
 
             var updated = await Get(createdId);
-            updated.Id.ShouldBe(createdId);
             updated.Name.ShouldBe(updatedName);
             updated.Text.ShouldBe(upadtedText);
             updated.Conllu.ShouldContain("# text = Hallå värld!");
