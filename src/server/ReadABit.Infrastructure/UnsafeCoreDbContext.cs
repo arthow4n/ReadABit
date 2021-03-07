@@ -23,6 +23,26 @@ namespace ReadABit.Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder
+                .Entity<ArticleCollection>()
+                .HasIndex(ac => new
+                {
+                    ac.LanguageCode,
+                    ac.Name,
+                });
+
+            modelBuilder
+                .Entity<Word>()
+                .HasIndex(w => new
+                {
+                    w.LanguageCode,
+                    w.Expression,
+                });
+
+            modelBuilder
+                .Entity<WordDefinition>()
+                .HasIndex(wd => wd.LanguageCode);
         }
     }
 }
