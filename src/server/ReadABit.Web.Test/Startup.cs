@@ -28,7 +28,8 @@ namespace ReadABit.Web.Test
             services.AddDbContext<UnsafeCoreDbContext>(
                 options => options.UseNpgsql(
                     configuration.GetConnectionString("CoreDbContext"),
-                    x => x.MigrationsAssembly("ReadABit.Infrastructure")
+                    x => x.UseNodaTime()
+                          .MigrationsAssembly("ReadABit.Infrastructure")
                 )
             );
             services

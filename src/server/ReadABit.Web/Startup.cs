@@ -42,7 +42,8 @@ namespace ReadABit.Web
                 {
                     options.UseNpgsql(
                         Configuration.GetConnectionString("CoreDbContext"),
-                        x => x.MigrationsAssembly("ReadABit.Infrastructure")
+                        x => x.UseNodaTime()
+                              .MigrationsAssembly("ReadABit.Infrastructure")
                     );
                     options.UseOpenIddict<Guid>();
                 }
