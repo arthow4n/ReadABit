@@ -15,7 +15,7 @@ namespace ReadABit.Core.Commands
         public ArticleCollectionListFilter Filter { get; set; } = new ArticleCollectionListFilter { };
     }
 
-    public class ArticleCollectionListFilter
+    public record ArticleCollectionListFilter
     {
         public Guid? OwnedByUserId { get; set; }
 
