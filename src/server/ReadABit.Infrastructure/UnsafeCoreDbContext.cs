@@ -38,7 +38,8 @@ namespace ReadABit.Infrastructure
                 {
                     w.LanguageCode,
                     w.Expression,
-                });
+                })
+                .IsUnique();
 
             modelBuilder
                 .Entity<WordDefinition>()

@@ -11,7 +11,7 @@ namespace ReadABit.Core.Commands
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; set; }
-        public Guid WordId { get; set; }
+        public WordSelector Word { get; set; } = new WordSelector { };
         public bool Public { get; set; }
         public string LanguageCode { get; set; } = "";
         public string Meaning { get; set; } = "";
@@ -23,6 +23,7 @@ namespace ReadABit.Core.Commands
         {
             RuleFor(x => x.LanguageCode).MustBeValidLanguageCode();
             RuleFor(x => x.Meaning).NotEmpty();
+            RuleFor(x => x.Word).MustBeValidWordSelector();
         }
     }
 }

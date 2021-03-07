@@ -10,5 +10,10 @@ namespace ReadABit.Core.Commands
             return ruleBuilder.Must(lc => LanguageCode.IsValid(lc))
                               .WithMessage("Language code must be a valid ISO 639 code, where ISO 639-1 should be preferred.");
         }
+
+        public static IRuleBuilderOptions<T, WordSelector> MustBeValidWordSelector<T>(this IRuleBuilder<T, WordSelector> ruleBuilder)
+        {
+            return ruleBuilder.SetValidator(new WordSelectorValidator());
+        }
     }
 }
