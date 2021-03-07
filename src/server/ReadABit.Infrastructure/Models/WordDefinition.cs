@@ -6,6 +6,7 @@ namespace ReadABit.Infrastructure.Models
 {
     public class WordDefinition
     {
+        public Guid Id { get; set; }
         public Guid WordId { get; set; }
         public Word Word { get; set; }
         public Guid UserId { get; set; }
