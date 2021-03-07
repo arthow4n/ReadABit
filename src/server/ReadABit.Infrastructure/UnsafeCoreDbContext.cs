@@ -17,7 +17,8 @@ namespace ReadABit.Infrastructure
 
         public DbSet<Article> Articles => Set<Article>();
         public DbSet<ArticleCollection> ArticleCollections => Set<ArticleCollection>();
-
+        public DbSet<Word> Words => Set<Word>();
+        public DbSet<WordDefinition> WordDefinitions => Set<WordDefinition>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -32,5 +32,13 @@ namespace ReadABit.Core.Utils
         {
             return _coreDbContext.ArticleCollections.Where(ac => ac.Public || ac.UserId == userId);
         }
+        public IQueryable<WordDefinition> WordDefinitionsOfUser(Guid userId)
+        {
+            return _coreDbContext.WordDefinitions.Where(wd => wd.UserId == userId);
+        }
+        public IQueryable<WordDefinition> WordDefinitionsOfUserOrPublic(Guid userId)
+        {
+            return _coreDbContext.WordDefinitions.Where(wd => wd.Public || wd.UserId == userId);
+        }
     }
 }
