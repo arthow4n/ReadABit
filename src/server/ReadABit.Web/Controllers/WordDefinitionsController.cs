@@ -29,6 +29,19 @@ namespace ReadABit.Web.Controllers
             return Ok(list);
         }
 
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<WordDefinitionListPublicSuggestionViewModel>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> ListWordDefinitionPublicSuggestions([FromQuery] WordDefinitionListPublicSuggestions request)
+        {
+            var list = await Mediator.Send(request with
+            {
+                UserId = RequestUserId,
+            });
+            return Ok(list);
+        }
+
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WordDefinition))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -25,12 +25,6 @@ namespace ReadABit.Core.Commands
 
     public record WordDefinitionListFilter
     {
-        /// <summary>
-        /// When true, search the top few popular public word definitions.
-        /// When false, get a list of word definitions owned by requesting user.
-        /// </summary>
-        public bool Public { get; set; }
-
         public WordSelector Word { get; set; } = new WordSelector { };
     }
 }

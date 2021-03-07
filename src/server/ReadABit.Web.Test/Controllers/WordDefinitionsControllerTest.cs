@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Commands;
@@ -34,17 +35,17 @@ namespace ReadABit.Web.Test.Controllers
                 .ShouldBeOfType<CreatedAtActionResult>();
             var createdId = creationResult.Value.ShouldBeOfType<WordDefinition>().Id;
 
-            (await List(searchPublic: false)).Count.ShouldBe(1);
+            (await List()).Count.ShouldBe(1);
 
-            using (AnotherUser)
+            using (User(2))
             {
-                (await List(searchPublic: true)).Count.ShouldBe(0);
+                (await List()).Count.ShouldBe(0);
                 (await T1.GetWordDefinition(createdId, new WordDefinitionGet { })).ShouldBeOfType<NotFoundResult>();
             }
 
             await T1.UpdateWordDefinition(createdId, new WordDefinitionUpdate { Public = true });
 
-            using (AnotherUser)
+            using (User(2))
             {
                 var created = await Get(createdId);
                 created.Id.ShouldBe(createdId);
@@ -69,29 +70,101 @@ namespace ReadABit.Web.Test.Controllers
             updated.LanguageCode.ShouldBe(updateRequest.LanguageCode);
             updated.Meaning.ShouldBe(updateRequest.Meaning);
 
-            using (AnotherUser)
+            using (User(2))
             {
                 (await T1.DeleteWordDefinition(createdId, new WordDefinitionDelete { })).ShouldBeOfType<NotFoundResult>();
             }
-            (await List(searchPublic: true)).Count.ShouldBe(1);
+            (await List()).Count.ShouldBe(1);
 
             (await T1.DeleteWordDefinition(createdId, new WordDefinitionDelete { })).ShouldBeOfType<NoContentResult>();
-            (await List(searchPublic: true)).Count.ShouldBe(0);
+            (await List()).Count.ShouldBe(0);
             (await T1.GetWordDefinition(createdId, new WordDefinitionGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
-        private async Task<List<WordDefinition>> List(bool searchPublic)
+        [Fact]
+        public async Task ListWordDefinitionPublicSuggestions_CountsCorrectly()
+        {
+            WordDefinitionCreate creationRequest = new()
+            {
+                Word = Word,
+                LanguageCode = "en",
+                Meaning = "Hello",
+                Public = true,
+            };
+
+            var expectedVm = new WordDefinitionListPublicSuggestionViewModel
+            {
+                LanguageCode = creationRequest.LanguageCode,
+                Meaning = creationRequest.Meaning,
+                Count = 1,
+            };
+
+            await T1.CreateWordDefinition(creationRequest with { Public = false });
+            // The user should always be able to see their own definition.
+            (await ListPublicSuggestions()).ShouldHaveSingleItem().ShouldBe(expectedVm with { Count = 1 });
+
+            // User 2 shouldn't see the word definition created by user 1 because it's private.
+            using (User(2))
+            {
+                (await ListPublicSuggestions()).ShouldBeEmpty();
+
+                await T1.CreateWordDefinition(creationRequest with { Public = true });
+            }
+
+            // Switching user for the following queries so we don't have to take private word definitions into account when making assertions.
+
+            using (User(3))
+            {
+                (await ListPublicSuggestions()).ShouldHaveSingleItem().ShouldBe(expectedVm with { Count = 1 });
+
+                await T1.CreateWordDefinition(creationRequest with { Public = true });
+            }
+
+            // User 4 should be able to see 2 becasue they were created public by user 2 and 3.
+            using (User(4))
+            {
+                (await ListPublicSuggestions()).ShouldHaveSingleItem().ShouldBe(expectedVm with { Count = 2 });
+
+                await T1.CreateWordDefinition(creationRequest with
+                {
+                    Meaning = "something else",
+                    Public = true,
+                });
+            }
+
+            using (User(5))
+            {
+                (await ListPublicSuggestions()).ShouldSatisfyAllConditions(
+                    x => x.Count.ShouldBe(2),
+                    x => x.First().ShouldBe(expectedVm with { Count = 2 }),
+                    x => x.ElementAt(1).ShouldBe(expectedVm with { Count = 1, Meaning = "something else" })
+                );
+            }
+        }
+
+        private async Task<List<WordDefinition>> List()
         {
             return (await T1.ListWordDefinitions(
                 new WordDefinitionList
                 {
                     Filter = new WordDefinitionListFilter
                     {
-                        Public = searchPublic,
                         Word = Word,
                     },
                 })).ShouldBeOfType<OkObjectResult>()
                 .Value.ShouldBeOfType<List<WordDefinition>>();
+        }
+
+        private async Task<List<WordDefinitionListPublicSuggestionViewModel>> ListPublicSuggestions()
+        {
+            return (await T1.ListWordDefinitionPublicSuggestions(new WordDefinitionListPublicSuggestions
+            {
+                Filter = new WordDefinitionListPublicSuggestionsFilter
+                {
+                    Word = Word,
+                },
+            })).ShouldBeOfType<OkObjectResult>()
+                .Value.ShouldBeOfType<List<WordDefinitionListPublicSuggestionViewModel>>();
         }
 
         private async Task<WordDefinition> Get(Guid id)

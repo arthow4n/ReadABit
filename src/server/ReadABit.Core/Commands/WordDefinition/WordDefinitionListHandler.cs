@@ -23,23 +23,10 @@ namespace ReadABit.Core.Commands
         {
             new WordDefinitionListValidator().ValidateAndThrow(request);
 
-            return (await _db.WordDefinitionsOfUserOrPublic(request.UserId)
+            return await _db.WordDefinitionsOfUser(request.UserId)
                             .AsNoTracking()
                             .OfWord(request.Filter.Word)
-                            // FIXME: Try to avoid loading all entities into memory.
-                            .ToListAsync(cancellationToken: cancellationToken))
-                            .GroupBy(
-                                wd => new
-                                {
-                                    // TODO: Sort the result by LanguageCode to match user preference.
-                                    wd.LanguageCode,
-                                    wd.Meaning,
-                                }
-                            )
-                            .OrderByDescending(wdg => wdg.Count())
-                            .Take(5)
-                            .SelectMany(wdg => wdg)
-                            .ToList();
+                            .ToListAsync(cancellationToken: cancellationToken);
         }
     }
 }
