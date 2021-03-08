@@ -12,10 +12,10 @@ namespace ReadABit.Core.Commands
     public record ArticleCollectionList : IPaginatedRequest, IRequest<Paginated<ArticleCollection>>
     {
         [OpenApiIgnore, JsonIgnore]
-        public Guid UserId { get; set; }
+        public Guid UserId { get; init; }
 
-        public ArticleCollectionListFilter Filter { get; set; } = new();
-        public PageFilter Page { get; set; } = new();
+        public ArticleCollectionListFilter Filter { get; init; } = new();
+        public PageFilter Page { get; init; } = new();
     }
 
     public class ArticleCollectionListValidator : AbstractValidator<ArticleCollectionList>
@@ -28,10 +28,10 @@ namespace ReadABit.Core.Commands
 
     public record ArticleCollectionListFilter
     {
-        public Guid? OwnedByUserId { get; set; }
+        public Guid? OwnedByUserId { get; init; }
 
-        public string? Name { get; set; }
+        public string? Name { get; init; }
 
-        public string LanguageCode { get; set; } = "";
+        public string LanguageCode { get; init; } = "";
     }
 }

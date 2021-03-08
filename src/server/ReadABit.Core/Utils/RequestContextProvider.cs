@@ -36,6 +36,6 @@ namespace ReadABit.Core.Utils
 
     public interface IRequestContext
     {
-        Guid? UserId { get; set; }
+        Guid? UserId { get; }
     }
 }

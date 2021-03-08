@@ -6,7 +6,7 @@ namespace ReadABit.Core.Commands
 {
     public interface IPaginatedRequest
     {
-        public PageFilter Page { get; set; }
+        public PageFilter Page { get; init; }
     }
 
     /// <summary>
@@ -14,8 +14,8 @@ namespace ReadABit.Core.Commands
     /// </summary>
     public record PageFilter
     {
-        public int Index { get; set; }
-        public int? Size { get; set; }
+        public int Index { get; init; }
+        public int? Size { get; init; }
 
         public PageFilterFilled Fill(int defaultPageSize) => new()
         {
@@ -34,19 +34,19 @@ namespace ReadABit.Core.Commands
         }
     }
 
-    public class Paginated<T>
+    public record Paginated<T>
     {
-        public PageInfo Page { get; set; } = new PageInfo { };
-        public List<T> Items { get; set; } = new List<T> { };
+        public PageInfo Page { get; init; } = new PageInfo { };
+        public List<T> Items { get; init; } = new List<T> { };
     }
 
     public record PageInfo
     {
-        public PageFilterFilled Current { get; set; } = new PageFilterFilled { };
-        public PageFilterFilled? Next { get; set; }
-        public PageFilterFilled? Previous { get; set; }
-        public int TotalPages { get; set; }
-        public int TotalCount { get; set; }
+        public PageFilterFilled Current { get; init; } = new PageFilterFilled { };
+        public PageFilterFilled? Next { get; init; }
+        public PageFilterFilled? Previous { get; init; }
+        public int TotalPages { get; init; }
+        public int TotalCount { get; init; }
     }
 
     /// <summary>
@@ -54,6 +54,6 @@ namespace ReadABit.Core.Commands
     /// </summary>
     public record PageFilterFilled : PageFilter
     {
-        public new int Size { get; set; }
+        public new int Size { get; init; }
     }
 }

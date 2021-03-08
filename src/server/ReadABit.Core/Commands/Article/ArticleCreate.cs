@@ -10,11 +10,11 @@ namespace ReadABit.Core.Commands
     public record ArticleCreate : IRequest<Article>
     {
         [OpenApiIgnore, JsonIgnore]
-        public Guid UserId { get; set; }
+        public Guid UserId { get; init; }
         [OpenApiIgnore, JsonIgnore]
-        public Guid ArticleCollectionId { get; set; }
-        public string Name { get; set; } = "";
-        public string Text { get; set; } = "";
+        public Guid ArticleCollectionId { get; init; }
+        public string Name { get; init; } = "";
+        public string Text { get; init; } = "";
     }
 
     public class ArticleCreateValidator : AbstractValidator<ArticleCreate>

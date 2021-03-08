@@ -2,7 +2,7 @@
 
 namespace ReadABit.Core.Commands
 {
-    public class SaveChanges : IRequest<int>
+    public record SaveChanges : IRequest<int>
     {
     }
 }

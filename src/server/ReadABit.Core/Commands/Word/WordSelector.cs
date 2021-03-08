@@ -5,9 +5,9 @@ namespace ReadABit.Core.Commands
 {
     public record WordSelector
     {
-        public string LanguageCode { get; set; } = "";
+        public string LanguageCode { get; init; } = "";
 
-        public string Expression { get; set; } = "";
+        public string Expression { get; init; } = "";
     }
 
     public class WordSelectorValidator : AbstractValidator<WordSelector>

@@ -9,9 +9,9 @@ namespace ReadABit.Core.Commands
     public record ArticleList : IPaginatedRequest, IRequest<Paginated<ArticleListItemViewModel>>
     {
         [OpenApiIgnore, JsonIgnore]
-        public Guid UserId { get; set; }
-        public Guid ArticleCollectionId { get; set; }
-        public PageFilter Page { get; set; } = new();
+        public Guid UserId { get; init; }
+        public Guid ArticleCollectionId { get; init; }
+        public PageFilter Page { get; init; } = new();
     }
 
     public class ArticleListValidator : AbstractValidator<ArticleList>
@@ -24,8 +24,8 @@ namespace ReadABit.Core.Commands
 
     public record ArticleListItemViewModel
     {
-        public Guid Id { get; set; }
-        public Guid ArticleCollectionId { get; set; }
-        public string Name { get; set; } = "";
+        public Guid Id { get; init; }
+        public Guid ArticleCollectionId { get; init; }
+        public string Name { get; init; } = "";
     }
 }

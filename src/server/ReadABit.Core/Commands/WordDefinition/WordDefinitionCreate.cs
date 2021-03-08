@@ -10,11 +10,11 @@ namespace ReadABit.Core.Commands
     public record WordDefinitionCreate : IRequest<WordDefinition>
     {
         [OpenApiIgnore, JsonIgnore]
-        public Guid UserId { get; set; }
-        public WordSelector Word { get; set; } = new WordSelector { };
-        public bool Public { get; set; }
-        public string LanguageCode { get; set; } = "";
-        public string Meaning { get; set; } = "";
+        public Guid UserId { get; init; }
+        public WordSelector Word { get; init; } = new WordSelector { };
+        public bool Public { get; init; }
+        public string LanguageCode { get; init; } = "";
+        public string Meaning { get; init; } = "";
     }
 
     public class WordDefinitionCreateValidator : AbstractValidator<WordDefinitionCreate>

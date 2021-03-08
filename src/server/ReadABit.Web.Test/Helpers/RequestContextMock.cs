@@ -45,6 +45,6 @@ namespace ReadABit.Web.Test.Helpers
 
         private readonly UserManager<ApplicationUser> _userManager;
         private ApplicationUser? _currentUser;
-        public Guid? UserId { get => _currentUser!.Id; set => throw new NotSupportedException(); }
+        public Guid? UserId { get => _currentUser!.Id; }
     }
 }

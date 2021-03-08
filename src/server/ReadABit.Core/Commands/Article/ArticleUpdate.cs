@@ -9,11 +9,11 @@ namespace ReadABit.Core.Commands
     public record ArticleUpdate : IRequest<bool>
     {
         [OpenApiIgnore, JsonIgnore]
-        public Guid UserId { get; set; }
+        public Guid UserId { get; init; }
         [OpenApiIgnore, JsonIgnore]
-        public Guid Id { get; set; }
-        public string? Name { get; set; }
-        public string? Text { get; set; }
+        public Guid Id { get; init; }
+        public string? Name { get; init; }
+        public string? Text { get; init; }
     }
 
     public class ArticleUpdateValidator : AbstractValidator<ArticleUpdate>

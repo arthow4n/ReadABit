@@ -11,9 +11,9 @@ namespace ReadABit.Core.Commands
     public record WordDefinitionList : IPaginatedRequest, IRequest<Paginated<WordDefinition>>
     {
         [OpenApiIgnore, JsonIgnore]
-        public Guid UserId { get; set; }
-        public WordDefinitionListFilter Filter { get; set; } = new();
-        public PageFilter Page { get; set; } = new();
+        public Guid UserId { get; init; }
+        public WordDefinitionListFilter Filter { get; init; } = new();
+        public PageFilter Page { get; init; } = new();
     }
 
     public class WordDefinitionListValidator : AbstractValidator<WordDefinitionList>
@@ -27,6 +27,6 @@ namespace ReadABit.Core.Commands
 
     public record WordDefinitionListFilter
     {
-        public WordSelector Word { get; set; } = new();
+        public WordSelector Word { get; init; } = new();
     }
 }

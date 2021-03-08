@@ -9,8 +9,8 @@ namespace ReadABit.Core.Commands
     public record WordDefinitionGet : IRequest<WordDefinition?>
     {
         [OpenApiIgnore, JsonIgnore]
-        public Guid Id { get; set; }
+        public Guid Id { get; init; }
         [OpenApiIgnore, JsonIgnore]
-        public Guid UserId { get; set; }
+        public Guid UserId { get; init; }
     }
 }

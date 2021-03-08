@@ -9,11 +9,11 @@ namespace ReadABit.Core.Commands
     public record WordDefinitionUpdate : IRequest<bool>
     {
         [OpenApiIgnore, JsonIgnore]
-        public Guid UserId { get; set; }
-        public Guid Id { get; set; }
-        public bool? Public { get; set; }
-        public string? LanguageCode { get; set; }
-        public string? Meaning { get; set; }
+        public Guid UserId { get; init; }
+        public Guid Id { get; init; }
+        public bool? Public { get; init; }
+        public string? LanguageCode { get; init; }
+        public string? Meaning { get; init; }
     }
 
     public class WordDefinitionUpdateValidator : AbstractValidator<WordDefinitionUpdate>
