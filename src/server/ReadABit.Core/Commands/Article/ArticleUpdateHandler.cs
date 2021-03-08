@@ -40,10 +40,13 @@ namespace ReadABit.Core.Commands
 
             article.Article.Name = request.Name is not null ? request.Name.Trim() : article.Article.Name;
             article.Article.Text = request.Text ?? article.Article.Text;
-            article.Article.Conllu =
-                request.Text is null ?
-                    article.Article.Conllu :
-                    UDPipeV1Service.ToConllu(article.LanguageCode, request.Text);
+
+            if (request.Text is not null)
+            {
+                var sparvXml = SparvPipelineService.ToSparvXml(article.LanguageCode, request.Text);
+                article.Article.SparvXmlJson = sparvXml.XmlJson;
+                article.Article.SparvXmlVersion = sparvXml.Version;
+            }
 
             return true;
         }

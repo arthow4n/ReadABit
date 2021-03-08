@@ -3,7 +3,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using EnsureThat;
 using ReadABit.Infrastructure.Models;
 using ReadABit.Core.Utils;
 using ReadABit.Core.Integrations.Services;
@@ -35,13 +34,16 @@ namespace ReadABit.Core.Commands
                          })
                          .SingleOrDefaultAsync(cancellationToken: cancellationToken);
 
+            // TODO: Take language code from request.
+            var sparvXml = SparvPipelineService.ToSparvXml("sv", request.Text);
             var article = new Article
             {
                 Id = Guid.NewGuid(),
                 ArticleCollectionId = articleCollection.Id,
                 Name = request.Name.Trim(),
                 Text = request.Text,
-                Conllu = UDPipeV1Service.ToConllu(articleCollection.LanguageCode, request.Text),
+                SparvXmlJson = sparvXml.XmlJson,
+                SparvXmlVersion = sparvXml.Version,
             };
 
             await _db.Unsafe.AddAsync(article, cancellationToken);

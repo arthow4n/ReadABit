@@ -1,8 +1,0 @@
-# newdoc
-# newpar
-# sent_id = 1
-# text = Hallå värld!
-1	Hallå	Hallå	ADP	PP	_	2	case	_	_
-2	värld	värld	NOUN	NN|UTR|SIN|IND|NOM	Case=Nom|Definite=Ind|Gender=Com|Number=Sing	0	root	_	SpaceAfter=No
-3	!	!	PUNCT	MAD	_	2	punct	_	SpacesAfter=\n
-
