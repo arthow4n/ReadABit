@@ -127,7 +127,8 @@ namespace ReadABit.Web.Test.Controllers
 
                 await T1.CreateWordDefinition(creationRequest with
                 {
-                    Meaning = "something else",
+                    LanguageCode = "sv",
+                    Meaning = "något annat",
                     Public = true,
                 });
             }
@@ -137,9 +138,11 @@ namespace ReadABit.Web.Test.Controllers
                 (await ListPublicSuggestions()).Items.ShouldSatisfyAllConditions(
                     x => x.Count.ShouldBe(2),
                     x => x.First().ShouldBe(expectedVm with { Count = 2 }),
-                    x => x.ElementAt(1).ShouldBe(expectedVm with { Count = 1, Meaning = "something else" })
+                    x => x.ElementAt(1).ShouldBe(expectedVm with { Count = 1, LanguageCode = "sv", Meaning = "något annat" })
                 );
             }
+
+            // TODO: Add test for sorting when user preference controller is in place.
         }
 
         private async Task<Paginated<WordDefinition>> List()

@@ -41,5 +41,9 @@ namespace ReadABit.Core.Utils
             return _coreDbContext.WordDefinitions.Where(wd => wd.Public || wd.UserId == userId);
         }
         public IQueryable<Word> Words => _coreDbContext.Words;
+        public IQueryable<UserPreference> UserPreferencesOfUser(Guid userId)
+        {
+            return _coreDbContext.UserPreferences.Where(up => up.UserId == userId);
+        }
     }
 }

@@ -23,30 +23,37 @@ namespace ReadABit.Core.Commands
         {
             new WordDefinitionListPublicSuggestionsValidator().ValidateAndThrow(request);
 
-            return (await _db.WordDefinitionsOfUserOrPublic(request.UserId)
-                             .OfWord(request.Filter.Word)
-                             .Select(wd => new
-                             {
-                                 wd.LanguageCode,
-                                 wd.Meaning,
-                             })
-                             // FIXME: When EF Core fixes this https://github.com/dotnet/efcore/issues/12088
-                             .ToListAsync(cancellationToken: cancellationToken))
-                             .GroupBy(wd => new
-                             {
-                                 wd.LanguageCode,
-                                 wd.Meaning,
-                             })
-                             .Select(wdg => new WordDefinitionListPublicSuggestionViewModel
-                             {
-                                 LanguageCode = wdg.First().LanguageCode,
-                                 Meaning = wdg.First().Meaning,
-                                 Count = wdg.Count(),
-                             })
-                             // TODO: Take requesting user's preferred language into consideration when sorting.
-                             .OrderByDescending(vm => vm.Count)
-                             .AsQueryable()
-                             .ToPaginated(request.Page, 50);
+            var tobePaginated = (await _db.WordDefinitionsOfUserOrPublic(request.UserId)
+                                          .OfWord(request.Filter.Word)
+                                          .Select(wd => new
+                                          {
+                                              wd.LanguageCode,
+                                              wd.Meaning,
+                                          })
+                                          // FIXME: When EF Core fixes this https://github.com/dotnet/efcore/issues/12088
+                                          .ToListAsync(cancellationToken: cancellationToken))
+                                          .GroupBy(wd => new
+                                          {
+                                              wd.LanguageCode,
+                                              wd.Meaning,
+                                          })
+                                          .Select(wdg => new WordDefinitionListPublicSuggestionViewModel
+                                          {
+                                              LanguageCode = wdg.First().LanguageCode,
+                                              Meaning = wdg.First().Meaning,
+                                              Count = wdg.Count(),
+                                          });
+
+            var userPreferredLanguageCode =
+                await _db.UserPreferencesOfUser(request.UserId)
+                         .Where(up => up.Type == UserPreferenceType.LanguageCode)
+                         .Select(up => up.Value)
+                         .SingleOrDefaultAsync(cancellationToken: cancellationToken);
+
+            return tobePaginated.OrderByDescending(vm => vm.LanguageCode == userPreferredLanguageCode ? 1 : 0)
+                                .ThenByDescending(vm => vm.Count)
+                                .AsQueryable()
+                                .ToPaginated(request.Page, 50);
         }
     }
 }
