@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FluentValidation;
 
@@ -15,6 +16,12 @@ namespace ReadABit.Core.Commands
     {
         public int Index { get; set; }
         public int? Size { get; set; }
+
+        public PageFilterFilled Fill(int defaultPageSize) => new()
+        {
+            Index = Index,
+            Size = Size ?? defaultPageSize,
+        };
     }
 
     public class PageFilterValidator : AbstractValidator<PageFilter>

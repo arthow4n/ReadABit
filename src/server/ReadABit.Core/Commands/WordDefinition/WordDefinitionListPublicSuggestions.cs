@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using FluentValidation;
 using MediatR;
 using Newtonsoft.Json;
 using NSwag.Annotations;
-using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public record WordDefinitionListPublicSuggestions : IRequest<List<WordDefinitionListPublicSuggestionViewModel>>
+    public record WordDefinitionListPublicSuggestions : IPaginatedRequest, IRequest<Paginated<WordDefinitionListPublicSuggestionViewModel>>
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; set; }
-        public WordDefinitionListPublicSuggestionsFilter Filter { get; set; } = new WordDefinitionListPublicSuggestionsFilter { };
+        public WordDefinitionListPublicSuggestionsFilter Filter { get; set; } = new();
+        public PageFilter Page { get; set; } = new();
     }
 
     public class WordDefinitionListPublicSuggestionsValidator : AbstractValidator<WordDefinitionListPublicSuggestions>
@@ -35,6 +34,6 @@ namespace ReadABit.Core.Commands
 
     public record WordDefinitionListPublicSuggestionsFilter
     {
-        public WordSelector Word { get; set; } = new WordSelector { };
+        public WordSelector Word { get; set; } = new();
     }
 }

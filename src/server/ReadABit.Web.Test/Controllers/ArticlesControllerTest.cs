@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Commands;
@@ -43,7 +42,7 @@ namespace ReadABit.Web.Test.Controllers
                 .ShouldBeOfType<CreatedAtActionResult>();
             var createdId = creationResult.Value.ShouldBeOfType<Article>().Id;
 
-            (await List(articleCollectionId)).Count.ShouldBe(1);
+            (await List(articleCollectionId)).Items.Count.ShouldBe(1);
 
             // Article in private article collection should not be accessible by another user.
             using (User(2))
@@ -87,17 +86,24 @@ namespace ReadABit.Web.Test.Controllers
             {
                 (await T1.DeleteArticle(createdId, new ArticleDelete { })).ShouldBeOfType<NotFoundResult>();
             }
-            (await List(articleCollectionId)).Count.ShouldBe(1);
+            (await List(articleCollectionId)).Items.Count.ShouldBe(1);
 
             (await T1.DeleteArticle(createdId, new ArticleDelete { })).ShouldBeOfType<NoContentResult>();
-            (await List(articleCollectionId)).Count.ShouldBe(0);
+            (await List(articleCollectionId)).Items.Count.ShouldBe(0);
             (await T1.GetArticle(createdId, new ArticleGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
-        private async Task<List<Article>> List(Guid articleCollectionId)
+        private async Task<Paginated<ArticleListItemViewModel>> List(Guid articleCollectionId)
         {
-            return (await T1.ListArticles(new ArticleList { ArticleCollectionId = articleCollectionId })).ShouldBeOfType<OkObjectResult>()
-                .Value.ShouldBeOfType<List<Article>>();
+            return (await T1.ListArticles(new ArticleList
+            {
+                ArticleCollectionId = articleCollectionId,
+                Page = new PageFilter
+                {
+                    Index = 1,
+                },
+            })).ShouldBeOfType<OkObjectResult>()
+                .Value.ShouldBeOfType<Paginated<ArticleListItemViewModel>>();
         }
 
         private async Task<Article> Get(Guid id)

@@ -34,7 +34,7 @@ namespace ReadABit.Web.Test.Controllers
                 .ShouldBeOfType<CreatedAtActionResult>();
             var createdId = creationResult.Value.ShouldBeOfType<ArticleCollection>().Id;
 
-            (await List(languageCode)).Count.ShouldBe(1);
+            (await List(languageCode)).Items.Count.ShouldBe(1);
 
             var created = await Get(createdId);
             created.Name.ShouldBe(name);
@@ -65,21 +65,21 @@ namespace ReadABit.Web.Test.Controllers
             updated.LanguageCode.ShouldBe(updatedLanguadeCode);
             updated.Public.ShouldBe(false);
 
-            (await List("en")).Count.ShouldBe(1);
+            (await List("en")).Items.Count.ShouldBe(1);
 
             // Another user shouldn't be able to see the article collection because it's not public
             using (User(2))
             {
-                (await List("en")).Count.ShouldBe(0);
+                (await List("en")).Items.Count.ShouldBe(0);
                 (await T1.GetArticleCollection(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();
             }
 
             (await T1.DeleteArticleCollection(createdId, new ArticleCollectionDelete { })).ShouldBeOfType<NoContentResult>();
-            (await List("en")).Count.ShouldBe(0);
+            (await List("en")).Items.Count.ShouldBe(0);
             (await T1.GetArticleCollection(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
-        private async Task<List<ArticleCollection>> List(string languageCode)
+        private async Task<Paginated<ArticleCollection>> List(string languageCode)
         {
             return
                 (await T1.ListArticleCollections(
@@ -89,10 +89,14 @@ namespace ReadABit.Web.Test.Controllers
                         {
                             LanguageCode = languageCode,
                         },
+                        Page = new PageFilter
+                        {
+                            Index = 1,
+                        },
                     }))
                     .ShouldBeOfType<OkObjectResult>()
                     .Value
-                    .ShouldBeOfType<List<ArticleCollection>>();
+                    .ShouldBeOfType<Paginated<ArticleCollection>>();
         }
 
         private async Task<ArticleCollection> Get(Guid id)

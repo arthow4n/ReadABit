@@ -17,12 +17,11 @@ namespace ReadABit.Web.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<ArticleCollection>))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Paginated<ArticleCollection>))]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> ListArticleCollections([FromQuery] ArticleCollectionList request)
         {
-            var list = await Mediator.Send(request with
+            Paginated<ArticleCollection> list = await Mediator.Send(request with
             {
                 UserId = RequestUserId,
             });

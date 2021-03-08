@@ -17,12 +17,11 @@ namespace ReadABit.Web.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<WordDefinition>))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Paginated<WordDefinition>))]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> ListWordDefinitions([FromQuery] WordDefinitionList request)
         {
-            var list = await Mediator.Send(request with
+            Paginated<WordDefinition> list = await Mediator.Send(request with
             {
                 UserId = RequestUserId,
             });
@@ -30,12 +29,11 @@ namespace ReadABit.Web.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<WordDefinitionListPublicSuggestionViewModel>))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Paginated<WordDefinitionListPublicSuggestionViewModel>))]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> ListWordDefinitionPublicSuggestions([FromQuery] WordDefinitionListPublicSuggestions request)
         {
-            var list = await Mediator.Send(request with
+            Paginated<WordDefinitionListPublicSuggestionViewModel> list = await Mediator.Send(request with
             {
                 UserId = RequestUserId,
             });

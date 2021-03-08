@@ -15,5 +15,10 @@ namespace ReadABit.Core.Commands
         {
             return ruleBuilder.SetValidator(new WordSelectorValidator());
         }
+
+        public static IRuleBuilderOptions<T, PageFilter> MustBeValidPageFilter<T>(this IRuleBuilder<T, PageFilter> ruleBuilder)
+        {
+            return ruleBuilder.SetValidator(new PageFilterValidator());
+        }
     }
 }

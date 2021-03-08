@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace ReadABit.Core.Commands
 {
-    public class ArticleListHandler : IRequestHandler<ArticleList, List<Article>>
+    public class ArticleListHandler : IRequestHandler<ArticleList, Paginated<ArticleListItemViewModel>>
     {
         private readonly DB _db;
 
@@ -18,13 +18,19 @@ namespace ReadABit.Core.Commands
             _db = db;
         }
 
-        public async Task<List<Article>> Handle(ArticleList request, CancellationToken cancellationToken)
+        public async Task<Paginated<ArticleListItemViewModel>> Handle(ArticleList request, CancellationToken cancellationToken)
         {
             return await _db.ArticleCollectionsOfUserOrPublic(request.UserId)
                             .AsNoTracking()
                             .Where(ac => ac.Id == request.ArticleCollectionId)
                             .SelectMany(ac => ac.Articles)
-                            .ToListAsync(cancellationToken: cancellationToken);
+                            .Select(a => new ArticleListItemViewModel
+                            {
+                                Id = a.Id,
+                                ArticleCollectionId = a.ArticleCollectionId,
+                                Name = a.Name,
+                            })
+                            .ToPaginatedAsync(request.Page, 50, cancellationToken);
         }
     }
 }

@@ -1,16 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
+using FluentValidation;
 using MediatR;
 using Newtonsoft.Json;
 using NSwag.Annotations;
-using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public record ArticleList : IRequest<List<Article>>
+    public record ArticleList : IPaginatedRequest, IRequest<Paginated<ArticleListItemViewModel>>
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; set; }
         public Guid ArticleCollectionId { get; set; }
+        public PageFilter Page { get; set; } = new();
+    }
+
+    public class ArticleListValidator : AbstractValidator<ArticleList>
+    {
+        public ArticleListValidator()
+        {
+            RuleFor(x => x.Page).MustBeValidPageFilter();
+        }
+    }
+
+    public record ArticleListItemViewModel
+    {
+        public Guid Id { get; set; }
+        public Guid ArticleCollectionId { get; set; }
+        public string Name { get; set; } = "";
     }
 }

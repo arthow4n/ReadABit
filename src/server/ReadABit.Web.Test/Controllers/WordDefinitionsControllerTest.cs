@@ -35,11 +35,11 @@ namespace ReadABit.Web.Test.Controllers
                 .ShouldBeOfType<CreatedAtActionResult>();
             var createdId = creationResult.Value.ShouldBeOfType<WordDefinition>().Id;
 
-            (await List()).Count.ShouldBe(1);
+            (await List()).Items.Count.ShouldBe(1);
 
             using (User(2))
             {
-                (await List()).Count.ShouldBe(0);
+                (await List()).Items.Count.ShouldBe(0);
                 (await T1.GetWordDefinition(createdId, new WordDefinitionGet { })).ShouldBeOfType<NotFoundResult>();
             }
 
@@ -74,10 +74,10 @@ namespace ReadABit.Web.Test.Controllers
             {
                 (await T1.DeleteWordDefinition(createdId, new WordDefinitionDelete { })).ShouldBeOfType<NotFoundResult>();
             }
-            (await List()).Count.ShouldBe(1);
+            (await List()).Items.Count.ShouldBe(1);
 
             (await T1.DeleteWordDefinition(createdId, new WordDefinitionDelete { })).ShouldBeOfType<NoContentResult>();
-            (await List()).Count.ShouldBe(0);
+            (await List()).Items.Count.ShouldBe(0);
             (await T1.GetWordDefinition(createdId, new WordDefinitionGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
@@ -101,12 +101,12 @@ namespace ReadABit.Web.Test.Controllers
 
             await T1.CreateWordDefinition(creationRequest with { Public = false });
             // The user should always be able to see their own definition.
-            (await ListPublicSuggestions()).ShouldHaveSingleItem().ShouldBe(expectedVm with { Count = 1 });
+            (await ListPublicSuggestions()).Items.ShouldHaveSingleItem().ShouldBe(expectedVm with { Count = 1 });
 
             // User 2 shouldn't see the word definition created by user 1 because it's private.
             using (User(2))
             {
-                (await ListPublicSuggestions()).ShouldBeEmpty();
+                (await ListPublicSuggestions()).Items.ShouldBeEmpty();
 
                 await T1.CreateWordDefinition(creationRequest with { Public = true });
             }
@@ -115,7 +115,7 @@ namespace ReadABit.Web.Test.Controllers
 
             using (User(3))
             {
-                (await ListPublicSuggestions()).ShouldHaveSingleItem().ShouldBe(expectedVm with { Count = 1 });
+                (await ListPublicSuggestions()).Items.ShouldHaveSingleItem().ShouldBe(expectedVm with { Count = 1 });
 
                 await T1.CreateWordDefinition(creationRequest with { Public = true });
             }
@@ -123,7 +123,7 @@ namespace ReadABit.Web.Test.Controllers
             // User 4 should be able to see 2 becasue they were created public by user 2 and 3.
             using (User(4))
             {
-                (await ListPublicSuggestions()).ShouldHaveSingleItem().ShouldBe(expectedVm with { Count = 2 });
+                (await ListPublicSuggestions()).Items.ShouldHaveSingleItem().ShouldBe(expectedVm with { Count = 2 });
 
                 await T1.CreateWordDefinition(creationRequest with
                 {
@@ -134,7 +134,7 @@ namespace ReadABit.Web.Test.Controllers
 
             using (User(5))
             {
-                (await ListPublicSuggestions()).ShouldSatisfyAllConditions(
+                (await ListPublicSuggestions()).Items.ShouldSatisfyAllConditions(
                     x => x.Count.ShouldBe(2),
                     x => x.First().ShouldBe(expectedVm with { Count = 2 }),
                     x => x.ElementAt(1).ShouldBe(expectedVm with { Count = 1, Meaning = "something else" })
@@ -142,7 +142,7 @@ namespace ReadABit.Web.Test.Controllers
             }
         }
 
-        private async Task<List<WordDefinition>> List()
+        private async Task<Paginated<WordDefinition>> List()
         {
             return (await T1.ListWordDefinitions(
                 new WordDefinitionList
@@ -151,11 +151,15 @@ namespace ReadABit.Web.Test.Controllers
                     {
                         Word = Word,
                     },
+                    Page = new PageFilter
+                    {
+                        Index = 1,
+                    },
                 })).ShouldBeOfType<OkObjectResult>()
-                .Value.ShouldBeOfType<List<WordDefinition>>();
+                .Value.ShouldBeOfType<Paginated<WordDefinition>>();
         }
 
-        private async Task<List<WordDefinitionListPublicSuggestionViewModel>> ListPublicSuggestions()
+        private async Task<Paginated<WordDefinitionListPublicSuggestionViewModel>> ListPublicSuggestions()
         {
             return (await T1.ListWordDefinitionPublicSuggestions(new WordDefinitionListPublicSuggestions
             {
@@ -163,8 +167,12 @@ namespace ReadABit.Web.Test.Controllers
                 {
                     Word = Word,
                 },
+                Page = new PageFilter
+                {
+                    Index = 1,
+                },
             })).ShouldBeOfType<OkObjectResult>()
-                .Value.ShouldBeOfType<List<WordDefinitionListPublicSuggestionViewModel>>();
+                .Value.ShouldBeOfType<Paginated<WordDefinitionListPublicSuggestionViewModel>>();
         }
 
         private async Task<WordDefinition> Get(Guid id)

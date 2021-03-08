@@ -2,15 +2,13 @@
 using System.Threading.Tasks;
 using MediatR;
 using ReadABit.Infrastructure.Models;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ReadABit.Core.Utils;
-using System.Collections.Generic;
 using FluentValidation;
 
 namespace ReadABit.Core.Commands
 {
-    public class WordDefinitionListHandler : IRequestHandler<WordDefinitionList, List<WordDefinition>>
+    public class WordDefinitionListHandler : IRequestHandler<WordDefinitionList, Paginated<WordDefinition>>
     {
         private readonly DB _db;
 
@@ -19,14 +17,14 @@ namespace ReadABit.Core.Commands
             _db = db;
         }
 
-        public async Task<List<WordDefinition>> Handle(WordDefinitionList request, CancellationToken cancellationToken)
+        public async Task<Paginated<WordDefinition>> Handle(WordDefinitionList request, CancellationToken cancellationToken)
         {
             new WordDefinitionListValidator().ValidateAndThrow(request);
 
             return await _db.WordDefinitionsOfUser(request.UserId)
                             .AsNoTracking()
                             .OfWord(request.Filter.Word)
-                            .ToListAsync(cancellationToken: cancellationToken);
+                            .ToPaginatedAsync(request.Page, 50, cancellationToken);
         }
     }
 }
