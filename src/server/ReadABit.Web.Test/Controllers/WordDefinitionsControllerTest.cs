@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +12,7 @@ using Xunit;
 
 namespace ReadABit.Web.Test.Controllers
 {
-    public class WordDefinitionsControllerTest : TestBase<WordDefinitionsController>
+    public class WordDefinitionsControllerTest : TestBase<WordDefinitionsController, UserPreferencesController>
     {
         public WordDefinitionsControllerTest(IServiceProvider serviceProvider, IRequestContext requestContext) : base(serviceProvider, requestContext)
         {
@@ -142,7 +141,21 @@ namespace ReadABit.Web.Test.Controllers
                 );
             }
 
-            // TODO: Add test for sorting when user preference controller is in place.
+            using (User(6))
+            {
+                // Word definitions of preferred language should always show up first.
+                await T2.UpsertUserPreference(new UserPreferenceUpsert
+                {
+                    Type = UserPreferenceType.LanguageCode,
+                    Value = "sv",
+                });
+
+                (await ListPublicSuggestions()).Items.ShouldSatisfyAllConditions(
+                    x => x.Count.ShouldBe(2),
+                    x => x.First().ShouldBe(expectedVm with { Count = 1, LanguageCode = "sv", Meaning = "något annat" }),
+                    x => x.ElementAt(1).ShouldBe(expectedVm with { Count = 2 })
+                );
+            }
         }
 
         private async Task<Paginated<WordDefinition>> List()
