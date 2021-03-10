@@ -15,7 +15,7 @@ namespace ReadABit.Core.Integrations.Services
         public static string ToConllu(string twoLetterISOLanguageName, string input)
         {
             var pipeline = new Pipeline(
-                LanguageToModelMapping[twoLetterISOLanguageName],
+                LanguageToModelMapping[twoLetterISOLanguageName].Value,
                 "tokenize",
                 Pipeline.DEFAULT,
                 Pipeline.DEFAULT,
@@ -33,9 +33,9 @@ namespace ReadABit.Core.Integrations.Services
             return processed;
         }
 
-        private static ReadOnlyDictionary<string, Model> LanguageToModelMapping => new(new Dictionary<string, Model>
+        private static ReadOnlyDictionary<string, Lazy<Model>> LanguageToModelMapping => new(new Dictionary<string, Lazy<Model>>
         {
-            { "sv", LoadModel("swedish-ud-1.2-160523.udpipe") },
+            { "sv", new(() => LoadModel("swedish-ud-1.2-160523.udpipe")) },
         });
 
         private static Model LoadModel(string modelName)
