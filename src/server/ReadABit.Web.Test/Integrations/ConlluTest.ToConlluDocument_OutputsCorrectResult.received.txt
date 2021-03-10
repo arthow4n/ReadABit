@@ -1,0 +1,189 @@
+{
+  "Id": "1",
+  "Paragraphs": [
+    {
+      "Id": "1",
+      "Sentences": [
+        {
+          "Id": "1",
+          "Text": "Hallå värld!",
+          "Tokens": [
+            {
+              "Id": "1",
+              "Form": "Hallå",
+              "Lemma": "Hallå",
+              "Upos": "ADP",
+              "Xpos": "PP",
+              "Feats": "_",
+              "Head": "2",
+              "Deprel": "case",
+              "Deps": "1",
+              "Misc": "_"
+            },
+            {
+              "Id": "2",
+              "Form": "värld",
+              "Lemma": "värld",
+              "Upos": "NOUN",
+              "Xpos": "NN|UTR|SIN|IND|NOM",
+              "Feats": "Case=Nom|Definite=Ind|Gender=Com|Number=Sing",
+              "Head": "0",
+              "Deprel": "root",
+              "Deps": "2",
+              "Misc": "SpaceAfter=No"
+            },
+            {
+              "Id": "3",
+              "Form": "!",
+              "Lemma": "!",
+              "Upos": "PUNCT",
+              "Xpos": "MAD",
+              "Feats": "_",
+              "Head": "2",
+              "Deprel": "punct",
+              "Deps": "3",
+              "Misc": "SpacesAfter=\\n\\n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Id": "2",
+      "Sentences": [
+        {
+          "Id": "2",
+          "Text": "Hur mår du?",
+          "Tokens": [
+            {
+              "Id": "1",
+              "Form": "Hur",
+              "Lemma": "hur",
+              "Upos": "ADV",
+              "Xpos": "HA",
+              "Feats": "_",
+              "Head": "2",
+              "Deprel": "advmod",
+              "Deps": "1",
+              "Misc": "_"
+            },
+            {
+              "Id": "2",
+              "Form": "mår",
+              "Lemma": "må",
+              "Upos": "VERB",
+              "Xpos": "VB|PRS|AKT",
+              "Feats": "Mood=Ind|Tense=Pres|VerbForm=Fin|Voice=Act",
+              "Head": "0",
+              "Deprel": "root",
+              "Deps": "2",
+              "Misc": "_"
+            },
+            {
+              "Id": "3",
+              "Form": "du",
+              "Lemma": "du",
+              "Upos": "PRON",
+              "Xpos": "PN|UTR|SIN|DEF|SUB",
+              "Feats": "Case=Nom|Definite=Def|Gender=Com|Number=Sing",
+              "Head": "2",
+              "Deprel": "nsubj",
+              "Deps": "3",
+              "Misc": "SpaceAfter=No"
+            },
+            {
+              "Id": "4",
+              "Form": "?",
+              "Lemma": "?",
+              "Upos": "PUNCT",
+              "Xpos": "MAD",
+              "Feats": "_",
+              "Head": "2",
+              "Deprel": "punct",
+              "Deps": "4",
+              "Misc": "SpacesAfter=\\n"
+            }
+          ]
+        },
+        {
+          "Id": "3",
+          "Text": "Jag mår bra, tack!",
+          "Tokens": [
+            {
+              "Id": "1",
+              "Form": "Jag",
+              "Lemma": "jag",
+              "Upos": "PRON",
+              "Xpos": "PN|UTR|SIN|DEF|SUB",
+              "Feats": "Case=Nom|Definite=Def|Gender=Com|Number=Sing",
+              "Head": "2",
+              "Deprel": "nsubj",
+              "Deps": "1",
+              "Misc": "_"
+            },
+            {
+              "Id": "2",
+              "Form": "mår",
+              "Lemma": "må",
+              "Upos": "VERB",
+              "Xpos": "VB|PRS|AKT",
+              "Feats": "Mood=Ind|Tense=Pres|VerbForm=Fin|Voice=Act",
+              "Head": "0",
+              "Deprel": "root",
+              "Deps": "2",
+              "Misc": "_"
+            },
+            {
+              "Id": "3",
+              "Form": "bra",
+              "Lemma": "bra",
+              "Upos": "ADV",
+              "Xpos": "AB|POS",
+              "Feats": "Degree=Pos",
+              "Head": "2",
+              "Deprel": "advmod",
+              "Deps": "3",
+              "Misc": "SpaceAfter=No"
+            },
+            {
+              "Id": "4",
+              "Form": ",",
+              "Lemma": ",",
+              "Upos": "PUNCT",
+              "Xpos": "MID",
+              "Feats": "_",
+              "Head": "2",
+              "Deprel": "punct",
+              "Deps": "4",
+              "Misc": "_"
+            },
+            {
+              "Id": "5",
+              "Form": "tack",
+              "Lemma": "tack",
+              "Upos": "NOUN",
+              "Xpos": "NN|NEU|SIN|IND|NOM",
+              "Feats": "Case=Nom|Definite=Ind|Gender=Neut|Number=Sing",
+              "Head": "2",
+              "Deprel": "conj",
+              "Deps": "5",
+              "Misc": "SpaceAfter=No"
+            },
+            {
+              "Id": "6",
+              "Form": "!",
+              "Lemma": "!",
+              "Upos": "PUNCT",
+              "Xpos": "MAD",
+              "Feats": "_",
+              "Head": "2",
+              "Deprel": "punct",
+              "Deps": "6",
+              "Misc": "SpacesAfter=\\n"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
