@@ -420,15 +420,11 @@ namespace ReadABit.Infrastructure.Migrations
                     b.Property<Guid>("ArticleCollectionId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Conllu")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("SparvXmlJson")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("SparvXmlVersion")
                         .IsRequired()
                         .HasColumnType("text");
 
