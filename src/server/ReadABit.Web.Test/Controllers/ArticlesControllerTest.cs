@@ -69,7 +69,18 @@ namespace ReadABit.Web.Test.Controllers
             }
 
             var updatedName = "updated";
-            var upadtedText = "Hallå värld!";
+            var upadtedText =
+@"Hallå värld!
+
+Han är min pappa,
+hon är min mamma,
+de är mina föräldrar.
+
+
+
+Varför vill du lära dig svenska?
+Det beror på att det gör det lättare att förstå vad folk säger.
+";
             await T1.UpdateArticle(createdId, new ArticleUpdate
             {
                 Name = updatedName,
