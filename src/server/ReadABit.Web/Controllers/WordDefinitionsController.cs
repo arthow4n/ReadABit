@@ -19,7 +19,7 @@ namespace ReadABit.Web.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Paginated<WordDefinition>))]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> ListWordDefinitions([FromQuery] WordDefinitionList request)
+        public async Task<IActionResult> List([FromQuery] WordDefinitionList request)
         {
             Paginated<WordDefinition> list = await Mediator.Send(request with
             {
@@ -28,10 +28,11 @@ namespace ReadABit.Web.Controllers
             return Ok(list);
         }
 
+        [Route("/suggestions")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Paginated<WordDefinitionListPublicSuggestionViewModel>))]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> ListWordDefinitionPublicSuggestions([FromQuery] WordDefinitionListPublicSuggestions request)
+        public async Task<IActionResult> ListPublicSuggestions([FromQuery] WordDefinitionListPublicSuggestions request)
         {
             Paginated<WordDefinitionListPublicSuggestionViewModel> list = await Mediator.Send(request with
             {
@@ -44,7 +45,7 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WordDefinition))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetWordDefinition(Guid id, [FromQuery] WordDefinitionGet request)
+        public async Task<IActionResult> Get(Guid id, [FromQuery] WordDefinitionGet request)
         {
             var wordDefinition = await Mediator.Send(request with
             {
@@ -63,21 +64,21 @@ namespace ReadABit.Web.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(WordDefinition))]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> CreateWordDefinition(WordDefinitionCreate request)
+        public async Task<IActionResult> Create(WordDefinitionCreate request)
         {
             var created = await Mediator.Send(request with
             {
                 UserId = RequestUserId,
             });
             await SaveChangesAsync();
-            return CreatedAtAction(nameof(GetWordDefinition), new { id = created.Id }, created);
+            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         }
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> UpdateWordDefinition(Guid id, WordDefinitionUpdate request)
+        public async Task<IActionResult> Update(Guid id, WordDefinitionUpdate request)
         {
             var found = await Mediator.Send(request with
             {
@@ -98,7 +99,7 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> DeleteWordDefinition(Guid id, [FromQuery] WordDefinitionDelete request)
+        public async Task<IActionResult> Delete(Guid id, [FromQuery] WordDefinitionDelete request)
         {
             var found = await Mediator.Send(request with
             {

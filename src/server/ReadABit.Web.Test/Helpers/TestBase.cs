@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Transactions;
 using ReadABit.Core.Utils;
+using ReadABit.Web.Controllers;
 
 namespace ReadABit.Web.Test.Helpers
 {
@@ -34,6 +35,11 @@ namespace ReadABit.Web.Test.Helpers
             }
             return new ScopedAnotherUser(RequestContext, userNo);
         }
+
+        protected ArticleCollectionsController ArticleCollectionsController => DI.New<ArticleCollectionsController>(ServiceProvider);
+        protected ArticlesController ArticlesController => DI.New<ArticlesController>(ServiceProvider);
+        protected UserPreferencesController UserPreferencesController => DI.New<UserPreferencesController>(ServiceProvider);
+        protected WordDefinitionsController WordDefinitionsController => DI.New<WordDefinitionsController>(ServiceProvider);
 
         protected class ScopedAnotherUser : IDisposable
         {
@@ -90,43 +96,6 @@ namespace ReadABit.Web.Test.Helpers
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
-        }
-    }
-
-    /// <summary>
-    /// Automatically creates an instance of <typeparamref name="T1T"> with all the dependencies injected.
-    /// </summary>
-    public class TestBase<T1T> : TestBase
-    {
-        protected readonly T1T T1;
-        public TestBase(IServiceProvider serviceProvider, IRequestContext requestContext) : base(serviceProvider, requestContext)
-        {
-            T1 = DI.New<T1T>(serviceProvider);
-        }
-    }
-
-    /// <summary>
-    /// Similar to <see cref="TestBase<T1>" /> but creates more injected instances for you.
-    /// </summary>
-    public class TestBase<T1T, T2T> : TestBase<T1T>
-    {
-        protected readonly T2T T2;
-        public TestBase(IServiceProvider serviceProvider, IRequestContext requestContext) : base(serviceProvider, requestContext)
-        {
-            T2 = DI.New<T2T>(serviceProvider);
-        }
-    }
-
-
-    /// <summary>
-    /// Similar to <see cref="TestBase<T1>" /> but creates more injected instances for you.
-    /// </summary>
-    public class TestBase<T1T, T2T, T3T> : TestBase<T1T, T2T>
-    {
-        protected readonly T3T T3;
-        public TestBase(IServiceProvider serviceProvider, IRequestContext requestContext) : base(serviceProvider, requestContext)
-        {
-            T3 = DI.New<T3T>(serviceProvider);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace ReadABit.Web.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<UserPreference>))]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> ListUserPreferences([FromQuery] UserPreferenceList request)
+        public async Task<IActionResult> List([FromQuery] UserPreferenceList request)
         {
             List<UserPreference> list = await Mediator.Send(request with
             {
@@ -31,7 +31,7 @@ namespace ReadABit.Web.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> UpsertUserPreference(UserPreferenceUpsert request)
+        public async Task<IActionResult> Upsert(UserPreferenceUpsert request)
         {
             await Mediator.Send(request with
             {
@@ -46,7 +46,7 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> DeleteUserPreference(Guid id, [FromQuery] UserPreferenceDelete request)
+        public async Task<IActionResult> Delete(Guid id, [FromQuery] UserPreferenceDelete request)
         {
             var found = await Mediator.Send(request with
             {

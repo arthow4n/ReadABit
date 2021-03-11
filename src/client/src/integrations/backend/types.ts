@@ -12,16 +12,25 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Ca
 export module Backend {
 
 export interface IClient {
-    articleCollections_ListArticleCollections(filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, filter_LanguageCode?: string | null | undefined): Promise<ArticleCollection[]>;
-    articleCollections_CreateArticleCollection(request: ArticleCollectionCreate): Promise<ArticleCollection>;
-    articleCollections_GetArticleCollection(id: string): Promise<ArticleCollection>;
-    articleCollections_UpdateArticleCollection(id: string, request: ArticleCollectionUpdate): Promise<void>;
-    articleCollections_DeleteArticleCollection(id: string): Promise<void>;
-    articles_ListArticles(articleCollectionId?: string | undefined): Promise<Article[]>;
-    articles_CreateArticle(request: ArticleCreate): Promise<Article>;
-    articles_GetArticle(id: string): Promise<Article>;
-    articles_UpdateArticle(id: string, request: ArticleUpdate): Promise<void>;
-    articles_DeleteArticle(id: string): Promise<void>;
+    articleCollections_List(filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, filter_LanguageCode?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined): Promise<PaginatedOfArticleCollection>;
+    articleCollections_Create(request: ArticleCollectionCreate): Promise<ArticleCollection>;
+    articleCollections_Get(id: string): Promise<ArticleCollection>;
+    articleCollections_Update(id: string, request: ArticleCollectionUpdate): Promise<void>;
+    articleCollections_Delete(id: string): Promise<void>;
+    articles_List(articleCollectionId?: string | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined): Promise<PaginatedOfArticleListItemViewModel>;
+    articles_Create(request: ArticleCreate): Promise<Article>;
+    articles_Get(id: string): Promise<Article>;
+    articles_Update(id: string, request: ArticleUpdate): Promise<void>;
+    articles_Delete(id: string): Promise<void>;
+    userPreferences_List(): Promise<UserPreference[]>;
+    userPreferences_Upsert(request: UserPreferenceUpsert): Promise<void>;
+    userPreferences_Delete(id: string): Promise<void>;
+    wordDefinitions_List(filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined): Promise<PaginatedOfWordDefinition>;
+    wordDefinitions_Create(request: WordDefinitionCreate): Promise<WordDefinition>;
+    wordDefinitions_ListPublicSuggestions(filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined): Promise<PaginatedOfWordDefinitionListPublicSuggestionViewModel>;
+    wordDefinitions_Get(id: string): Promise<WordDefinition>;
+    wordDefinitions_Update(id: string, request: WordDefinitionUpdate): Promise<void>;
+    wordDefinitions_Delete(id: string): Promise<void>;
 }
 
 export class Client implements IClient {
@@ -34,7 +43,7 @@ export class Client implements IClient {
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
 
-    articleCollections_ListArticleCollections(filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, filter_LanguageCode?: string | null | undefined , cancelToken?: CancelToken | undefined): Promise<ArticleCollection[]> {
+    articleCollections_List(filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, filter_LanguageCode?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<PaginatedOfArticleCollection> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections?";
         if (filter_OwnedByUserId !== undefined && filter_OwnedByUserId !== null)
             url_ += "Filter.OwnedByUserId=" + encodeURIComponent("" + filter_OwnedByUserId) + "&";
@@ -42,6 +51,12 @@ export class Client implements IClient {
             url_ += "Filter.Name=" + encodeURIComponent("" + filter_Name) + "&";
         if (filter_LanguageCode !== undefined && filter_LanguageCode !== null)
             url_ += "Filter.LanguageCode=" + encodeURIComponent("" + filter_LanguageCode) + "&";
+        if (page_Index === null)
+            throw new Error("The parameter 'page_Index' cannot be null.");
+        else if (page_Index !== undefined)
+            url_ += "Page.Index=" + encodeURIComponent("" + page_Index) + "&";
+        if (page_Size !== undefined && page_Size !== null)
+            url_ += "Page.Size=" + encodeURIComponent("" + page_Size) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -60,11 +75,11 @@ export class Client implements IClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processArticleCollections_ListArticleCollections(_response);
+            return this.processArticleCollections_List(_response);
         });
     }
 
-    protected processArticleCollections_ListArticleCollections(response: AxiosResponse): Promise<ArticleCollection[]> {
+    protected processArticleCollections_List(response: AxiosResponse): Promise<PaginatedOfArticleCollection> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -80,12 +95,6 @@ export class Client implements IClient {
             let resultData200  = _responseText;
             result200 = JSON.parse(resultData200);
             return result200;
-        } else if (status === 404) {
-            const _responseText = response.data;
-            let result404: any = null;
-            let resultData404  = _responseText;
-            result404 = JSON.parse(resultData404);
-            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
         } else {
             const _responseText = response.data;
             let resultdefault: any = null;
@@ -95,7 +104,7 @@ export class Client implements IClient {
         }
     }
 
-    articleCollections_CreateArticleCollection(request: ArticleCollectionCreate , cancelToken?: CancelToken | undefined): Promise<ArticleCollection> {
+    articleCollections_Create(request: ArticleCollectionCreate , cancelToken?: CancelToken | undefined): Promise<ArticleCollection> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -119,11 +128,11 @@ export class Client implements IClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processArticleCollections_CreateArticleCollection(_response);
+            return this.processArticleCollections_Create(_response);
         });
     }
 
-    protected processArticleCollections_CreateArticleCollection(response: AxiosResponse): Promise<ArticleCollection> {
+    protected processArticleCollections_Create(response: AxiosResponse): Promise<ArticleCollection> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -148,7 +157,7 @@ export class Client implements IClient {
         }
     }
 
-    articleCollections_GetArticleCollection(id: string , cancelToken?: CancelToken | undefined): Promise<ArticleCollection> {
+    articleCollections_Get(id: string , cancelToken?: CancelToken | undefined): Promise<ArticleCollection> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -171,11 +180,11 @@ export class Client implements IClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processArticleCollections_GetArticleCollection(_response);
+            return this.processArticleCollections_Get(_response);
         });
     }
 
-    protected processArticleCollections_GetArticleCollection(response: AxiosResponse): Promise<ArticleCollection> {
+    protected processArticleCollections_Get(response: AxiosResponse): Promise<ArticleCollection> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -206,7 +215,7 @@ export class Client implements IClient {
         }
     }
 
-    articleCollections_UpdateArticleCollection(id: string, request: ArticleCollectionUpdate , cancelToken?: CancelToken | undefined): Promise<void> {
+    articleCollections_Update(id: string, request: ArticleCollectionUpdate , cancelToken?: CancelToken | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -232,11 +241,11 @@ export class Client implements IClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processArticleCollections_UpdateArticleCollection(_response);
+            return this.processArticleCollections_Update(_response);
         });
     }
 
-    protected processArticleCollections_UpdateArticleCollection(response: AxiosResponse): Promise<void> {
+    protected processArticleCollections_Update(response: AxiosResponse): Promise<void> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -264,7 +273,7 @@ export class Client implements IClient {
         }
     }
 
-    articleCollections_DeleteArticleCollection(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
+    articleCollections_Delete(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -286,11 +295,11 @@ export class Client implements IClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processArticleCollections_DeleteArticleCollection(_response);
+            return this.processArticleCollections_Delete(_response);
         });
     }
 
-    protected processArticleCollections_DeleteArticleCollection(response: AxiosResponse): Promise<void> {
+    protected processArticleCollections_Delete(response: AxiosResponse): Promise<void> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -318,12 +327,18 @@ export class Client implements IClient {
         }
     }
 
-    articles_ListArticles(articleCollectionId?: string | undefined , cancelToken?: CancelToken | undefined): Promise<Article[]> {
+    articles_List(articleCollectionId?: string | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<PaginatedOfArticleListItemViewModel> {
         let url_ = this.baseUrl + "/api/v1/Articles?";
         if (articleCollectionId === null)
             throw new Error("The parameter 'articleCollectionId' cannot be null.");
         else if (articleCollectionId !== undefined)
             url_ += "ArticleCollectionId=" + encodeURIComponent("" + articleCollectionId) + "&";
+        if (page_Index === null)
+            throw new Error("The parameter 'page_Index' cannot be null.");
+        else if (page_Index !== undefined)
+            url_ += "Page.Index=" + encodeURIComponent("" + page_Index) + "&";
+        if (page_Size !== undefined && page_Size !== null)
+            url_ += "Page.Size=" + encodeURIComponent("" + page_Size) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -342,11 +357,11 @@ export class Client implements IClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processArticles_ListArticles(_response);
+            return this.processArticles_List(_response);
         });
     }
 
-    protected processArticles_ListArticles(response: AxiosResponse): Promise<Article[]> {
+    protected processArticles_List(response: AxiosResponse): Promise<PaginatedOfArticleListItemViewModel> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -362,12 +377,6 @@ export class Client implements IClient {
             let resultData200  = _responseText;
             result200 = JSON.parse(resultData200);
             return result200;
-        } else if (status === 404) {
-            const _responseText = response.data;
-            let result404: any = null;
-            let resultData404  = _responseText;
-            result404 = JSON.parse(resultData404);
-            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
         } else {
             const _responseText = response.data;
             let resultdefault: any = null;
@@ -377,7 +386,7 @@ export class Client implements IClient {
         }
     }
 
-    articles_CreateArticle(request: ArticleCreate , cancelToken?: CancelToken | undefined): Promise<Article> {
+    articles_Create(request: ArticleCreate , cancelToken?: CancelToken | undefined): Promise<Article> {
         let url_ = this.baseUrl + "/api/v1/Articles";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -401,11 +410,11 @@ export class Client implements IClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processArticles_CreateArticle(_response);
+            return this.processArticles_Create(_response);
         });
     }
 
-    protected processArticles_CreateArticle(response: AxiosResponse): Promise<Article> {
+    protected processArticles_Create(response: AxiosResponse): Promise<Article> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -430,7 +439,7 @@ export class Client implements IClient {
         }
     }
 
-    articles_GetArticle(id: string , cancelToken?: CancelToken | undefined): Promise<Article> {
+    articles_Get(id: string , cancelToken?: CancelToken | undefined): Promise<Article> {
         let url_ = this.baseUrl + "/api/v1/Articles/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -453,11 +462,11 @@ export class Client implements IClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processArticles_GetArticle(_response);
+            return this.processArticles_Get(_response);
         });
     }
 
-    protected processArticles_GetArticle(response: AxiosResponse): Promise<Article> {
+    protected processArticles_Get(response: AxiosResponse): Promise<Article> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -488,7 +497,7 @@ export class Client implements IClient {
         }
     }
 
-    articles_UpdateArticle(id: string, request: ArticleUpdate , cancelToken?: CancelToken | undefined): Promise<void> {
+    articles_Update(id: string, request: ArticleUpdate , cancelToken?: CancelToken | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/Articles/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -514,11 +523,11 @@ export class Client implements IClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processArticles_UpdateArticle(_response);
+            return this.processArticles_Update(_response);
         });
     }
 
-    protected processArticles_UpdateArticle(response: AxiosResponse): Promise<void> {
+    protected processArticles_Update(response: AxiosResponse): Promise<void> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -546,7 +555,7 @@ export class Client implements IClient {
         }
     }
 
-    articles_DeleteArticle(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
+    articles_Delete(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/Articles/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -568,11 +577,11 @@ export class Client implements IClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processArticles_DeleteArticle(_response);
+            return this.processArticles_Delete(_response);
         });
     }
 
-    protected processArticles_DeleteArticle(response: AxiosResponse): Promise<void> {
+    protected processArticles_Delete(response: AxiosResponse): Promise<void> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -599,6 +608,521 @@ export class Client implements IClient {
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
+
+    userPreferences_List(  cancelToken?: CancelToken | undefined): Promise<UserPreference[]> {
+        let url_ = this.baseUrl + "/api/v1/UserPreferences";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUserPreferences_List(_response);
+        });
+    }
+
+    protected processUserPreferences_List(response: AxiosResponse): Promise<UserPreference[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    userPreferences_Upsert(request: UserPreferenceUpsert , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/v1/UserPreferences";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_ = <AxiosRequestConfig>{
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUserPreferences_Upsert(_response);
+        });
+    }
+
+    protected processUserPreferences_Upsert(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(<any>null);
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    userPreferences_Delete(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/v1/UserPreferences/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUserPreferences_Delete(_response);
+        });
+    }
+
+    protected processUserPreferences_Delete(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(<any>null);
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = JSON.parse(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    wordDefinitions_List(filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<PaginatedOfWordDefinition> {
+        let url_ = this.baseUrl + "/api/v1/WordDefinitions?";
+        if (filter_Word_LanguageCode !== undefined && filter_Word_LanguageCode !== null)
+            url_ += "Filter.Word.LanguageCode=" + encodeURIComponent("" + filter_Word_LanguageCode) + "&";
+        if (filter_Word_Expression !== undefined && filter_Word_Expression !== null)
+            url_ += "Filter.Word.Expression=" + encodeURIComponent("" + filter_Word_Expression) + "&";
+        if (page_Index === null)
+            throw new Error("The parameter 'page_Index' cannot be null.");
+        else if (page_Index !== undefined)
+            url_ += "Page.Index=" + encodeURIComponent("" + page_Index) + "&";
+        if (page_Size !== undefined && page_Size !== null)
+            url_ += "Page.Size=" + encodeURIComponent("" + page_Size) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processWordDefinitions_List(_response);
+        });
+    }
+
+    protected processWordDefinitions_List(response: AxiosResponse): Promise<PaginatedOfWordDefinition> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    wordDefinitions_Create(request: WordDefinitionCreate , cancelToken?: CancelToken | undefined): Promise<WordDefinition> {
+        let url_ = this.baseUrl + "/api/v1/WordDefinitions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_ = <AxiosRequestConfig>{
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processWordDefinitions_Create(_response);
+        });
+    }
+
+    protected processWordDefinitions_Create(response: AxiosResponse): Promise<WordDefinition> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 201) {
+            const _responseText = response.data;
+            let result201: any = null;
+            let resultData201  = _responseText;
+            result201 = JSON.parse(resultData201);
+            return result201;
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    wordDefinitions_ListPublicSuggestions(filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<PaginatedOfWordDefinitionListPublicSuggestionViewModel> {
+        let url_ = this.baseUrl + "/suggestions?";
+        if (filter_Word_LanguageCode !== undefined && filter_Word_LanguageCode !== null)
+            url_ += "Filter.Word.LanguageCode=" + encodeURIComponent("" + filter_Word_LanguageCode) + "&";
+        if (filter_Word_Expression !== undefined && filter_Word_Expression !== null)
+            url_ += "Filter.Word.Expression=" + encodeURIComponent("" + filter_Word_Expression) + "&";
+        if (page_Index === null)
+            throw new Error("The parameter 'page_Index' cannot be null.");
+        else if (page_Index !== undefined)
+            url_ += "Page.Index=" + encodeURIComponent("" + page_Index) + "&";
+        if (page_Size !== undefined && page_Size !== null)
+            url_ += "Page.Size=" + encodeURIComponent("" + page_Size) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processWordDefinitions_ListPublicSuggestions(_response);
+        });
+    }
+
+    protected processWordDefinitions_ListPublicSuggestions(response: AxiosResponse): Promise<PaginatedOfWordDefinitionListPublicSuggestionViewModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    wordDefinitions_Get(id: string , cancelToken?: CancelToken | undefined): Promise<WordDefinition> {
+        let url_ = this.baseUrl + "/api/v1/WordDefinitions/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processWordDefinitions_Get(_response);
+        });
+    }
+
+    protected processWordDefinitions_Get(response: AxiosResponse): Promise<WordDefinition> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = JSON.parse(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    wordDefinitions_Update(id: string, request: WordDefinitionUpdate , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/v1/WordDefinitions/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_ = <AxiosRequestConfig>{
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processWordDefinitions_Update(_response);
+        });
+    }
+
+    protected processWordDefinitions_Update(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(<any>null);
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = JSON.parse(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    wordDefinitions_Delete(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
+        let url_ = this.baseUrl + "/api/v1/WordDefinitions/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processWordDefinitions_Delete(_response);
+        });
+    }
+
+    protected processWordDefinitions_Delete(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(<any>null);
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = JSON.parse(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+}
+
+export interface PaginatedOfArticleCollection {
+    page: PageInfo;
+    items: ArticleCollection[];
+}
+
+export interface PageInfo {
+    current: PageFilterFilled;
+    next?: PageFilterFilled | null;
+    previous?: PageFilterFilled | null;
+    totalPages: number;
+    totalCount: number;
+}
+
+export interface PageFilter {
+    index: number;
+    size?: number | null;
+}
+
+export interface PageFilterFilled extends PageFilter {
+    size: number;
 }
 
 export interface ArticleCollection {
@@ -638,7 +1162,36 @@ export interface Article {
     articleCollection?: ArticleCollection | null;
     name: string;
     text: string;
-    conllu: string;
+    conlluDocument: Document;
+}
+
+export interface Document {
+    id: string;
+    paragraphs: Paragraph[];
+}
+
+export interface Paragraph {
+    id: string;
+    sentences: Sentence[];
+}
+
+export interface Sentence {
+    id: string;
+    text: string;
+    tokens: Token[];
+}
+
+export interface Token {
+    id: string;
+    form: string;
+    lemma: string;
+    upos: string;
+    xpos: string;
+    feats: string;
+    head: string;
+    deprel: string;
+    deps: string;
+    misc: string;
 }
 
 export interface ProblemDetails {
@@ -662,6 +1215,17 @@ export interface ArticleCollectionUpdate {
     public?: boolean | null;
 }
 
+export interface PaginatedOfArticleListItemViewModel {
+    page: PageInfo;
+    items: ArticleListItemViewModel[];
+}
+
+export interface ArticleListItemViewModel {
+    id: string;
+    articleCollectionId: string;
+    name: string;
+}
+
 export interface ArticleCreate {
     name: string;
     text: string;
@@ -670,6 +1234,76 @@ export interface ArticleCreate {
 export interface ArticleUpdate {
     name?: string | null;
     text?: string | null;
+}
+
+export interface UserPreference {
+    id: string;
+    userId: string;
+    type: UserPreferenceType;
+    value?: string | null;
+}
+
+export enum UserPreferenceType {
+    Invalid = "Invalid",
+    LanguageCode = "LanguageCode",
+}
+
+export interface UserPreferenceUpsert {
+    type: UserPreferenceType;
+    value: string;
+}
+
+export interface PaginatedOfWordDefinition {
+    page: PageInfo;
+    items: WordDefinition[];
+}
+
+export interface WordDefinition {
+    id: string;
+    wordId: string;
+    word?: Word | null;
+    userId: string;
+    user?: ApplicationUser | null;
+    public: boolean;
+    languageCode: string;
+    meaning: string;
+    createdAt: Date;
+}
+
+export interface Word {
+    id: string;
+    languageCode: string;
+    expression: string;
+}
+
+export interface PaginatedOfWordDefinitionListPublicSuggestionViewModel {
+    page: PageInfo;
+    items: WordDefinitionListPublicSuggestionViewModel[];
+}
+
+export interface WordDefinitionListPublicSuggestionViewModel {
+    languageCode: string;
+    meaning: string;
+    count: number;
+}
+
+export interface WordDefinitionCreate {
+    word: WordSelector;
+    public: boolean;
+    languageCode: string;
+    meaning: string;
+}
+
+export interface WordSelector {
+    languageCode: string;
+    expression: string;
+}
+
+export interface WordDefinitionUpdate {
+    id: string;
+    public?: boolean | null;
+    languageCode?: string | null;
+    meaning?: string | null;
 }
 
 export class BackendCallException extends Error {

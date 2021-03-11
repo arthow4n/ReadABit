@@ -12,7 +12,7 @@ using Xunit;
 
 namespace ReadABit.Web.Test.Controllers
 {
-    public class WordDefinitionsControllerTest : TestBase<WordDefinitionsController, UserPreferencesController>
+    public class WordDefinitionsControllerTest : TestBase
     {
         public WordDefinitionsControllerTest(IServiceProvider serviceProvider, IRequestContext requestContext) : base(serviceProvider, requestContext)
         {
@@ -30,7 +30,7 @@ namespace ReadABit.Web.Test.Controllers
             };
 
             var creationResult =
-                (await T1.CreateWordDefinition(creationRequest))
+                (await WordDefinitionsController.Create(creationRequest))
                 .ShouldBeOfType<CreatedAtActionResult>();
             var createdId = creationResult.Value.ShouldBeOfType<WordDefinition>().Id;
 
@@ -39,10 +39,10 @@ namespace ReadABit.Web.Test.Controllers
             using (User(2))
             {
                 (await List()).Items.Count.ShouldBe(0);
-                (await T1.GetWordDefinition(createdId, new WordDefinitionGet { })).ShouldBeOfType<NotFoundResult>();
+                (await WordDefinitionsController.Get(createdId, new WordDefinitionGet { })).ShouldBeOfType<NotFoundResult>();
             }
 
-            await T1.UpdateWordDefinition(createdId, new WordDefinitionUpdate { Public = true });
+            await WordDefinitionsController.Update(createdId, new WordDefinitionUpdate { Public = true });
 
             using (User(2))
             {
@@ -51,7 +51,7 @@ namespace ReadABit.Web.Test.Controllers
                 created.LanguageCode.ShouldBe(creationRequest.LanguageCode);
                 created.Meaning.ShouldBe(creationRequest.Meaning);
 
-                (await T1.UpdateWordDefinition(createdId, new WordDefinitionUpdate
+                (await WordDefinitionsController.Update(createdId, new WordDefinitionUpdate
                 {
                     LanguageCode = "en",
                     Meaning = "Another way to say hello",
@@ -63,7 +63,7 @@ namespace ReadABit.Web.Test.Controllers
                 LanguageCode = "sv",
                 Meaning = "ett hälsningsord",
             };
-            await T1.UpdateWordDefinition(createdId, updateRequest);
+            await WordDefinitionsController.Update(createdId, updateRequest);
 
             var updated = await Get(createdId);
             updated.LanguageCode.ShouldBe(updateRequest.LanguageCode);
@@ -71,13 +71,13 @@ namespace ReadABit.Web.Test.Controllers
 
             using (User(2))
             {
-                (await T1.DeleteWordDefinition(createdId, new WordDefinitionDelete { })).ShouldBeOfType<NotFoundResult>();
+                (await WordDefinitionsController.Delete(createdId, new WordDefinitionDelete { })).ShouldBeOfType<NotFoundResult>();
             }
             (await List()).Items.Count.ShouldBe(1);
 
-            (await T1.DeleteWordDefinition(createdId, new WordDefinitionDelete { })).ShouldBeOfType<NoContentResult>();
+            (await WordDefinitionsController.Delete(createdId, new WordDefinitionDelete { })).ShouldBeOfType<NoContentResult>();
             (await List()).Items.Count.ShouldBe(0);
-            (await T1.GetWordDefinition(createdId, new WordDefinitionGet { })).ShouldBeOfType<NotFoundResult>();
+            (await WordDefinitionsController.Get(createdId, new WordDefinitionGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
         [Fact]
@@ -98,7 +98,7 @@ namespace ReadABit.Web.Test.Controllers
                 Count = 1,
             };
 
-            await T1.CreateWordDefinition(creationRequest with { Public = false });
+            await WordDefinitionsController.Create(creationRequest with { Public = false });
             // The user should always be able to see their own definition.
             (await ListPublicSuggestions()).Items.ShouldHaveSingleItem().ShouldBe(expectedVm with { Count = 1 });
 
@@ -107,7 +107,7 @@ namespace ReadABit.Web.Test.Controllers
             {
                 (await ListPublicSuggestions()).Items.ShouldBeEmpty();
 
-                await T1.CreateWordDefinition(creationRequest with { Public = true });
+                await WordDefinitionsController.Create(creationRequest with { Public = true });
             }
 
             // Switching user for the following queries so we don't have to take private word definitions into account when making assertions.
@@ -116,7 +116,7 @@ namespace ReadABit.Web.Test.Controllers
             {
                 (await ListPublicSuggestions()).Items.ShouldHaveSingleItem().ShouldBe(expectedVm with { Count = 1 });
 
-                await T1.CreateWordDefinition(creationRequest with { Public = true });
+                await WordDefinitionsController.Create(creationRequest with { Public = true });
             }
 
             // User 4 should be able to see 2 becasue they were created public by user 2 and 3.
@@ -124,7 +124,7 @@ namespace ReadABit.Web.Test.Controllers
             {
                 (await ListPublicSuggestions()).Items.ShouldHaveSingleItem().ShouldBe(expectedVm with { Count = 2 });
 
-                await T1.CreateWordDefinition(creationRequest with
+                await WordDefinitionsController.Create(creationRequest with
                 {
                     LanguageCode = "sv",
                     Meaning = "något annat",
@@ -144,7 +144,7 @@ namespace ReadABit.Web.Test.Controllers
             using (User(6))
             {
                 // Word definitions of preferred language should always show up first.
-                await T2.UpsertUserPreference(new UserPreferenceUpsert
+                await UserPreferencesController.Upsert(new UserPreferenceUpsert
                 {
                     Type = UserPreferenceType.LanguageCode,
                     Value = "sv",
@@ -160,7 +160,7 @@ namespace ReadABit.Web.Test.Controllers
 
         private async Task<Paginated<WordDefinition>> List()
         {
-            return (await T1.ListWordDefinitions(
+            return (await WordDefinitionsController.List(
                 new WordDefinitionList
                 {
                     Filter = new WordDefinitionListFilter
@@ -177,7 +177,7 @@ namespace ReadABit.Web.Test.Controllers
 
         private async Task<Paginated<WordDefinitionListPublicSuggestionViewModel>> ListPublicSuggestions()
         {
-            return (await T1.ListWordDefinitionPublicSuggestions(new WordDefinitionListPublicSuggestions
+            return (await WordDefinitionsController.ListPublicSuggestions(new WordDefinitionListPublicSuggestions
             {
                 Filter = new WordDefinitionListPublicSuggestionsFilter
                 {
@@ -193,7 +193,7 @@ namespace ReadABit.Web.Test.Controllers
 
         private async Task<WordDefinition> Get(Guid id)
         {
-            return (await T1.GetWordDefinition(id, new WordDefinitionGet { })).ShouldBeOfType<OkObjectResult>()
+            return (await WordDefinitionsController.Get(id, new WordDefinitionGet { })).ShouldBeOfType<OkObjectResult>()
                 .Value.ShouldBeOfType<WordDefinition>();
         }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Commands;
@@ -12,7 +11,7 @@ using Xunit;
 
 namespace ReadABit.Web.Test.Controllers
 {
-    public class ArticleCollectionsControllerTest : TestBase<ArticleCollectionsController>
+    public class ArticleCollectionsControllerTest : TestBase
     {
         public ArticleCollectionsControllerTest(IServiceProvider serviceProvider, IRequestContext requestContext) : base(serviceProvider, requestContext)
         {
@@ -25,7 +24,7 @@ namespace ReadABit.Web.Test.Controllers
             var name = "dummy";
 
             var creationResult =
-                (await T1.CreateArticleCollection(new ArticleCollectionCreate
+                (await ArticleCollectionsController.Create(new ArticleCollectionCreate
                 {
                     Name = name,
                     LanguageCode = languageCode,
@@ -43,7 +42,7 @@ namespace ReadABit.Web.Test.Controllers
 
             using (User(2))
             {
-                (await T1.UpdateArticleCollection(createdId, new ArticleCollectionUpdate
+                (await ArticleCollectionsController.Update(createdId, new ArticleCollectionUpdate
                 {
                     LanguageCode = "en",
                     Name = "another",
@@ -53,7 +52,7 @@ namespace ReadABit.Web.Test.Controllers
 
             var updatedName = "updated";
             var updatedLanguadeCode = "en";
-            await T1.UpdateArticleCollection(createdId, new ArticleCollectionUpdate
+            await ArticleCollectionsController.Update(createdId, new ArticleCollectionUpdate
             {
                 LanguageCode = updatedLanguadeCode,
                 Name = updatedName,
@@ -71,18 +70,18 @@ namespace ReadABit.Web.Test.Controllers
             using (User(2))
             {
                 (await List("en")).Items.Count.ShouldBe(0);
-                (await T1.GetArticleCollection(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();
+                (await ArticleCollectionsController.Get(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();
             }
 
-            (await T1.DeleteArticleCollection(createdId, new ArticleCollectionDelete { })).ShouldBeOfType<NoContentResult>();
+            (await ArticleCollectionsController.Delete(createdId, new ArticleCollectionDelete { })).ShouldBeOfType<NoContentResult>();
             (await List("en")).Items.Count.ShouldBe(0);
-            (await T1.GetArticleCollection(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();
+            (await ArticleCollectionsController.Get(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
         private async Task<Paginated<ArticleCollection>> List(string languageCode)
         {
             return
-                (await T1.ListArticleCollections(
+                (await ArticleCollectionsController.List(
                     new ArticleCollectionList
                     {
                         Filter = new ArticleCollectionListFilter
@@ -101,7 +100,7 @@ namespace ReadABit.Web.Test.Controllers
 
         private async Task<ArticleCollection> Get(Guid id)
         {
-            return (await T1.GetArticleCollection(id, new ArticleCollectionGet { })).ShouldBeOfType<OkObjectResult>()
+            return (await ArticleCollectionsController.Get(id, new ArticleCollectionGet { })).ShouldBeOfType<OkObjectResult>()
                 .Value.ShouldBeOfType<ArticleCollection>();
         }
     }

@@ -12,7 +12,7 @@ using Xunit;
 
 namespace ReadABit.Web.Test.Controllers
 {
-    public class ArticlesControllerTest : TestBase<ArticlesController, ArticleCollectionsController>
+    public class ArticlesControllerTest : TestBase
     {
         public ArticlesControllerTest(IServiceProvider serviceProvider, IRequestContext requestContext) : base(serviceProvider, requestContext)
         {
@@ -22,7 +22,7 @@ namespace ReadABit.Web.Test.Controllers
         public async Task CRUD_Succeeds()
         {
             var articleCollectionId =
-                (await T2.CreateArticleCollection(new ArticleCollectionCreate
+                (await ArticleCollectionsController.Create(new ArticleCollectionCreate
                 {
                     LanguageCode = "sv",
                     Name = "collection",
@@ -34,7 +34,7 @@ namespace ReadABit.Web.Test.Controllers
             var name = "dummy";
             var text = "Hallå!";
             var creationResult =
-                (await T1.CreateArticle(new ArticleCreate
+                (await ArticlesController.Create(new ArticleCreate
                 {
                     ArticleCollectionId = articleCollectionId,
                     Name = name,
@@ -48,10 +48,10 @@ namespace ReadABit.Web.Test.Controllers
             // Article in private article collection should not be accessible by another user.
             using (User(2))
             {
-                (await T1.GetArticle(createdId, new ArticleGet { })).ShouldBeOfType<NotFoundResult>();
+                (await ArticlesController.Get(createdId, new ArticleGet { })).ShouldBeOfType<NotFoundResult>();
             }
 
-            await T2.UpdateArticleCollection(articleCollectionId, new ArticleCollectionUpdate { Public = true });
+            await ArticleCollectionsController.Update(articleCollectionId, new ArticleCollectionUpdate { Public = true });
 
             // Article in public article collection should be accessible by another user.
             using (User(2))
@@ -62,7 +62,7 @@ namespace ReadABit.Web.Test.Controllers
                 JsonConvert.SerializeObject(created.ConlluDocument, Formatting.Indented)
                     .ShouldMatchApproved(c => c.WithDiscriminator("CreatedConlluDocument"));
 
-                (await T1.UpdateArticle(createdId, new ArticleUpdate
+                (await ArticlesController.Update(createdId, new ArticleUpdate
                 {
                     Name = "another",
                     Text = "another",
@@ -82,7 +82,7 @@ de är mina föräldrar.
 Varför vill du lära dig svenska?
 Det beror på att det gör det lättare att förstå vad folk säger.
 ";
-            await T1.UpdateArticle(createdId, new ArticleUpdate
+            await ArticlesController.Update(createdId, new ArticleUpdate
             {
                 Name = updatedName,
                 Text = upadtedText,
@@ -96,18 +96,18 @@ Det beror på att det gör det lättare att förstå vad folk säger.
 
             using (User(2))
             {
-                (await T1.DeleteArticle(createdId, new ArticleDelete { })).ShouldBeOfType<NotFoundResult>();
+                (await ArticlesController.Delete(createdId, new ArticleDelete { })).ShouldBeOfType<NotFoundResult>();
             }
             (await List(articleCollectionId)).Items.Count.ShouldBe(1);
 
-            (await T1.DeleteArticle(createdId, new ArticleDelete { })).ShouldBeOfType<NoContentResult>();
+            (await ArticlesController.Delete(createdId, new ArticleDelete { })).ShouldBeOfType<NoContentResult>();
             (await List(articleCollectionId)).Items.Count.ShouldBe(0);
-            (await T1.GetArticle(createdId, new ArticleGet { })).ShouldBeOfType<NotFoundResult>();
+            (await ArticlesController.Get(createdId, new ArticleGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
         private async Task<Paginated<ArticleListItemViewModel>> List(Guid articleCollectionId)
         {
-            return (await T1.ListArticles(new ArticleList
+            return (await ArticlesController.List(new ArticleList
             {
                 ArticleCollectionId = articleCollectionId,
                 Page = new PageFilter
@@ -120,7 +120,7 @@ Det beror på att det gör det lättare att förstå vad folk säger.
 
         private async Task<Article> Get(Guid id)
         {
-            return (await T1.GetArticle(id, new ArticleGet { })).ShouldBeOfType<OkObjectResult>()
+            return (await ArticlesController.Get(id, new ArticleGet { })).ShouldBeOfType<OkObjectResult>()
                 .Value.ShouldBeOfType<Article>();
         }
     }

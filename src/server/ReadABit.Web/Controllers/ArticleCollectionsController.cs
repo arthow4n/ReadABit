@@ -19,7 +19,7 @@ namespace ReadABit.Web.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Paginated<ArticleCollection>))]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> ListArticleCollections([FromQuery] ArticleCollectionList request)
+        public async Task<IActionResult> List([FromQuery] ArticleCollectionList request)
         {
             Paginated<ArticleCollection> list = await Mediator.Send(request with
             {
@@ -32,7 +32,7 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ArticleCollection))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> GetArticleCollection(Guid id, [FromQuery] ArticleCollectionGet request)
+        public async Task<IActionResult> Get(Guid id, [FromQuery] ArticleCollectionGet request)
         {
             var articleCollection = await Mediator.Send(request with
             {
@@ -51,21 +51,21 @@ namespace ReadABit.Web.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ArticleCollection))]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> CreateArticleCollection(ArticleCollectionCreate request)
+        public async Task<IActionResult> Create(ArticleCollectionCreate request)
         {
             var created = await Mediator.Send(request with
             {
                 UserId = RequestUserId,
             });
             await SaveChangesAsync();
-            return CreatedAtAction(nameof(GetArticleCollection), new { id = created.Id }, created);
+            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         }
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> UpdateArticleCollection(Guid id, ArticleCollectionUpdate request)
+        public async Task<IActionResult> Update(Guid id, ArticleCollectionUpdate request)
         {
             var found = await Mediator.Send(request with
             {
@@ -86,7 +86,7 @@ namespace ReadABit.Web.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> DeleteArticleCollection(Guid id, [FromQuery] ArticleCollectionDelete request)
+        public async Task<IActionResult> Delete(Guid id, [FromQuery] ArticleCollectionDelete request)
         {
             var found = await Mediator.Send(request with
             {

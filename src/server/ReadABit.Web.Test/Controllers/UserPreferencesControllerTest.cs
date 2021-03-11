@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ReadABit.Web.Test.Controllers
 {
-    public class UserPreferencesControllerTest : TestBase<UserPreferencesController>
+    public class UserPreferencesControllerTest : TestBase
     {
         public UserPreferencesControllerTest(IServiceProvider serviceProvider, IRequestContext requestContext) : base(serviceProvider, requestContext)
         {
@@ -21,7 +21,7 @@ namespace ReadABit.Web.Test.Controllers
         [Fact]
         public async Task CRUD_Succeeds()
         {
-            await T1.UpsertUserPreference(new UserPreferenceUpsert
+            await UserPreferencesController.Upsert(new UserPreferenceUpsert
             {
                 Type = UserPreferenceType.LanguageCode,
                 Value = "en",
@@ -31,7 +31,7 @@ namespace ReadABit.Web.Test.Controllers
                 x => x.Value.ShouldBe("en")
             );
 
-            await T1.UpsertUserPreference(new UserPreferenceUpsert
+            await UserPreferencesController.Upsert(new UserPreferenceUpsert
             {
                 Type = UserPreferenceType.LanguageCode,
                 Value = "sv",
@@ -42,13 +42,13 @@ namespace ReadABit.Web.Test.Controllers
                 x => x.Value.ShouldBe("sv")
             );
 
-            await T1.DeleteUserPreference(preference.Id, new UserPreferenceDelete { });
+            await UserPreferencesController.Delete(preference.Id, new UserPreferenceDelete { });
             (await List()).ShouldBeEmpty();
         }
 
         private async Task<List<UserPreference>> List()
         {
-            return (await T1.ListUserPreferences(new UserPreferenceList { }))
+            return (await UserPreferencesController.List(new UserPreferenceList { }))
                 .ShouldBeOfType<OkObjectResult>()
                 .Value.ShouldBeOfType<List<UserPreference>>();
         }
