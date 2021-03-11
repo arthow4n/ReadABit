@@ -1,8 +1,7 @@
 import * as React from 'react';
 
 import { useTranslation } from 'react-i18next';
-import { Button } from 'react-native';
-import { useQuery } from 'react-query';
+import { Button, View } from 'react-native';
 
 import {
   useAutoDiscovery,
@@ -11,10 +10,7 @@ import {
   exchangeCodeAsync,
 } from 'expo-auth-session';
 
-import { View, Text } from './Themed';
-
 import {
-  api,
   backendBaseUrl,
   configAuthorizationHeader,
 } from '../../integrations/backend/backend';

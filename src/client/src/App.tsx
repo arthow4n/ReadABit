@@ -7,9 +7,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { registerRootComponent } from 'expo';
 import { StatusBar } from 'expo-status-bar';
 
-import { Navigation } from './navigation';
 import { useCachedResources } from './shared/hooks/useCachedResources';
-import { useColorScheme } from './shared/hooks/useColorScheme';
 import './translations/init';
 
 LogBox.ignoreLogs([
@@ -23,7 +21,6 @@ const queryClient = new QueryClient();
 // eslint-disable-next-line
 function App() {
   const isLoadingComplete = useCachedResources();
-  const colorScheme = useColorScheme();
 
   if (!isLoadingComplete) {
     return null;
@@ -31,7 +28,7 @@ function App() {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <Navigation colorScheme={colorScheme} />
+        {/* TODO: App screen */}
       </QueryClientProvider>
       <StatusBar />
     </SafeAreaProvider>
