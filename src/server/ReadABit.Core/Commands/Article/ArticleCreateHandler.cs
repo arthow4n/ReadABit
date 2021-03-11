@@ -3,7 +3,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using EnsureThat;
 using ReadABit.Infrastructure.Models;
 using ReadABit.Core.Utils;
 using ReadABit.Core.Integrations.Services;
@@ -41,7 +40,7 @@ namespace ReadABit.Core.Commands
                 ArticleCollectionId = articleCollection.Id,
                 Name = request.Name.Trim(),
                 Text = request.Text,
-                Conllu = UDPipeV1Service.ToConllu(articleCollection.LanguageCode, request.Text),
+                ConlluDocument = UDPipeV1Service.ToConlluDocument(articleCollection.LanguageCode, request.Text),
             };
 
             await _db.Unsafe.AddAsync(article, cancellationToken);

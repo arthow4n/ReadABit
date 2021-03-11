@@ -1,0 +1,512 @@
+{
+  "Id": "1",
+  "Paragraphs": [
+    {
+      "Id": "1",
+      "Sentences": [
+        {
+          "Id": "1",
+          "Text": "Hallå värld!",
+          "Tokens": [
+            {
+              "Id": "1",
+              "Form": "Hallå",
+              "Lemma": "Hallå",
+              "Upos": "ADP",
+              "Xpos": "PP",
+              "Feats": "_",
+              "Head": "2",
+              "Deprel": "case",
+              "Deps": "1",
+              "Misc": "_"
+            },
+            {
+              "Id": "2",
+              "Form": "värld",
+              "Lemma": "värld",
+              "Upos": "NOUN",
+              "Xpos": "NN|UTR|SIN|IND|NOM",
+              "Feats": "Case=Nom|Definite=Ind|Gender=Com|Number=Sing",
+              "Head": "0",
+              "Deprel": "root",
+              "Deps": "2",
+              "Misc": "SpaceAfter=No"
+            },
+            {
+              "Id": "3",
+              "Form": "!",
+              "Lemma": "!",
+              "Upos": "PUNCT",
+              "Xpos": "MAD",
+              "Feats": "_",
+              "Head": "2",
+              "Deprel": "punct",
+              "Deps": "3",
+              "Misc": "SpacesAfter=\\n\\n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Id": "2",
+      "Sentences": [
+        {
+          "Id": "2",
+          "Text": "Han är min pappa, hon är min mamma, de är mina föräldrar.",
+          "Tokens": [
+            {
+              "Id": "1",
+              "Form": "Han",
+              "Lemma": "han",
+              "Upos": "PRON",
+              "Xpos": "PN|UTR|SIN|DEF|SUB",
+              "Feats": "Case=Nom|Definite=Def|Gender=Com|Number=Sing",
+              "Head": "4",
+              "Deprel": "nsubj",
+              "Deps": "1",
+              "Misc": "_"
+            },
+            {
+              "Id": "2",
+              "Form": "är",
+              "Lemma": "vara",
+              "Upos": "AUX",
+              "Xpos": "VB|PRS|AKT",
+              "Feats": "Mood=Ind|Tense=Pres|VerbForm=Fin|Voice=Act",
+              "Head": "4",
+              "Deprel": "cop",
+              "Deps": "2",
+              "Misc": "_"
+            },
+            {
+              "Id": "3",
+              "Form": "min",
+              "Lemma": "jag",
+              "Upos": "DET",
+              "Xpos": "PS|UTR|SIN|DEF",
+              "Feats": "Definite=Def|Gender=Com|Number=Sing|Poss=Yes",
+              "Head": "4",
+              "Deprel": "nmod:poss",
+              "Deps": "3",
+              "Misc": "_"
+            },
+            {
+              "Id": "4",
+              "Form": "pappa",
+              "Lemma": "pappa",
+              "Upos": "NOUN",
+              "Xpos": "NN|UTR|SIN|IND|NOM",
+              "Feats": "Case=Nom|Definite=Ind|Gender=Com|Number=Sing",
+              "Head": "0",
+              "Deprel": "root",
+              "Deps": "4",
+              "Misc": "SpaceAfter=No"
+            },
+            {
+              "Id": "5",
+              "Form": ",",
+              "Lemma": ",",
+              "Upos": "PUNCT",
+              "Xpos": "MID",
+              "Feats": "_",
+              "Head": "4",
+              "Deprel": "punct",
+              "Deps": "5",
+              "Misc": "SpacesAfter=\\n"
+            },
+            {
+              "Id": "6",
+              "Form": "hon",
+              "Lemma": "hon",
+              "Upos": "PRON",
+              "Xpos": "PN|UTR|SIN|DEF|SUB",
+              "Feats": "Case=Nom|Definite=Def|Gender=Com|Number=Sing",
+              "Head": "9",
+              "Deprel": "nsubj",
+              "Deps": "6",
+              "Misc": "_"
+            },
+            {
+              "Id": "7",
+              "Form": "är",
+              "Lemma": "vara",
+              "Upos": "AUX",
+              "Xpos": "VB|PRS|AKT",
+              "Feats": "Mood=Ind|Tense=Pres|VerbForm=Fin|Voice=Act",
+              "Head": "9",
+              "Deprel": "cop",
+              "Deps": "7",
+              "Misc": "_"
+            },
+            {
+              "Id": "8",
+              "Form": "min",
+              "Lemma": "jag",
+              "Upos": "DET",
+              "Xpos": "PS|UTR|SIN|DEF",
+              "Feats": "Definite=Def|Gender=Com|Number=Sing|Poss=Yes",
+              "Head": "9",
+              "Deprel": "nmod:poss",
+              "Deps": "8",
+              "Misc": "_"
+            },
+            {
+              "Id": "9",
+              "Form": "mamma",
+              "Lemma": "mamma",
+              "Upos": "NOUN",
+              "Xpos": "NN|UTR|SIN|IND|NOM",
+              "Feats": "Case=Nom|Definite=Ind|Gender=Com|Number=Sing",
+              "Head": "4",
+              "Deprel": "parataxis",
+              "Deps": "9",
+              "Misc": "SpaceAfter=No"
+            },
+            {
+              "Id": "10",
+              "Form": ",",
+              "Lemma": ",",
+              "Upos": "PUNCT",
+              "Xpos": "MID",
+              "Feats": "_",
+              "Head": "9",
+              "Deprel": "punct",
+              "Deps": "10",
+              "Misc": "SpacesAfter=\\n"
+            },
+            {
+              "Id": "11",
+              "Form": "de",
+              "Lemma": "de",
+              "Upos": "PRON",
+              "Xpos": "PN|UTR/NEU|PLU|DEF|SUB",
+              "Feats": "Case=Nom|Definite=Def|Number=Plur",
+              "Head": "14",
+              "Deprel": "nsubj",
+              "Deps": "11",
+              "Misc": "_"
+            },
+            {
+              "Id": "12",
+              "Form": "är",
+              "Lemma": "vara",
+              "Upos": "AUX",
+              "Xpos": "VB|PRS|AKT",
+              "Feats": "Mood=Ind|Tense=Pres|VerbForm=Fin|Voice=Act",
+              "Head": "14",
+              "Deprel": "cop",
+              "Deps": "12",
+              "Misc": "_"
+            },
+            {
+              "Id": "13",
+              "Form": "mina",
+              "Lemma": "jag",
+              "Upos": "DET",
+              "Xpos": "PS|UTR/NEU|PLU|DEF",
+              "Feats": "Definite=Def|Number=Plur|Poss=Yes",
+              "Head": "14",
+              "Deprel": "nmod:poss",
+              "Deps": "13",
+              "Misc": "_"
+            },
+            {
+              "Id": "14",
+              "Form": "föräldrar",
+              "Lemma": "förälder",
+              "Upos": "NOUN",
+              "Xpos": "NN|UTR|PLU|IND|NOM",
+              "Feats": "Case=Nom|Definite=Ind|Gender=Com|Number=Plur",
+              "Head": "9",
+              "Deprel": "conj",
+              "Deps": "14",
+              "Misc": "SpaceAfter=No"
+            },
+            {
+              "Id": "15",
+              "Form": ".",
+              "Lemma": ".",
+              "Upos": "PUNCT",
+              "Xpos": "MAD",
+              "Feats": "_",
+              "Head": "4",
+              "Deprel": "punct",
+              "Deps": "15",
+              "Misc": "SpacesAfter=\\n\\n\\n\\n"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Id": "3",
+      "Sentences": [
+        {
+          "Id": "3",
+          "Text": "Varför vill du lära dig svenska?",
+          "Tokens": [
+            {
+              "Id": "1",
+              "Form": "Varför",
+              "Lemma": "varför",
+              "Upos": "ADV",
+              "Xpos": "HA",
+              "Feats": "_",
+              "Head": "4",
+              "Deprel": "advmod",
+              "Deps": "1",
+              "Misc": "_"
+            },
+            {
+              "Id": "2",
+              "Form": "vill",
+              "Lemma": "vilja",
+              "Upos": "AUX",
+              "Xpos": "VB|PRS|AKT",
+              "Feats": "Mood=Ind|Tense=Pres|VerbForm=Fin|Voice=Act",
+              "Head": "4",
+              "Deprel": "aux",
+              "Deps": "2",
+              "Misc": "_"
+            },
+            {
+              "Id": "3",
+              "Form": "du",
+              "Lemma": "du",
+              "Upos": "PRON",
+              "Xpos": "PN|UTR|SIN|DEF|SUB",
+              "Feats": "Case=Nom|Definite=Def|Gender=Com|Number=Sing",
+              "Head": "4",
+              "Deprel": "nsubj",
+              "Deps": "3",
+              "Misc": "_"
+            },
+            {
+              "Id": "4",
+              "Form": "lära",
+              "Lemma": "lära",
+              "Upos": "VERB",
+              "Xpos": "VB|INF|AKT",
+              "Feats": "VerbForm=Inf|Voice=Act",
+              "Head": "0",
+              "Deprel": "root",
+              "Deps": "4",
+              "Misc": "_"
+            },
+            {
+              "Id": "5",
+              "Form": "dig",
+              "Lemma": "du",
+              "Upos": "PRON",
+              "Xpos": "PN|UTR|SIN|DEF|OBJ",
+              "Feats": "Case=Acc|Definite=Def|Gender=Com|Number=Sing",
+              "Head": "4",
+              "Deprel": "iobj",
+              "Deps": "5",
+              "Misc": "_"
+            },
+            {
+              "Id": "6",
+              "Form": "svenska",
+              "Lemma": "svensk",
+              "Upos": "NOUN",
+              "Xpos": "NN|UTR|SIN|IND|NOM",
+              "Feats": "Case=Nom|Definite=Ind|Gender=Com|Number=Sing",
+              "Head": "4",
+              "Deprel": "dobj",
+              "Deps": "6",
+              "Misc": "SpaceAfter=No"
+            },
+            {
+              "Id": "7",
+              "Form": "?",
+              "Lemma": "?",
+              "Upos": "PUNCT",
+              "Xpos": "MAD",
+              "Feats": "_",
+              "Head": "4",
+              "Deprel": "punct",
+              "Deps": "7",
+              "Misc": "SpacesAfter=\\n"
+            }
+          ]
+        },
+        {
+          "Id": "4",
+          "Text": "Det beror på att det gör det lättare att förstå vad folk säger.",
+          "Tokens": [
+            {
+              "Id": "1",
+              "Form": "Det",
+              "Lemma": "den",
+              "Upos": "PRON",
+              "Xpos": "PN|NEU|SIN|DEF|SUB/OBJ",
+              "Feats": "Definite=Def|Gender=Neut|Number=Sing",
+              "Head": "2",
+              "Deprel": "nsubj",
+              "Deps": "1",
+              "Misc": "_"
+            },
+            {
+              "Id": "2",
+              "Form": "beror",
+              "Lemma": "bero",
+              "Upos": "VERB",
+              "Xpos": "VB|PRS|AKT",
+              "Feats": "Mood=Ind|Tense=Pres|VerbForm=Fin|Voice=Act",
+              "Head": "0",
+              "Deprel": "root",
+              "Deps": "2",
+              "Misc": "_"
+            },
+            {
+              "Id": "3",
+              "Form": "på",
+              "Lemma": "på",
+              "Upos": "ADP",
+              "Xpos": "PP",
+              "Feats": "_",
+              "Head": "6",
+              "Deprel": "case",
+              "Deps": "3",
+              "Misc": "_"
+            },
+            {
+              "Id": "4",
+              "Form": "att",
+              "Lemma": "att",
+              "Upos": "SCONJ",
+              "Xpos": "SN",
+              "Feats": "_",
+              "Head": "6",
+              "Deprel": "mark",
+              "Deps": "4",
+              "Misc": "_"
+            },
+            {
+              "Id": "5",
+              "Form": "det",
+              "Lemma": "den",
+              "Upos": "PRON",
+              "Xpos": "PN|NEU|SIN|DEF|SUB/OBJ",
+              "Feats": "Definite=Def|Gender=Neut|Number=Sing",
+              "Head": "6",
+              "Deprel": "expl",
+              "Deps": "5",
+              "Misc": "_"
+            },
+            {
+              "Id": "6",
+              "Form": "gör",
+              "Lemma": "göra",
+              "Upos": "VERB",
+              "Xpos": "VB|PRS|AKT",
+              "Feats": "Mood=Ind|Tense=Pres|VerbForm=Fin|Voice=Act",
+              "Head": "2",
+              "Deprel": "advcl",
+              "Deps": "6",
+              "Misc": "_"
+            },
+            {
+              "Id": "7",
+              "Form": "det",
+              "Lemma": "den",
+              "Upos": "PRON",
+              "Xpos": "PN|NEU|SIN|DEF|SUB/OBJ",
+              "Feats": "Definite=Def|Gender=Neut|Number=Sing",
+              "Head": "6",
+              "Deprel": "nsubj",
+              "Deps": "7",
+              "Misc": "_"
+            },
+            {
+              "Id": "8",
+              "Form": "lättare",
+              "Lemma": "lätt",
+              "Upos": "ADJ",
+              "Xpos": "JJ|KOM|UTR/NEU|SIN/PLU|IND/DEF|NOM",
+              "Feats": "Case=Nom|Degree=Cmp",
+              "Head": "6",
+              "Deprel": "xcomp",
+              "Deps": "8",
+              "Misc": "_"
+            },
+            {
+              "Id": "9",
+              "Form": "att",
+              "Lemma": "att",
+              "Upos": "PART",
+              "Xpos": "IE",
+              "Feats": "_",
+              "Head": "10",
+              "Deprel": "mark",
+              "Deps": "9",
+              "Misc": "_"
+            },
+            {
+              "Id": "10",
+              "Form": "förstå",
+              "Lemma": "förstå",
+              "Upos": "VERB",
+              "Xpos": "VB|INF|AKT",
+              "Feats": "VerbForm=Inf|Voice=Act",
+              "Head": "6",
+              "Deprel": "advcl",
+              "Deps": "10",
+              "Misc": "_"
+            },
+            {
+              "Id": "11",
+              "Form": "vad",
+              "Lemma": "vad",
+              "Upos": "PRON",
+              "Xpos": "HP|NEU|SIN|IND",
+              "Feats": "Definite=Ind|Gender=Neut|Number=Sing|PronType=Int,Rel",
+              "Head": "13",
+              "Deprel": "dobj",
+              "Deps": "11",
+              "Misc": "_"
+            },
+            {
+              "Id": "12",
+              "Form": "folk",
+              "Lemma": "folk",
+              "Upos": "NOUN",
+              "Xpos": "NN|NEU|PLU|IND|NOM",
+              "Feats": "Case=Nom|Definite=Ind|Gender=Neut|Number=Plur",
+              "Head": "13",
+              "Deprel": "nsubj",
+              "Deps": "12",
+              "Misc": "_"
+            },
+            {
+              "Id": "13",
+              "Form": "säger",
+              "Lemma": "säga",
+              "Upos": "VERB",
+              "Xpos": "VB|PRS|AKT",
+              "Feats": "Mood=Ind|Tense=Pres|VerbForm=Fin|Voice=Act",
+              "Head": "10",
+              "Deprel": "ccomp",
+              "Deps": "13",
+              "Misc": "SpaceAfter=No"
+            },
+            {
+              "Id": "14",
+              "Form": ".",
+              "Lemma": ".",
+              "Upos": "PUNCT",
+              "Xpos": "MAD",
+              "Feats": "_",
+              "Head": "2",
+              "Deprel": "punct",
+              "Deps": "14",
+              "Misc": "SpacesAfter=\\n"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
@@ -58,8 +59,8 @@ namespace ReadABit.Web.Test.Controllers
                 var created = await Get(createdId);
                 created.Name.ShouldBe(name);
                 created.Text.ShouldBe(text);
-                created.Conllu.ShouldContain("# text = Hallå!");
-                created.Conllu.ShouldMatchApproved(c => c.WithDiscriminator("CreatedConllu"));
+                JsonConvert.SerializeObject(created.ConlluDocument, Formatting.Indented)
+                    .ShouldMatchApproved(c => c.WithDiscriminator("CreatedConlluDocument"));
 
                 (await T1.UpdateArticle(createdId, new ArticleUpdate
                 {
@@ -90,8 +91,8 @@ Det beror på att det gör det lättare att förstå vad folk säger.
             var updated = await Get(createdId);
             updated.Name.ShouldBe(updatedName);
             updated.Text.ShouldBe(upadtedText);
-            updated.Conllu.ShouldContain("# text = Hallå värld!");
-            updated.Conllu.ShouldMatchApproved(c => c.WithDiscriminator("UpdatedConllu"));
+            JsonConvert.SerializeObject(updated.ConlluDocument, Formatting.Indented)
+                .ShouldMatchApproved(c => c.WithDiscriminator("UpdatedConlluDocument"));
 
             using (User(2))
             {

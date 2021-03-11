@@ -3,12 +3,20 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
+using ReadABit.Core.Integrations.Contracts.Conllu;
 using Ufal.UDPipe;
 
 namespace ReadABit.Core.Integrations.Services
 {
     public static class UDPipeV1Service
     {
+        /// <param name="twoLetterISOLanguageName"><see cref="CultureInfo.TwoLetterISOLanguageName" /></param>
+        /// <param name="input">Text content of the input.</param>
+        public static Conllu.Document ToConlluDocument(string twoLetterISOLanguageName, string input)
+        {
+            return ToConllu(twoLetterISOLanguageName, input).ToConlluDocument();
+        }
+
         /// <param name="twoLetterISOLanguageName"><see cref="CultureInfo.TwoLetterISOLanguageName" /></param>
         /// <param name="input">Text content of the input.</param>
         /// <returns>CoNLL-U annotaion of the input. See https://universaldependencies.org/format.html for full spec.</returns>

@@ -1,0 +1,40 @@
+{
+  "Id": "1",
+  "Paragraphs": [
+    {
+      "Id": "1",
+      "Sentences": [
+        {
+          "Id": "1",
+          "Text": "Hallå!",
+          "Tokens": [
+            {
+              "Id": "1",
+              "Form": "Hallå",
+              "Lemma": "Hallå",
+              "Upos": "ADV",
+              "Xpos": "AB",
+              "Feats": "_",
+              "Head": "0",
+              "Deprel": "root",
+              "Deps": "1",
+              "Misc": "SpaceAfter=No"
+            },
+            {
+              "Id": "2",
+              "Form": "!",
+              "Lemma": "!",
+              "Upos": "PUNCT",
+              "Xpos": "MAD",
+              "Feats": "_",
+              "Head": "1",
+              "Deprel": "punct",
+              "Deps": "2",
+              "Misc": "SpacesAfter=\\n"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

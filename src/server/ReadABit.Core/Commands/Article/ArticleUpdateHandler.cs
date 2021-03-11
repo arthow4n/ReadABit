@@ -40,10 +40,10 @@ namespace ReadABit.Core.Commands
 
             article.Article.Name = request.Name is not null ? request.Name.Trim() : article.Article.Name;
             article.Article.Text = request.Text ?? article.Article.Text;
-            article.Article.Conllu =
+            article.Article.ConlluDocument =
                 request.Text is null ?
-                    article.Article.Conllu :
-                    UDPipeV1Service.ToConllu(article.LanguageCode, request.Text);
+                    article.Article.ConlluDocument :
+                    UDPipeV1Service.ToConlluDocument(article.LanguageCode, request.Text);
 
             return true;
         }
