@@ -346,6 +346,18 @@ namespace ReadABit.Web.Controllers
                 );
             }
 
+            if (await _signInManager.ValidateSecurityStampAsync(principal) is null)
+            {
+                return Forbid(
+                    authenticationSchemes: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+                    properties: new AuthenticationProperties(new Dictionary<string, string?>
+                    {
+                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "The refresh token is no longer valid.",
+                    })
+                );
+            }
+
             if (await _signInManager.CanSignInAsync(user) is false)
             {
                 return Forbid(
