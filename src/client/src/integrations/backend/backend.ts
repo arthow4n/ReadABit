@@ -2,6 +2,7 @@ import axios from 'axios';
 import { fetchDiscoveryAsync, TokenResponse } from 'expo-auth-session';
 import Constants from 'expo-constants';
 import * as SecureStore from 'expo-secure-store';
+import React from 'react';
 
 import { authTokenStorageKey, clientId, scopes } from './oidcConstants';
 import { Backend } from './types';
@@ -15,7 +16,45 @@ const axiosIntance = axios.create();
 // Get rid of the default transform because it overrides NSWag's transform.
 axiosIntance.defaults.transformResponse = [];
 
-let currentToken: TokenResponse | null = null;
+class TokenManager {
+  #currentToken: TokenResponse | null = null;
+
+  #tokenChangeListeners: Set<(() => void)> = new Set();
+
+  get currentToken() {
+    return this.#currentToken;
+  }
+
+  set currentToken(value) {
+    this.#currentToken = value;
+    this.#tokenChangeListeners.forEach((listener) => listener());
+  }
+
+  subscribeToTokenChange = (listener: () => void) => {
+    this.#tokenChangeListeners.add(listener);
+  };
+
+  unsubscribeToTokenChange = (listener: () => void) => {
+    this.#tokenChangeListeners.delete(listener);
+  };
+}
+
+const tokenManager = new TokenManager();
+
+export const useBackendApiTokenState = () => {
+  const [, setBumper] = React.useState({});
+
+  const bump = React.useCallback(() => setBumper({}), []);
+
+  React.useEffect(() => {
+    tokenManager.subscribeToTokenChange(bump);
+    return () => tokenManager.unsubscribeToTokenChange(bump);
+  }, []);
+
+  return {
+    hasValidToken: !!tokenManager.currentToken,
+  };
+};
 
 const secureStoreAvailabePromise = SecureStore.isAvailableAsync();
 
@@ -24,7 +63,7 @@ export const configAuthorizationHeader = async (
   shouldSave = true,
 ) => {
   // This is for ensuring class methods exist on the object since we are going to use them.
-  currentToken = t instanceof TokenResponse ? t : new TokenResponse(t);
+  tokenManager.currentToken = t instanceof TokenResponse ? t : new TokenResponse(t);
 
   axiosIntance.defaults.headers.common.Authorization = `Bearer ${t.accessToken}`;
 
@@ -37,12 +76,12 @@ export const configAuthorizationHeader = async (
     await SecureStore.setItemAsync(
       authTokenStorageKey,
       // `getRequestConfig()` returns the params needed for `new TokenResponse()`
-      JSON.stringify(currentToken.getRequestConfig()),
+      JSON.stringify(tokenManager.currentToken.getRequestConfig()),
     );
   }
 };
 
-export const tryLoadingAuthToken = async () => {
+export const loadAuthToken = async () => {
   const storedJson = await SecureStore.getItemAsync(authTokenStorageKey).catch(
     () => '',
   );
@@ -69,6 +108,8 @@ let ongoingRefreshTokenPromise: Promise<void> | null = null;
 
 const refreshToken = async (t: TokenResponse) => {
   const discovery = await fetchDiscoveryAsync(backendBaseUrl);
+
+  // FIXME: Bounce user back to login screen if got exception here.
   const newTokenResponse = await t.refreshAsync(
     {
       clientId,
@@ -99,16 +140,16 @@ export const api = new Proxy(innerClient, {
     }
 
     return async (...args: any[]) => {
-      if (currentToken === null) {
+      if (tokenManager.currentToken === null) {
         throw new Error(
           'Calling backend API without a valid token. Did you forget to call `configAuthorizationHeader`?',
         );
       }
 
-      if (currentToken.shouldRefresh()) {
+      if (tokenManager.currentToken.shouldRefresh()) {
         // Ensure there's only one ongoing token refresh request
         ongoingRefreshTokenPromise =
-          ongoingRefreshTokenPromise ?? refreshToken(currentToken);
+          ongoingRefreshTokenPromise ?? refreshToken(tokenManager.currentToken);
         await ongoingRefreshTokenPromise;
       }
 

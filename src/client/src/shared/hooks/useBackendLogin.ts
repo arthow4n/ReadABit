@@ -1,8 +1,5 @@
 import * as React from 'react';
 
-import { useTranslation } from 'react-i18next';
-import { Button, View } from 'react-native';
-
 import {
   useAutoDiscovery,
   useAuthRequest,
@@ -13,6 +10,7 @@ import {
 import {
   backendBaseUrl,
   configAuthorizationHeader,
+  useBackendApiTokenState,
 } from '../../integrations/backend/backend';
 import {
   clientId,
@@ -20,9 +18,8 @@ import {
   scopes,
 } from '../../integrations/backend/oidcConstants';
 
-export const LoginButton: React.FC = () => {
-  const { t } = useTranslation();
-  const [isTokenReady, setIsTokenReady] = React.useState(false);
+export const useBackendLogin = () => {
+  const { hasValidToken } = useBackendApiTokenState();
 
   const discovery = useAutoDiscovery(backendBaseUrl);
   const [authRequest, authResult, promptAsync] = useAuthRequest(
@@ -66,24 +63,16 @@ export const LoginButton: React.FC = () => {
     );
 
     await configAuthorizationHeader(tokenResponse);
-    setIsTokenReady(true);
   };
 
   React.useEffect(() => {
     exchangeCodeForToken();
   }, [authResult]);
 
-  if (isTokenReady) {
-    return null;
-  }
-
-  return (
-    <View>
-      <Button
-        title={t('Login')}
-        disabled={!authRequest}
-        onPress={() => promptAsync()}
-      />
-    </View>
-  );
+  return {
+    gotoLoginPage: () => {
+      promptAsync();
+    },
+    isLoggedIn: !!hasValidToken,
+  };
 };

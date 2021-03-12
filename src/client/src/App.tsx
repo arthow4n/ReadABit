@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { registerRootComponent } from 'expo';
 import { StatusBar } from 'expo-status-bar';
 
+import { Root } from './navigation/navigators/Root';
 import { useCachedResources } from './shared/hooks/useCachedResources';
 import './translations/init';
 
@@ -18,8 +19,7 @@ LogBox.ignoreLogs([
 
 const queryClient = new QueryClient();
 
-// eslint-disable-next-line
-function App() {
+const App: React.FC = () => {
   const isLoadingComplete = useCachedResources();
 
   if (!isLoadingComplete) {
@@ -28,11 +28,11 @@ function App() {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        {/* TODO: App screen */}
+        <Root />
       </QueryClientProvider>
       <StatusBar />
     </SafeAreaProvider>
   );
-}
+};
 
 registerRootComponent(App);

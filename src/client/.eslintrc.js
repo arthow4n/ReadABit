@@ -17,5 +17,11 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['warn'],
     'implicit-arrow-linebreak': 'off',
     'function-paren-newline': 'off',
+    'arrow-body-style': 'off',
+    indent: 'off',
+    '@typescript-eslint/indent': 'off',
+    'no-nested-ternary': 'off',
+    'no-confusing-arrow': 'off',
+    'react/jsx-curly-newline': 'off',
   },
 };
