@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { registerRootComponent } from 'expo';
 import { StatusBar } from 'expo-status-bar';
 
-import { Root } from './navigation/navigators/Root';
+import { RootNavigator } from './navigation/RootNavigator';
 import { useCachedResources } from './shared/hooks/useCachedResources';
 import './translations/init';
 
@@ -28,7 +28,7 @@ const App: React.FC = () => {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <Root />
+        <RootNavigator />
       </QueryClientProvider>
       <StatusBar />
     </SafeAreaProvider>

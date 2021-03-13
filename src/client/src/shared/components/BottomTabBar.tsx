@@ -26,9 +26,11 @@ const TabButton: React.FC<{
   );
 };
 
-export const RootBottomTabBar: React.FC<
-  BottomTabBarProps<BottomTabBarOptions>
-> = ({ state, descriptors, navigation }) => {
+export const BottomTabBar: React.FC<BottomTabBarProps<BottomTabBarOptions>> = ({
+  state,
+  descriptors,
+  navigation,
+}) => {
   const focusedOptions = descriptors[state.routes[state.index].key].options;
 
   if (focusedOptions.tabBarVisible === false) {

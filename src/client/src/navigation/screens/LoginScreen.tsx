@@ -1,38 +1,47 @@
-import * as React from 'react';
+import React from 'react';
 
 import { useTranslation } from 'react-i18next';
 
 import {
   Body,
   Button,
+  Container,
   Content,
   Header,
   Left,
   Right,
-  Text,
   Title,
+  Text,
 } from 'native-base';
 
-import { useBackendLogin } from '../../shared/hooks/useBackendLogin';
-import { LoginScreenProps } from '../navigators/Root.types';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-export const LoginScreen: React.FC<LoginScreenProps> = () => {
+import { SafeArea } from '../../shared/components/SafeArea';
+import { useBackendLogin } from '../../shared/hooks/useBackendLogin';
+import { LoginStackParamList } from '../navigators/LoginNavigator.types';
+
+export const LoginScreen: React.FC<
+  StackNavigationProp<LoginStackParamList, 'Login'>
+> = () => {
   const { t } = useTranslation();
   const { gotoLoginPage } = useBackendLogin();
+
   return (
-    <>
-      <Header>
-        <Left />
-        <Body>
-          <Title>{t('Login')}</Title>
-        </Body>
-        <Right />
-      </Header>
-      <Content centerContent>
-        <Button onPress={gotoLoginPage}>
-          <Text>{t('Login')}</Text>
-        </Button>
-      </Content>
-    </>
+    <SafeArea>
+      <Container>
+        <Header>
+          <Left />
+          <Body>
+            <Title>{t('Login')}</Title>
+          </Body>
+          <Right />
+        </Header>
+        <Content centerContent>
+          <Button onPress={gotoLoginPage}>
+            <Text>{t('Login')}</Text>
+          </Button>
+        </Content>
+      </Container>
+    </SafeArea>
   );
 };
