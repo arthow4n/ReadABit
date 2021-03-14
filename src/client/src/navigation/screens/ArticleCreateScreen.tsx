@@ -9,6 +9,10 @@ import { StackNavigationProp } from '@react-navigation/stack';
 
 import { api } from '../../integrations/backend/backend';
 import { useAppSettingsContext } from '../../shared/contexts/AppSettingsContext';
+import {
+  QueryCacheKey,
+  useMutateArticleCollectionsCreate,
+} from '../../shared/hooks/useBackendReactQuery';
 import { ArticleStackParamList } from '../navigators/ArticleNavigator.types';
 
 export const ArticleCreateScreen: React.FC<
@@ -17,11 +21,10 @@ export const ArticleCreateScreen: React.FC<
   const { t } = useTranslation();
   const { appSettings } = useAppSettingsContext();
 
-  const { mutateAsync } = useMutation(api.articleCollections_Create);
+  const { mutateAsync } = useMutateArticleCollectionsCreate();
 
   const { isLoading, refetch, data } = useQuery(
-    // TODO: Fix cache key
-    ['articleCollections_List'],
+    [QueryCacheKey.ArticleCollections],
     () => api.articleCollections_List(),
     {
       onSuccess: async ({ items }) => {
