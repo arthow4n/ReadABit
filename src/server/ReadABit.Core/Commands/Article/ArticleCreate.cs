@@ -11,7 +11,6 @@ namespace ReadABit.Core.Commands
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; init; }
-        [OpenApiIgnore, JsonIgnore]
         public Guid ArticleCollectionId { get; init; }
         public string Name { get; init; } = "";
         public string Text { get; init; } = "";

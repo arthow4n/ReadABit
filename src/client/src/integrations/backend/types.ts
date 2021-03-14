@@ -1227,6 +1227,7 @@ export interface ArticleListItemViewModel {
 }
 
 export interface ArticleCreate {
+    articleCollectionId: string;
     name: string;
     text: string;
 }

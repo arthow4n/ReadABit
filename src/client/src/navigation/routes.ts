@@ -23,6 +23,10 @@ const exactPathMapping: Record<Routes, string> = {
   [Routes.ArticleCreate]: 'Articles/Create',
 };
 
+export function routeUrl(
+  route: Routes.Article,
+  routeParams: { id: string },
+): string;
 export function routeUrl(route: Routes.ArticleCreate): string;
 export function routeUrl(
   route: Routes,

@@ -10,7 +10,8 @@ import { api } from '../../integrations/backend/backend';
 // TODO: Find a better way to move useQuery calls here.
 
 export enum QueryCacheKey {
-  ArticleCollections = 'ArticleCollections',
+  ArticleCollectionList = 'ArticleCollectionList',
+  ArticleList = 'ArticleList',
 }
 
 const useMutateAndInvalidate = <TData, TVariables>(
@@ -44,6 +45,12 @@ const useMutateAndInvalidate = <TData, TVariables>(
 
 export const useMutateArticleCollectionsCreate = () => {
   return useMutateAndInvalidate(api.articleCollections_Create, [
-    [QueryCacheKey.ArticleCollections],
+    [QueryCacheKey.ArticleCollectionList],
+  ]);
+};
+
+export const useMutateArticleCreate = () => {
+  return useMutateAndInvalidate(api.articles_Create, [
+    [QueryCacheKey.ArticleList],
   ]);
 };

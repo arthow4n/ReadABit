@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^12.0.0",
+    "@hookform/resolvers": "^1.3.5",
     "@react-native-community/masked-view": "0.1.10",
     "@react-navigation/bottom-tabs": "5.11.2",
     "@react-navigation/native": "~5.8.10",
@@ -36,13 +37,15 @@
     "native-base": "^2.15.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
+    "react-hook-form": "^6.15.4",
     "react-i18next": "^11.8.8",
     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
     "react-native-gesture-handler": "~1.8.0",
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "~2.15.0",
     "react-native-web": "~0.13.12",
-    "react-query": "^3.9.9"
+    "react-query": "^3.9.9",
+    "zod": "^2.0.0-beta.30"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
