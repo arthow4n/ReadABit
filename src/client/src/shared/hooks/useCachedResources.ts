@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Ionicons } from '@expo/vector-icons';
 
 import { loadAuthToken } from '../../integrations/backend/backend';
+import { loadAppSettings } from '../contexts/AppSettingsContext';
 
 const ignorePromiseErrors = (promises: Promise<void>[]) => {
   const catched = promises.map((x) => x.catch((e) => console.warn(e)));
@@ -27,6 +28,7 @@ export function useCachedResources() {
         ...Ionicons.font,
       }),
       loadAuthToken(),
+      loadAppSettings(),
     ]);
 
     setLoadingComplete(true);

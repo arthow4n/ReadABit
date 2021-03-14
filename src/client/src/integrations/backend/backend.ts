@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { fetchDiscoveryAsync, TokenResponse } from 'expo-auth-session';
+import { fetchDiscoveryAsync, TokenResponse, TokenResponseConfig } from 'expo-auth-session';
 import Constants from 'expo-constants';
-import * as SecureStore from 'expo-secure-store';
 import React from 'react';
+import { readFromSecureStore, StorageKey, writeToSecureStore } from '../../shared/utils/storage';
 
-import { authTokenStorageKey, clientId, scopes } from './oidcConstants';
+import { clientId, scopes } from './oidcConstants';
 import { Backend } from './types';
 
 // TODO: Make this compatible with production env.
@@ -56,8 +56,6 @@ export const useBackendApiTokenState = () => {
   };
 };
 
-const secureStoreAvailabePromise = SecureStore.isAvailableAsync();
-
 export const configAuthorizationHeader = async (
   t: TokenResponse,
   shouldSave = true,
@@ -67,39 +65,18 @@ export const configAuthorizationHeader = async (
 
   axiosIntance.defaults.headers.common.Authorization = `Bearer ${t.accessToken}`;
 
-  if (!(await secureStoreAvailabePromise)) {
-    console.warn("SecureStore is unavailable. Auth tokens won't be saved.");
-    return;
-  }
-
   if (shouldSave) {
-    await SecureStore.setItemAsync(
-      authTokenStorageKey,
-      // `getRequestConfig()` returns the params needed for `new TokenResponse()`
-      JSON.stringify(tokenManager.currentToken.getRequestConfig()),
-    );
+    await writeToSecureStore(StorageKey.AuthToken, tokenManager.currentToken.getRequestConfig());
   }
 };
 
 export const loadAuthToken = async () => {
-  const storedJson = await SecureStore.getItemAsync(authTokenStorageKey).catch(
-    () => '',
-  );
-  if (!storedJson) {
+  const saved = await readFromSecureStore<TokenResponseConfig>(StorageKey.AuthToken);
+  if (saved == null) {
     return;
   }
 
-  try {
-    await configAuthorizationHeader(
-      new TokenResponse(JSON.parse(storedJson)),
-      false,
-    );
-  } catch (e) {
-    console.warn(
-      `tryLoadingAuthToken: Malformed JSON found in storage, value: ${storedJson}`,
-    );
-    await SecureStore.deleteItemAsync(authTokenStorageKey);
-  }
+  await configAuthorizationHeader(new TokenResponse(saved));
 };
 
 const innerClient = new Backend.Client(backendBaseUrl, axiosIntance);

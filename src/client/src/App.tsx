@@ -8,6 +8,7 @@ import { registerRootComponent } from 'expo';
 import { StatusBar } from 'expo-status-bar';
 
 import { RootNavigator } from './navigation/RootNavigator';
+import { AppSettingsContextProvider } from './shared/contexts/AppSettingsContext';
 import { useCachedResources } from './shared/hooks/useCachedResources';
 import './translations/init';
 
@@ -28,7 +29,9 @@ const App: React.FC = () => {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <RootNavigator />
+        <AppSettingsContextProvider>
+          <RootNavigator />
+        </AppSettingsContextProvider>
       </QueryClientProvider>
       <StatusBar />
     </SafeAreaProvider>
