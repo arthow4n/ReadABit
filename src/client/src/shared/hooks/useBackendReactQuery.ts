@@ -23,10 +23,19 @@ const useMutateAndInvalidate = <TData, TVariables>(
   const proxied: typeof mutationHandle = {
     ...mutationHandle,
     mutateAsync: async (...args) => {
-      invalidations.forEach((invalidation) => {
-        queryClient.invalidateQueries(...invalidation);
-      });
-      return mutationHandle.mutateAsync(...args);
+      const result = await mutationHandle.mutateAsync(...args);
+
+      // Invalidation should be run after the mutation
+      // because it will trigger refetch in background
+      // when the query is currently being rendered.
+      // https://react-query.tanstack.com/guides/query-invalidation
+      await Promise.all(
+        invalidations.map((invalidation) =>
+          queryClient.invalidateQueries(...invalidation),
+        ),
+      );
+
+      return result;
     },
   };
 
