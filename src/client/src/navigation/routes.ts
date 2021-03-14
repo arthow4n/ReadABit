@@ -54,53 +54,48 @@ export const linking: LinkingOptions = {
   prefixes: [backendBaseUrl, redirectUri],
   config: {
     screens: {
-      RootNavigator: {
-        initialRouteName: 'LoginNavigator',
+      LoginNavigator: {
+        initialRouteName: Routes.Login,
         screens: {
-          LoginNavigator: {
-            initialRouteName: Routes.Login,
+          [Routes.Login]: {
+            path: exactPathMapping[Routes.Login],
+            exact: true,
+          },
+        },
+      },
+      HomeNavigator: {
+        screens: {
+          [Routes.Home]: {
+            path: exactPathMapping[Routes.Home],
+            exact: true,
+          },
+          ArticleCollectionNavigator: {
             screens: {
-              [Routes.Login]: {
-                path: exactPathMapping[Routes.Login],
+              [Routes.ArticleCollectionList]: {
+                path: exactPathMapping[Routes.ArticleCollectionList],
+                exact: true,
+              },
+              [Routes.ArticleCollection]: {
+                path: exactPathMapping[Routes.ArticleCollection],
                 exact: true,
               },
             },
           },
-          HomeNavigator: {
-            screens: {
-              [Routes.Home]: {
-                path: exactPathMapping[Routes.Home],
-                exact: true,
-              },
-              ArticleCollectionNavigator: {
-                screens: {
-                  [Routes.ArticleCollectionList]: {
-                    path: exactPathMapping[Routes.ArticleCollectionList],
-                    exact: true,
-                  },
-                  [Routes.ArticleCollection]: {
-                    path: exactPathMapping[Routes.ArticleCollection],
-                    exact: true,
-                  },
-                },
-              },
-              [Routes.Settings]: {
-                path: exactPathMapping[Routes.Settings],
-                exact: true,
-              },
-            },
+          [Routes.Settings]: {
+            path: exactPathMapping[Routes.Settings],
+            exact: true,
           },
-          ArticleNavigator: {
-            screens: {
-              [Routes.ArticleCreate]: {
-                path: exactPathMapping[Routes.ArticleCreate],
-                exact: true,
-              },
-              [Routes.Article]: {
-                path: exactPathMapping[Routes.Article],
-                exact: true,
-              },
-            },
+        },
+      },
+      ArticleNavigator: {
+        screens: {
+          [Routes.ArticleCreate]: {
+            path: exactPathMapping[Routes.ArticleCreate],
+            exact: true,
+          },
+          [Routes.Article]: {
+            path: exactPathMapping[Routes.Article],
+            exact: true,
           },
         },
       },

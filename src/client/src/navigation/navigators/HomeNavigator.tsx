@@ -2,6 +2,8 @@ import React from 'react';
 
 import { useTranslation } from 'react-i18next';
 
+import { Container } from 'native-base';
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { HomeBottomTabParamList } from './HomeNavigator.types';
@@ -17,19 +19,23 @@ export const HomeNavigator: React.FC = () => {
 
   return (
     <SafeArea>
-      <HomeBottomTab.Navigator tabBar={(props) => <BottomTabBar {...props} />}>
-        <HomeBottomTab.Screen
-          name="Home"
-          options={{ tabBarLabel: t('Home_screen name') }}
-          component={HomeScreen}
-        />
-        {/* TODO: Fix the missing screens */}
-        {/* <HomeButtomTab.Screen
+      <Container>
+        <HomeBottomTab.Navigator
+          tabBar={(props) => <BottomTabBar {...props} />}
+        >
+          <HomeBottomTab.Screen
+            name="Home"
+            options={{ tabBarLabel: t('Home_screen name') }}
+            component={HomeScreen}
+          />
+          {/* TODO: Fix the missing screens */}
+          {/* <HomeButtomTab.Screen
               name="ArticleCollectionNavigator"
               component={ArticleCollectionNavigator}
             /> */}
-        {/* <HomeButtomTab.Screen name="Settings" component={SettingsScreen} /> */}
-      </HomeBottomTab.Navigator>
+          {/* <HomeButtomTab.Screen name="Settings" component={SettingsScreen} /> */}
+        </HomeBottomTab.Navigator>
+      </Container>
     </SafeArea>
   );
 };

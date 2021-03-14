@@ -45,7 +45,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps<BottomTabBarOptions>> = ({
           const label = (() => {
             if (typeof options.tabBarLabel !== 'string') {
               throw new Error(
-                '`tabBarLabel` should be string. Check `<.Screen options={{ tabBarLabel: ... }}>',
+                `tabBarLabel should be string. Check <${route.name}.Screen options={{ tabBarLabel: ... }}>`,
               );
             }
 
