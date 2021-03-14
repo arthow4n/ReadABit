@@ -10,7 +10,7 @@ const LoginStack = createStackNavigator<LoginStackParamList>();
 
 export const LoginNavigator: React.FC = () => {
   return (
-    <LoginStack.Navigator>
+    <LoginStack.Navigator headerMode="none">
       <LoginStack.Screen name="Login" component={LoginScreen} />
     </LoginStack.Navigator>
   );

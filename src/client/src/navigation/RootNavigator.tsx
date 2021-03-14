@@ -14,7 +14,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
 export const RootNavigator: React.FC = () => {
   return (
     <NavigationContainer linking={linking}>
-      <RootStack.Navigator>
+      <RootStack.Navigator headerMode="none" initialRouteName="HomeNavigator">
         <RootStack.Screen name="LoginNavigator" component={LoginNavigator} />
         <RootStack.Screen name="HomeNavigator" component={HomeNavigator} />
         <RootStack.Screen
