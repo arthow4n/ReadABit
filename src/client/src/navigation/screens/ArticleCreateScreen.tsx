@@ -55,7 +55,7 @@ const ArticleCreateForm: React.FC<{
 
   const { mutateAsync, isLoading } = useMutateArticleCreate();
   const onSubmitPress = handleSubmit(async (values) => {
-    const result = await mutateAsync(values);
+    const result = await mutateAsync({ request: values });
     linkTo(routeUrl(Routes.Article, { id: result.id }));
   });
 
@@ -127,14 +127,19 @@ export const ArticleCreateScreen: React.FC<
   const { refetch, data } = useQuery(
     [QueryCacheKey.ArticleCollectionList],
     // TODO: Handle large list
-    () => api.articleCollections_List(appSettings.languageCodes.studying),
+    () =>
+      api.articleCollections_List({
+        filter_LanguageCode: appSettings.languageCodes.studying,
+      }),
     {
       onSuccess: async ({ items }) => {
         if (!items.length) {
           const r = await mutateAsync({
-            languageCode: appSettings.languageCodes.studying,
-            name: t('Quick imports'),
-            public: false,
+            request: {
+              languageCode: appSettings.languageCodes.studying,
+              name: t('Quick imports'),
+              public: false,
+            },
           });
           console.log(r);
           refetch();

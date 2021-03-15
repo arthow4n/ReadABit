@@ -108,7 +108,7 @@
       "useAbortSignal": false,
       "inlineNamedDictionaries": false,
       "inlineNamedAny": false,
-      "templateDirectory": null,
+      "templateDirectory": "Misc/NSwagTemplates",
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,

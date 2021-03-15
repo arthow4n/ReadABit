@@ -12,25 +12,25 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Ca
 export module Backend {
 
 export interface IClient {
-    articleCollections_List(filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined): Promise<PaginatedOfArticleCollection>;
-    articleCollections_Create(request: ArticleCollectionCreate): Promise<ArticleCollection>;
-    articleCollections_Get(id: string): Promise<ArticleCollection>;
-    articleCollections_Update(id: string, request: ArticleCollectionUpdate): Promise<void>;
-    articleCollections_Delete(id: string): Promise<void>;
-    articles_List(articleCollectionId?: string | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined): Promise<PaginatedOfArticleListItemViewModel>;
-    articles_Create(request: ArticleCreate): Promise<Article>;
-    articles_Get(id: string): Promise<Article>;
-    articles_Update(id: string, request: ArticleUpdate): Promise<void>;
-    articles_Delete(id: string): Promise<void>;
-    userPreferences_List(): Promise<UserPreference[]>;
-    userPreferences_Upsert(request: UserPreferenceUpsert): Promise<void>;
-    userPreferences_Delete(id: string): Promise<void>;
-    wordDefinitions_List(filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined): Promise<PaginatedOfWordDefinition>;
-    wordDefinitions_Create(request: WordDefinitionCreate): Promise<WordDefinition>;
-    wordDefinitions_ListPublicSuggestions(filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined): Promise<PaginatedOfWordDefinitionListPublicSuggestionViewModel>;
-    wordDefinitions_Get(id: string): Promise<WordDefinition>;
-    wordDefinitions_Update(id: string, request: WordDefinitionUpdate): Promise<void>;
-    wordDefinitions_Delete(id: string): Promise<void>;
+    articleCollections_List(request: { filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfArticleCollection>;
+    articleCollections_Create(request: { request: ArticleCollectionCreate }): Promise<ArticleCollection>;
+    articleCollections_Get(request: { id: string }): Promise<ArticleCollection>;
+    articleCollections_Update(request: { id: string, request: ArticleCollectionUpdate }): Promise<void>;
+    articleCollections_Delete(request: { id: string }): Promise<void>;
+    articles_List(request: { articleCollectionId?: string | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfArticleListItemViewModel>;
+    articles_Create(request: { request: ArticleCreate }): Promise<Article>;
+    articles_Get(request: { id: string }): Promise<Article>;
+    articles_Update(request: { id: string, request: ArticleUpdate }): Promise<void>;
+    articles_Delete(request: { id: string }): Promise<void>;
+    userPreferences_List(request: {  }): Promise<UserPreference[]>;
+    userPreferences_Upsert(request: { request: UserPreferenceUpsert }): Promise<void>;
+    userPreferences_Delete(request: { id: string }): Promise<void>;
+    wordDefinitions_List(request: { filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfWordDefinition>;
+    wordDefinitions_Create(request: { request: WordDefinitionCreate }): Promise<WordDefinition>;
+    wordDefinitions_ListPublicSuggestions(request: { filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfWordDefinitionListPublicSuggestionViewModel>;
+    wordDefinitions_Get(request: { id: string }): Promise<WordDefinition>;
+    wordDefinitions_Update(request: { id: string, request: WordDefinitionUpdate }): Promise<void>;
+    wordDefinitions_Delete(request: { id: string }): Promise<void>;
 }
 
 export class Client implements IClient {
@@ -43,22 +43,22 @@ export class Client implements IClient {
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
 
-    articleCollections_List(filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<PaginatedOfArticleCollection> {
+    articleCollections_List(request: { filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfArticleCollection> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections?";
-        if (filter_LanguageCode === undefined)
-            throw new Error("The parameter 'filter_LanguageCode' must be defined.");
-        else if(filter_LanguageCode !== null)
-            url_ += "Filter.LanguageCode=" + encodeURIComponent("" + filter_LanguageCode) + "&";
-        if (filter_OwnedByUserId !== undefined && filter_OwnedByUserId !== null)
-            url_ += "Filter.OwnedByUserId=" + encodeURIComponent("" + filter_OwnedByUserId) + "&";
-        if (filter_Name !== undefined && filter_Name !== null)
-            url_ += "Filter.Name=" + encodeURIComponent("" + filter_Name) + "&";
-        if (page_Index === null)
-            throw new Error("The parameter 'page_Index' cannot be null.");
-        else if (page_Index !== undefined)
-            url_ += "Page.Index=" + encodeURIComponent("" + page_Index) + "&";
-        if (page_Size !== undefined && page_Size !== null)
-            url_ += "Page.Size=" + encodeURIComponent("" + page_Size) + "&";
+        if (request.filter_LanguageCode === undefined)
+            throw new Error("The parameter 'request.filter_LanguageCode' must be defined.");
+        else if(request.filter_LanguageCode !== null)
+            url_ += "Filter.LanguageCode=" + encodeURIComponent("" + request.filter_LanguageCode) + "&";
+        if (request.filter_OwnedByUserId !== undefined && request.filter_OwnedByUserId !== null)
+            url_ += "Filter.OwnedByUserId=" + encodeURIComponent("" + request.filter_OwnedByUserId) + "&";
+        if (request.filter_Name !== undefined && request.filter_Name !== null)
+            url_ += "Filter.Name=" + encodeURIComponent("" + request.filter_Name) + "&";
+        if (request.page_Index === null)
+            throw new Error("The parameter 'request.page_Index' cannot be null.");
+        else if (request.page_Index !== undefined)
+            url_ += "Page.Index=" + encodeURIComponent("" + request.page_Index) + "&";
+        if (request.page_Size !== undefined && request.page_Size !== null)
+            url_ += "Page.Size=" + encodeURIComponent("" + request.page_Size) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -106,11 +106,11 @@ export class Client implements IClient {
         }
     }
 
-    articleCollections_Create(request: ArticleCollectionCreate , cancelToken?: CancelToken | undefined): Promise<ArticleCollection> {
+    articleCollections_Create(request: { request: ArticleCollectionCreate }, cancelToken?: CancelToken | undefined ): Promise<ArticleCollection> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(request);
+        const content_ = JSON.stringify(request.request);
 
         let options_ = <AxiosRequestConfig>{
             data: content_,
@@ -159,11 +159,11 @@ export class Client implements IClient {
         }
     }
 
-    articleCollections_Get(id: string , cancelToken?: CancelToken | undefined): Promise<ArticleCollection> {
+    articleCollections_Get(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<ArticleCollection> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (request.id === undefined || request.id === null)
+            throw new Error("The parameter 'request.id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -217,14 +217,14 @@ export class Client implements IClient {
         }
     }
 
-    articleCollections_Update(id: string, request: ArticleCollectionUpdate , cancelToken?: CancelToken | undefined): Promise<void> {
+    articleCollections_Update(request: { id: string, request: ArticleCollectionUpdate }, cancelToken?: CancelToken | undefined ): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (request.id === undefined || request.id === null)
+            throw new Error("The parameter 'request.id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(request);
+        const content_ = JSON.stringify(request.request);
 
         let options_ = <AxiosRequestConfig>{
             data: content_,
@@ -275,11 +275,11 @@ export class Client implements IClient {
         }
     }
 
-    articleCollections_Delete(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
+    articleCollections_Delete(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (request.id === undefined || request.id === null)
+            throw new Error("The parameter 'request.id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -329,18 +329,18 @@ export class Client implements IClient {
         }
     }
 
-    articles_List(articleCollectionId?: string | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<PaginatedOfArticleListItemViewModel> {
+    articles_List(request: { articleCollectionId?: string | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfArticleListItemViewModel> {
         let url_ = this.baseUrl + "/api/v1/Articles?";
-        if (articleCollectionId === null)
-            throw new Error("The parameter 'articleCollectionId' cannot be null.");
-        else if (articleCollectionId !== undefined)
-            url_ += "ArticleCollectionId=" + encodeURIComponent("" + articleCollectionId) + "&";
-        if (page_Index === null)
-            throw new Error("The parameter 'page_Index' cannot be null.");
-        else if (page_Index !== undefined)
-            url_ += "Page.Index=" + encodeURIComponent("" + page_Index) + "&";
-        if (page_Size !== undefined && page_Size !== null)
-            url_ += "Page.Size=" + encodeURIComponent("" + page_Size) + "&";
+        if (request.articleCollectionId === null)
+            throw new Error("The parameter 'request.articleCollectionId' cannot be null.");
+        else if (request.articleCollectionId !== undefined)
+            url_ += "ArticleCollectionId=" + encodeURIComponent("" + request.articleCollectionId) + "&";
+        if (request.page_Index === null)
+            throw new Error("The parameter 'request.page_Index' cannot be null.");
+        else if (request.page_Index !== undefined)
+            url_ += "Page.Index=" + encodeURIComponent("" + request.page_Index) + "&";
+        if (request.page_Size !== undefined && request.page_Size !== null)
+            url_ += "Page.Size=" + encodeURIComponent("" + request.page_Size) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -388,11 +388,11 @@ export class Client implements IClient {
         }
     }
 
-    articles_Create(request: ArticleCreate , cancelToken?: CancelToken | undefined): Promise<Article> {
+    articles_Create(request: { request: ArticleCreate }, cancelToken?: CancelToken | undefined ): Promise<Article> {
         let url_ = this.baseUrl + "/api/v1/Articles";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(request);
+        const content_ = JSON.stringify(request.request);
 
         let options_ = <AxiosRequestConfig>{
             data: content_,
@@ -441,11 +441,11 @@ export class Client implements IClient {
         }
     }
 
-    articles_Get(id: string , cancelToken?: CancelToken | undefined): Promise<Article> {
+    articles_Get(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<Article> {
         let url_ = this.baseUrl + "/api/v1/Articles/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (request.id === undefined || request.id === null)
+            throw new Error("The parameter 'request.id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -499,14 +499,14 @@ export class Client implements IClient {
         }
     }
 
-    articles_Update(id: string, request: ArticleUpdate , cancelToken?: CancelToken | undefined): Promise<void> {
+    articles_Update(request: { id: string, request: ArticleUpdate }, cancelToken?: CancelToken | undefined ): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/Articles/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (request.id === undefined || request.id === null)
+            throw new Error("The parameter 'request.id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(request);
+        const content_ = JSON.stringify(request.request);
 
         let options_ = <AxiosRequestConfig>{
             data: content_,
@@ -557,11 +557,11 @@ export class Client implements IClient {
         }
     }
 
-    articles_Delete(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
+    articles_Delete(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/Articles/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (request.id === undefined || request.id === null)
+            throw new Error("The parameter 'request.id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -611,7 +611,7 @@ export class Client implements IClient {
         }
     }
 
-    userPreferences_List(  cancelToken?: CancelToken | undefined): Promise<UserPreference[]> {
+    userPreferences_List(request: {  } = { }, cancelToken?: CancelToken | undefined ): Promise<UserPreference[]> {
         let url_ = this.baseUrl + "/api/v1/UserPreferences";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -660,11 +660,11 @@ export class Client implements IClient {
         }
     }
 
-    userPreferences_Upsert(request: UserPreferenceUpsert , cancelToken?: CancelToken | undefined): Promise<void> {
+    userPreferences_Upsert(request: { request: UserPreferenceUpsert }, cancelToken?: CancelToken | undefined ): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/UserPreferences";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(request);
+        const content_ = JSON.stringify(request.request);
 
         let options_ = <AxiosRequestConfig>{
             data: content_,
@@ -709,11 +709,11 @@ export class Client implements IClient {
         }
     }
 
-    userPreferences_Delete(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
+    userPreferences_Delete(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/UserPreferences/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (request.id === undefined || request.id === null)
+            throw new Error("The parameter 'request.id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -763,18 +763,18 @@ export class Client implements IClient {
         }
     }
 
-    wordDefinitions_List(filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<PaginatedOfWordDefinition> {
+    wordDefinitions_List(request: { filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfWordDefinition> {
         let url_ = this.baseUrl + "/api/v1/WordDefinitions?";
-        if (filter_Word_LanguageCode !== undefined && filter_Word_LanguageCode !== null)
-            url_ += "Filter.Word.LanguageCode=" + encodeURIComponent("" + filter_Word_LanguageCode) + "&";
-        if (filter_Word_Expression !== undefined && filter_Word_Expression !== null)
-            url_ += "Filter.Word.Expression=" + encodeURIComponent("" + filter_Word_Expression) + "&";
-        if (page_Index === null)
-            throw new Error("The parameter 'page_Index' cannot be null.");
-        else if (page_Index !== undefined)
-            url_ += "Page.Index=" + encodeURIComponent("" + page_Index) + "&";
-        if (page_Size !== undefined && page_Size !== null)
-            url_ += "Page.Size=" + encodeURIComponent("" + page_Size) + "&";
+        if (request.filter_Word_LanguageCode !== undefined && request.filter_Word_LanguageCode !== null)
+            url_ += "Filter.Word.LanguageCode=" + encodeURIComponent("" + request.filter_Word_LanguageCode) + "&";
+        if (request.filter_Word_Expression !== undefined && request.filter_Word_Expression !== null)
+            url_ += "Filter.Word.Expression=" + encodeURIComponent("" + request.filter_Word_Expression) + "&";
+        if (request.page_Index === null)
+            throw new Error("The parameter 'request.page_Index' cannot be null.");
+        else if (request.page_Index !== undefined)
+            url_ += "Page.Index=" + encodeURIComponent("" + request.page_Index) + "&";
+        if (request.page_Size !== undefined && request.page_Size !== null)
+            url_ += "Page.Size=" + encodeURIComponent("" + request.page_Size) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -822,11 +822,11 @@ export class Client implements IClient {
         }
     }
 
-    wordDefinitions_Create(request: WordDefinitionCreate , cancelToken?: CancelToken | undefined): Promise<WordDefinition> {
+    wordDefinitions_Create(request: { request: WordDefinitionCreate }, cancelToken?: CancelToken | undefined ): Promise<WordDefinition> {
         let url_ = this.baseUrl + "/api/v1/WordDefinitions";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(request);
+        const content_ = JSON.stringify(request.request);
 
         let options_ = <AxiosRequestConfig>{
             data: content_,
@@ -875,18 +875,18 @@ export class Client implements IClient {
         }
     }
 
-    wordDefinitions_ListPublicSuggestions(filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<PaginatedOfWordDefinitionListPublicSuggestionViewModel> {
+    wordDefinitions_ListPublicSuggestions(request: { filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfWordDefinitionListPublicSuggestionViewModel> {
         let url_ = this.baseUrl + "/suggestions?";
-        if (filter_Word_LanguageCode !== undefined && filter_Word_LanguageCode !== null)
-            url_ += "Filter.Word.LanguageCode=" + encodeURIComponent("" + filter_Word_LanguageCode) + "&";
-        if (filter_Word_Expression !== undefined && filter_Word_Expression !== null)
-            url_ += "Filter.Word.Expression=" + encodeURIComponent("" + filter_Word_Expression) + "&";
-        if (page_Index === null)
-            throw new Error("The parameter 'page_Index' cannot be null.");
-        else if (page_Index !== undefined)
-            url_ += "Page.Index=" + encodeURIComponent("" + page_Index) + "&";
-        if (page_Size !== undefined && page_Size !== null)
-            url_ += "Page.Size=" + encodeURIComponent("" + page_Size) + "&";
+        if (request.filter_Word_LanguageCode !== undefined && request.filter_Word_LanguageCode !== null)
+            url_ += "Filter.Word.LanguageCode=" + encodeURIComponent("" + request.filter_Word_LanguageCode) + "&";
+        if (request.filter_Word_Expression !== undefined && request.filter_Word_Expression !== null)
+            url_ += "Filter.Word.Expression=" + encodeURIComponent("" + request.filter_Word_Expression) + "&";
+        if (request.page_Index === null)
+            throw new Error("The parameter 'request.page_Index' cannot be null.");
+        else if (request.page_Index !== undefined)
+            url_ += "Page.Index=" + encodeURIComponent("" + request.page_Index) + "&";
+        if (request.page_Size !== undefined && request.page_Size !== null)
+            url_ += "Page.Size=" + encodeURIComponent("" + request.page_Size) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -934,11 +934,11 @@ export class Client implements IClient {
         }
     }
 
-    wordDefinitions_Get(id: string , cancelToken?: CancelToken | undefined): Promise<WordDefinition> {
+    wordDefinitions_Get(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<WordDefinition> {
         let url_ = this.baseUrl + "/api/v1/WordDefinitions/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (request.id === undefined || request.id === null)
+            throw new Error("The parameter 'request.id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -992,14 +992,14 @@ export class Client implements IClient {
         }
     }
 
-    wordDefinitions_Update(id: string, request: WordDefinitionUpdate , cancelToken?: CancelToken | undefined): Promise<void> {
+    wordDefinitions_Update(request: { id: string, request: WordDefinitionUpdate }, cancelToken?: CancelToken | undefined ): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/WordDefinitions/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (request.id === undefined || request.id === null)
+            throw new Error("The parameter 'request.id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(request);
+        const content_ = JSON.stringify(request.request);
 
         let options_ = <AxiosRequestConfig>{
             data: content_,
@@ -1050,11 +1050,11 @@ export class Client implements IClient {
         }
     }
 
-    wordDefinitions_Delete(id: string , cancelToken?: CancelToken | undefined): Promise<void> {
+    wordDefinitions_Delete(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/WordDefinitions/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        if (request.id === undefined || request.id === null)
+            throw new Error("The parameter 'request.id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
