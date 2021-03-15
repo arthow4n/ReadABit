@@ -1,11 +1,10 @@
-﻿using System.Data;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using FluentValidation;
 using MediatR;
 using Newtonsoft.Json;
 using NSwag.Annotations;
 using ReadABit.Infrastructure.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ReadABit.Core.Commands
 {
@@ -28,9 +27,8 @@ namespace ReadABit.Core.Commands
     public record ArticleCollectionListFilter
     {
         public Guid? OwnedByUserId { get; init; }
-
         public string? Name { get; init; }
-
+        [BindRequired]
         public string LanguageCode { get; init; } = "";
     }
 }

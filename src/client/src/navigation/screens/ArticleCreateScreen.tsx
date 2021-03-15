@@ -127,12 +127,7 @@ export const ArticleCreateScreen: React.FC<
   const { refetch, data } = useQuery(
     [QueryCacheKey.ArticleCollectionList],
     // TODO: Handle large list
-    () =>
-      api.articleCollections_List(
-        null,
-        null,
-        appSettings.languageCodes.studying,
-      ),
+    () => api.articleCollections_List(appSettings.languageCodes.studying),
     {
       onSuccess: async ({ items }) => {
         if (!items.length) {

@@ -12,7 +12,7 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Ca
 export module Backend {
 
 export interface IClient {
-    articleCollections_List(filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, filter_LanguageCode?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined): Promise<PaginatedOfArticleCollection>;
+    articleCollections_List(filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined): Promise<PaginatedOfArticleCollection>;
     articleCollections_Create(request: ArticleCollectionCreate): Promise<ArticleCollection>;
     articleCollections_Get(id: string): Promise<ArticleCollection>;
     articleCollections_Update(id: string, request: ArticleCollectionUpdate): Promise<void>;
@@ -43,14 +43,16 @@ export class Client implements IClient {
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
 
-    articleCollections_List(filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, filter_LanguageCode?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<PaginatedOfArticleCollection> {
+    articleCollections_List(filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined , cancelToken?: CancelToken | undefined): Promise<PaginatedOfArticleCollection> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections?";
+        if (filter_LanguageCode === undefined)
+            throw new Error("The parameter 'filter_LanguageCode' must be defined.");
+        else if(filter_LanguageCode !== null)
+            url_ += "Filter.LanguageCode=" + encodeURIComponent("" + filter_LanguageCode) + "&";
         if (filter_OwnedByUserId !== undefined && filter_OwnedByUserId !== null)
             url_ += "Filter.OwnedByUserId=" + encodeURIComponent("" + filter_OwnedByUserId) + "&";
         if (filter_Name !== undefined && filter_Name !== null)
             url_ += "Filter.Name=" + encodeURIComponent("" + filter_Name) + "&";
-        if (filter_LanguageCode !== undefined && filter_LanguageCode !== null)
-            url_ += "Filter.LanguageCode=" + encodeURIComponent("" + filter_LanguageCode) + "&";
         if (page_Index === null)
             throw new Error("The parameter 'page_Index' cannot be null.");
         else if (page_Index !== undefined)
