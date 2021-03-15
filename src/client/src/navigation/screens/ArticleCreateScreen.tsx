@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Controller, useForm } from 'react-hook-form';
+import { appendErrors, Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 
@@ -127,16 +127,21 @@ export const ArticleCreateScreen: React.FC<
   const { refetch, data } = useQuery(
     [QueryCacheKey.ArticleCollectionList],
     // TODO: Handle large list
-    () => api.articleCollections_List(),
+    () =>
+      api.articleCollections_List(
+        null,
+        null,
+        appSettings.languageCodes.studying,
+      ),
     {
       onSuccess: async ({ items }) => {
         if (!items.length) {
-          await mutateAsync({
+          const r = await mutateAsync({
             languageCode: appSettings.languageCodes.studying,
             name: t('Quick imports'),
             public: false,
           });
-
+          console.log(r);
           refetch();
         }
       },

@@ -23,9 +23,11 @@ export const StackNavigatorHeader: React.FC<StackHeaderProps> = ({
   return (
     <Header>
       <Left>
-        <Button transparent onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" />
-        </Button>
+        {navigation.canGoBack() && (
+          <Button transparent onPress={() => navigation.goBack()}>
+            <Icon name="arrow-back" />
+          </Button>
+        )}
       </Left>
       <Body>
         <Title>{title}</Title>

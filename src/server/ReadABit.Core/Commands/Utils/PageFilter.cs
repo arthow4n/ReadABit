@@ -14,7 +14,7 @@ namespace ReadABit.Core.Commands
     /// </summary>
     public record PageFilter
     {
-        public int Index { get; init; }
+        public int Index { get; init; } = 1;
         public int? Size { get; init; }
 
         public PageFilterFilled Fill(int defaultPageSize) => new()

@@ -71,6 +71,10 @@ export const configAuthorizationHeader = async (
 };
 
 export const loadAuthToken = async () => {
+  // FIXME: Fix backend so refresh token is valid between server restarts.
+  // Maybe due to this? https://github.com/openiddict/openiddict-core/issues/430#issuecomment-323347809
+  return;
+
   const saved = await readFromSecureStore<TokenResponseConfig>(StorageKey.AuthToken);
   if (saved == null) {
     return;
@@ -127,8 +131,9 @@ export const api = new Proxy(innerClient, {
         // Ensure there's only one ongoing token refresh request
         ongoingRefreshTokenPromise =
           ongoingRefreshTokenPromise ?? refreshToken(tokenManager.currentToken);
-        await ongoingRefreshTokenPromise;
       }
+
+      await ongoingRefreshTokenPromise;
 
       return actual.call(innerClient, ...args);
     };

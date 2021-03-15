@@ -13,7 +13,6 @@ namespace ReadABit.Core.Commands
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; init; }
-
         public ArticleCollectionListFilter Filter { get; init; } = new();
         public PageFilter Page { get; init; } = new();
     }

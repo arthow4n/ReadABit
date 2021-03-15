@@ -26,6 +26,7 @@ namespace ReadABit.Core.Commands
                 .Where(ac => ac.LanguageCode == request.Filter.LanguageCode)
                 .Where(ac => request.Filter.OwnedByUserId == null || ac.UserId == request.Filter.OwnedByUserId)
                 .Where(ac => string.IsNullOrWhiteSpace(request.Filter.Name) || ac.Name.StartsWith(request.Filter.Name))
+                // TODO: Sorting
                 .ToPaginatedAsync(request.Page, 50, cancellationToken);
         }
     }

@@ -30,11 +30,11 @@ const useMutateAndInvalidate = <TData, TVariables>(
       // because it will trigger refetch in background
       // when the query is currently being rendered.
       // https://react-query.tanstack.com/guides/query-invalidation
-      await Promise.all(
-        invalidations.map((invalidation) =>
-          queryClient.invalidateQueries(...invalidation),
-        ),
-      );
+      // Promise.all(
+      //   invalidations.map((invalidation) =>
+      //     queryClient.invalidateQueries(...invalidation),
+      //   ),
+      // );
 
       return result;
     },
