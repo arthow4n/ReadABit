@@ -4,21 +4,15 @@
   "tools": {
     "dotnet-aspnet-codegenerator": {
       "version": "5.0.2",
-      "commands": [
-        "dotnet-aspnet-codegenerator"
-      ]
+      "commands": ["dotnet-aspnet-codegenerator"]
     },
     "dotnet-ef": {
-      "version": "5.0.3",
-      "commands": [
-        "dotnet-ef"
-      ]
+      "version": "5.0.4",
+      "commands": ["dotnet-ef"]
     },
     "nswag.consolecore": {
       "version": "13.10.5",
-      "commands": [
-        "nswag"
-      ]
+      "commands": ["nswag"]
     }
   }
 }

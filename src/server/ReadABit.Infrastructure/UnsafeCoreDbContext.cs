@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ namespace ReadABit.Infrastructure
     /// <summary>
     /// The root DbContext. Avoid using this when possible since it's more easy to forget filtering the query by user when directly using this.
     /// </summary>
-    public class UnsafeCoreDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
+    public class UnsafeCoreDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>, IDataProtectionKeyContext
     {
         public UnsafeCoreDbContext(DbContextOptions options) : base(options)
         {
@@ -20,6 +21,7 @@ namespace ReadABit.Infrastructure
         public DbSet<Word> Words => Set<Word>();
         public DbSet<WordDefinition> WordDefinitions => Set<WordDefinition>();
         public DbSet<UserPreference> UserPreferences => Set<UserPreference>();
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

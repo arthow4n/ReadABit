@@ -17,6 +17,7 @@ using FluentValidation.AspNetCore;
 using NodaTime.Serialization.JsonNet;
 using NodaTime;
 using Npgsql;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace ReadABit.Web
 {
@@ -150,6 +151,10 @@ namespace ReadABit.Web
             services.AddHttpContextAccessor();
             services.AddScoped<IRequestContext, RequestContext>();
             services.AddScoped<DB, DB>();
+
+            // https://github.com/openiddict/openiddict-core/issues/430
+            services.AddDataProtection()
+                .PersistKeysToDbContext<UnsafeCoreDbContext>();
 
             services.AddMediatR(typeof(SaveChanges));
 
