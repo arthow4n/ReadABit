@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using NodaTime;
 using ReadABit.Core.Integrations.Contracts.Conllu;
 
 namespace ReadABit.Infrastructure.Models
@@ -16,15 +17,17 @@ namespace ReadABit.Infrastructure.Models
         /// </summary>
         [Required]
         public string Name { get; set; }
-
         /// <summary>
         /// Plain text of the article content
         /// </summary>
         [Required]
         public string Text { get; set; }
-
         [Required]
         [Column(TypeName = "jsonb")]
         public Conllu.Document ConlluDocument { get; set; }
+        [Required]
+        public Instant CreatedAt { get; set; }
+        [Required]
+        public Instant UpdatedAt { get; set; }
     }
 }

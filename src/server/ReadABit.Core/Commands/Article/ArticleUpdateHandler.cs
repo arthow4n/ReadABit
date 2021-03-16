@@ -8,16 +8,19 @@ using ReadABit.Core.Utils;
 using ReadABit.Core.Integrations.Services;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation;
+using NodaTime;
 
 namespace ReadABit.Core.Commands
 {
     public class ArticleUpdateHandler : IRequestHandler<ArticleUpdate, bool>
     {
         private readonly DB _db;
+        private readonly IClock _clock;
 
-        public ArticleUpdateHandler(DB db)
+        public ArticleUpdateHandler(DB db, IClock clock)
         {
             _db = db;
+            _clock = clock;
         }
 
         public async Task<bool> Handle(ArticleUpdate request, CancellationToken cancellationToken)
@@ -29,7 +32,7 @@ namespace ReadABit.Core.Commands
                                    .Select(a => new
                                    {
                                        Article = a,
-                                       a.ArticleCollection.LanguageCode,
+                                       a.ArticleCollection,
                                    })
                                    .SingleOrDefaultAsync(cancellationToken: cancellationToken);
 
@@ -43,7 +46,9 @@ namespace ReadABit.Core.Commands
             article.Article.ConlluDocument =
                 request.Text is null ?
                     article.Article.ConlluDocument :
-                    UDPipeV1Service.ToConlluDocument(article.LanguageCode, request.Text);
+                    UDPipeV1Service.ToConlluDocument(article.ArticleCollection.LanguageCode, request.Text);
+
+            article.ArticleCollection.UpdatedAt = _clock.GetCurrentInstant();
 
             return true;
         }

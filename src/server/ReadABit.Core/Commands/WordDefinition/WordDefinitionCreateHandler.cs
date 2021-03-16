@@ -69,6 +69,7 @@ namespace ReadABit.Core.Commands
                 LanguageCode = request.LanguageCode,
                 Meaning = request.Meaning.Trim(),
                 CreatedAt = _clock.GetCurrentInstant(),
+                UpdatedAt = _clock.GetCurrentInstant(),
             };
 
             await _db.Unsafe.AddAsync(wordDefinition, cancellationToken);

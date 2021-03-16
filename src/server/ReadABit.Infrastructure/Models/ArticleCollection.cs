@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using NodaTime;
 
 namespace ReadABit.Infrastructure.Models
 {
@@ -19,5 +20,9 @@ namespace ReadABit.Infrastructure.Models
         public List<Article> Articles { get; set; }
         [Required]
         public bool Public { get; set; }
+        [Required]
+        public Instant CreatedAt { get; set; }
+        [Required]
+        public Instant UpdatedAt { get; set; }
     }
 }

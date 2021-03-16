@@ -32,5 +32,7 @@ namespace ReadABit.Infrastructure.Models
         /// </summary>
         [Required]
         public Instant CreatedAt { get; set; }
+        [Required]
+        public Instant UpdatedAt { get; set; }
     }
 }
