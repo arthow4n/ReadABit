@@ -70,19 +70,6 @@ export const configAuthorizationHeader = async (
   }
 };
 
-export const loadAuthToken = async () => {
-  // FIXME: Fix backend so refresh token is valid between server restarts.
-  // Maybe due to this? https://github.com/openiddict/openiddict-core/issues/430#issuecomment-323347809
-  return;
-
-  const saved = await readFromSecureStore<TokenResponseConfig>(StorageKey.AuthToken);
-  if (saved == null) {
-    return;
-  }
-
-  await configAuthorizationHeader(new TokenResponse(saved));
-};
-
 const innerClient = new Backend.Client(backendBaseUrl, axiosIntance);
 
 let ongoingRefreshTokenPromise: Promise<void> | null = null;
@@ -101,6 +88,22 @@ const refreshToken = async (t: TokenResponse) => {
 
   await configAuthorizationHeader(newTokenResponse);
   ongoingRefreshTokenPromise = null;
+};
+
+export const loadAuthToken = async () => {
+  const saved = await readFromSecureStore<TokenResponseConfig>(StorageKey.AuthToken);
+  if (saved == null) {
+    return;
+  }
+
+  // FIXME: Fix backend? so refresh token is valid between server restarts.
+  // Currently the refreshtoken is always invalid after backend restart for unknown reason.
+  // The following error message is always shown in client side after server restart in dev env:
+  // > The provided authorization grant (e.g., authorization code, resource owner
+  // > credentials) or refresh token is invalid, expired, revoked, does not match
+  // > the redirection URI used in the authorization request, or was issued to another client.
+  // > More info: The specified refresh token is invalid.
+  await refreshToken(new TokenResponse(saved));
 };
 
 // FIXME: Fix the template of types.ts instead of doing it like this.
