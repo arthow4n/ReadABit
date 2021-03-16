@@ -96,13 +96,6 @@ export const loadAuthToken = async () => {
     return;
   }
 
-  // FIXME: Fix backend? so refresh token is valid between server restarts.
-  // Currently the refreshtoken is always invalid after backend restart for unknown reason.
-  // The following error message is always shown in client side after server restart in dev env:
-  // > The provided authorization grant (e.g., authorization code, resource owner
-  // > credentials) or refresh token is invalid, expired, revoked, does not match
-  // > the redirection URI used in the authorization request, or was issued to another client.
-  // > More info: The specified refresh token is invalid.
   await refreshToken(new TokenResponse(saved));
 };
 

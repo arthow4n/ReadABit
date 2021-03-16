@@ -30,13 +30,16 @@ namespace ReadABit.Web
 
             var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
-            // FIXME: Find a better way to seed this in production
+            // FIXME: Find a better way to seed this in production, maybe in the CLI utils.
             if (_env.IsDevelopment())
             {
                 var existing = await manager.FindByClientIdAsync("ReadABit");
                 if (existing is not null)
                 {
-                    await manager.DeleteAsync(existing);
+                    return;
+                    // Uncomment the line below for quick reset in dev env.
+                    // Resetting this would invalidate issued tokens.
+                    // await manager.DeleteAsync(existing);
                 }
                 await manager.CreateAsync(new OpenIddictApplicationDescriptor
                 {
