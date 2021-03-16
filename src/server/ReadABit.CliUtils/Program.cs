@@ -6,6 +6,12 @@ using Microsoft.Extensions.Hosting;
 using System.CommandLine.Parsing;
 using System.Threading.Tasks;
 using ReadABit.CliUtils.Commands;
+using ReadABit.Web;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace ReadABit.CliUtils
 {
@@ -15,14 +21,20 @@ namespace ReadABit.CliUtils
         {
             return await BuildCommandLine()
                 .UseHost(
-                    _ => Host.CreateDefaultBuilder(),
-                    host =>
-                    {
-                        host.ConfigureServices(services =>
+                    _ => Host.CreateDefaultBuilder()
+                        .ConfigureWebHostDefaults(webBuilder =>
                         {
-                            // services.Add...
-                        });
-                    }
+                            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                            var config = new ConfigurationBuilder()
+                                     .SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location))
+                                     .AddJsonFile("appsettings.json")
+                                     .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true)
+                                     .AddUserSecrets<Startup>()
+                                     .Build();
+                            webBuilder.UseConfiguration(config);
+                            webBuilder.UseStartup<Startup>();
+                        }),
+                    host => { }
                 )
                 .UseDefaults()
                 .Build()
@@ -32,13 +44,16 @@ namespace ReadABit.CliUtils
         private static CommandLineBuilder BuildCommandLine()
         {
             var certCommand = new Command("cert");
+            var seedCommand = new Command("seed");
 
             var root = new RootCommand
             {
                 certCommand,
+                seedCommand,
             };
 
-            certCommand.Handler = CommandHandler.Create<IHost>(CertCommandHandler.Handle);
+            certCommand.Handler = CommandHandler.Create(CertCommandHandler.Handle);
+            seedCommand.Handler = CommandHandler.Create<IHost>(SeedCommandHandler.Handle);
             return new CommandLineBuilder(root);
         }
     }

@@ -8,7 +8,7 @@ namespace ReadABit.CliUtils.Commands
 {
     public static class CertCommandHandler
     {
-        public static void Handle(IHost host)
+        public static void Handle()
         {
             Console.WriteLine($"dotnet user-secrets set \"Certificates:OpenIddictEncryption\" \"{CreateCert("ReadABit OpenIddict Server Encryption Certificate", X509KeyUsageFlags.KeyEncipherment)}\"");
             Console.WriteLine($"dotnet user-secrets set \"Certificates:OpenIddictSigning\" \"{CreateCert("ReadABit OpenIddict Server Signing Certificate", X509KeyUsageFlags.DigitalSignature)}\"");

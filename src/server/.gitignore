@@ -445,8 +445,7 @@ $RECYCLE.BIN/
 tmp/
 
 # Actual appsettings
-**/appsettings.Development.json
-**/appsettings.Production.json
+**/appsettings.*.json
 
 # VS Code interactive notebook
 **/*.ipynb
