@@ -17,6 +17,7 @@ using FluentValidation.AspNetCore;
 using NodaTime.Serialization.JsonNet;
 using NodaTime;
 using Npgsql;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ReadABit.Web
 {
@@ -101,10 +102,9 @@ namespace ReadABit.Web
                         // https://github.com/openiddict/openiddict-core/issues/835
                         .AllowRefreshTokenFlow();
 
-                    // FIXME: Fix this so it works in production
                     options
-                        .AddDevelopmentEncryptionCertificate()
-                        .AddDevelopmentSigningCertificate();
+                        .AddEncryptionCertificate(new X509Certificate2(Convert.FromBase64String(Configuration["Certificates:OpenIddictEncryption"]), string.Empty))
+                        .AddSigningCertificate(new X509Certificate2(Convert.FromBase64String(Configuration["Certificates:OpenIddictSigning"]), string.Empty));
 
                     var aspOptions =
                         options
