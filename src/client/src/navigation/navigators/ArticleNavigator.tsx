@@ -32,7 +32,11 @@ export const ArticleNavigator: React.FC = () => {
             component={ArticleCreateScreen}
             options={{ headerTitle: t('Import article') }}
           />
-          <ArticleStack.Screen name="Article" component={ArticleScreen} />
+          <ArticleStack.Screen
+            name="Article"
+            component={ArticleScreen}
+            options={{ headerTitle: t('Read') }}
+          />
         </ArticleStack.Navigator>
       </Container>
     </SafeArea>

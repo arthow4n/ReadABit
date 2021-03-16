@@ -88,7 +88,7 @@ const ArticleCreateForm: React.FC<{
           control={control}
           name="name"
           render={({ onChange, value }) => (
-            <Input disabled={disabled} onChange={onChange} value={value} />
+            <Input disabled={disabled} onChangeText={onChange} value={value} />
           )}
         />
         <Text>{errors.name?.message}</Text>
@@ -102,7 +102,7 @@ const ArticleCreateForm: React.FC<{
             rowSpan={5}
             bordered
             placeholder={t('Content')}
-            onChange={onChange}
+            onChangeText={onChange}
             value={value}
           />
         )}
