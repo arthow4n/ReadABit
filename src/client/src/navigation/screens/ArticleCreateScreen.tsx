@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { appendErrors, Controller, useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 
@@ -24,8 +24,10 @@ import { StackNavigationProp } from '@react-navigation/stack';
 
 import { api } from '../../integrations/backend/backend';
 import { Backend } from '../../integrations/backend/types';
+import { ContentLoading } from '../../shared/components/Loading';
 import { useAppSettingsContext } from '../../shared/contexts/AppSettingsContext';
 import {
+  queryCacheKey,
   QueryCacheKey,
   useMutateArticleCollectionsCreate,
   useMutateArticleCreate,
@@ -125,7 +127,9 @@ export const ArticleCreateScreen: React.FC<
   const { mutateAsync } = useMutateArticleCollectionsCreate();
 
   const { refetch, data } = useQuery(
-    [QueryCacheKey.ArticleCollectionList],
+    queryCacheKey(QueryCacheKey.ArticleCollectionList, {
+      filter_LanguageCode: appSettings.languageCodes.studying,
+    }),
     // TODO: Handle large list
     () =>
       api.articleCollections_List({
@@ -149,11 +153,7 @@ export const ArticleCreateScreen: React.FC<
   );
 
   if (!data?.items.length) {
-    return (
-      <Content centerContent>
-        <Spinner />
-      </Content>
-    );
+    return <ContentLoading />;
   }
 
   return (
