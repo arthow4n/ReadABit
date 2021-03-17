@@ -18,7 +18,6 @@ using NodaTime.Serialization.JsonNet;
 using NodaTime;
 using Npgsql;
 using System.Security.Cryptography.X509Certificates;
-using System.Text.Json;
 
 namespace ReadABit.Web
 {
@@ -135,7 +134,6 @@ namespace ReadABit.Web
                     options.EnableAuthorizationEntryValidation();
                     options.EnableTokenEntryValidation();
                 });
-            services.AddHostedService<OpenIddictWorker>();
 
             services
                 .AddControllers()

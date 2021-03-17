@@ -44,7 +44,9 @@ namespace ReadABit.CliUtils
         private static CommandLineBuilder BuildCommandLine()
         {
             var certCommand = new Command("cert");
-            var seedCommand = new Command("seed");
+            var seedCommand = new Command("seed") {
+                new Option(new string[] { "-f", "--force" }, "Override all existing entires. May cause data loss.")
+            };
 
             var root = new RootCommand
             {
@@ -53,7 +55,7 @@ namespace ReadABit.CliUtils
             };
 
             certCommand.Handler = CommandHandler.Create(CertCommandHandler.Handle);
-            seedCommand.Handler = CommandHandler.Create<IHost>(SeedCommandHandler.Handle);
+            seedCommand.Handler = CommandHandler.Create<bool, IHost>(SeedCommandHandler.Handle);
             return new CommandLineBuilder(root);
         }
     }
