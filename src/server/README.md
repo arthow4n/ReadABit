@@ -21,4 +21,13 @@
   dotnet user-secrets set ConnectionStrings:CoreDbContext "Host=localhost;Username=...;Password=...;Database=readabit-test"
   cd ..
   ```
+- Setup OpenIddict
+  ```
+  cd ./ReadABit.CliUtils
+  dotnet run -- seed
+  dotnet run -- cert
+  
+  cd ../ReadABit.Web
+  # run the commands you got from the output of `dotnet run -- cert`
+  ```
 - Refer to `./scripts` or VS Code tasks (`ctrl-shift-p` -> Task) for some other snippets
