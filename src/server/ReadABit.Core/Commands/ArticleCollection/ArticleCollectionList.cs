@@ -14,6 +14,7 @@ namespace ReadABit.Core.Commands
         public Guid UserId { get; init; }
         public ArticleCollectionListFilter Filter { get; init; } = new();
         public PageFilter Page { get; init; } = new();
+        public SortBy SortBy { get; init; }
     }
 
     public class ArticleCollectionListValidator : AbstractValidator<ArticleCollectionList>

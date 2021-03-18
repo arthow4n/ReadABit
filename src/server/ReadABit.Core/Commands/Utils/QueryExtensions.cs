@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ReadABit.Infrastructure.Models;
 using System.Collections.Generic;
+using ReadABit.Infrastructure.Interfaces;
 
 namespace ReadABit.Core.Commands
 {
@@ -62,6 +63,17 @@ namespace ReadABit.Core.Commands
                     TotalCount = totalCount,
                     TotalPages = totalPages,
                 },
+            };
+        }
+
+        public static IQueryable<T> SortBy<T>(this IQueryable<T> query, SortBy sortBy) where T : ITimestampedEntity
+        {
+            return sortBy switch
+            {
+                Commands.SortBy.LastUpdated => query.OrderByDescending(x => x.UpdatedAt),
+                Commands.SortBy.LastCreated => query.OrderByDescending(x => x.CreatedAt),
+                Commands.SortBy.CreatedAt => query.OrderByDescending(x => x.CreatedAt),
+                _ => throw new ArgumentOutOfRangeException(nameof(sortBy)),
             };
         }
     }

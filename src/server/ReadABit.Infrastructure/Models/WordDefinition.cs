@@ -1,10 +1,11 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using NodaTime;
+using ReadABit.Infrastructure.Interfaces;
 
 namespace ReadABit.Infrastructure.Models
 {
-    public class WordDefinition
+    public class WordDefinition : ITimestampedEntity
     {
         public Guid Id { get; set; }
         public Guid WordId { get; set; }

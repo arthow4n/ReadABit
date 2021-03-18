@@ -3,10 +3,11 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using NodaTime;
 using ReadABit.Core.Integrations.Contracts.Conllu;
+using ReadABit.Infrastructure.Interfaces;
 
 namespace ReadABit.Infrastructure.Models
 {
-    public class Article
+    public class Article : ITimestampedEntity
     {
         public Guid Id { get; set; }
         public Guid ArticleCollectionId { get; set; }

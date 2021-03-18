@@ -12,7 +12,7 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Ca
 export module Backend {
 
 export interface IClient {
-    articleCollections_List(request: { filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfArticleCollection>;
+    articleCollections_List(request: { filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined, sortBy?: SortBy | undefined }): Promise<PaginatedOfArticleCollection>;
     articleCollections_Create(request: { request: ArticleCollectionCreate }): Promise<ArticleCollection>;
     articleCollections_Get(request: { id: string }): Promise<ArticleCollection>;
     articleCollections_Update(request: { id: string, request: ArticleCollectionUpdate }): Promise<void>;
@@ -43,7 +43,7 @@ export class Client implements IClient {
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
 
-    articleCollections_List(request: { filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfArticleCollection> {
+    articleCollections_List(request: { filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined, sortBy?: SortBy | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfArticleCollection> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections?";
         if (request.filter_LanguageCode === undefined)
             throw new Error("The parameter 'request.filter_LanguageCode' must be defined.");
@@ -59,6 +59,10 @@ export class Client implements IClient {
             url_ += "Page.Index=" + encodeURIComponent("" + request.page_Index) + "&";
         if (request.page_Size !== undefined && request.page_Size !== null)
             url_ += "Page.Size=" + encodeURIComponent("" + request.page_Size) + "&";
+        if (request.sortBy === null)
+            throw new Error("The parameter 'request.sortBy' cannot be null.");
+        else if (request.sortBy !== undefined)
+            url_ += "SortBy=" + encodeURIComponent("" + request.sortBy) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -1135,6 +1139,8 @@ export interface ArticleCollection {
     languageCode: string;
     articles?: Article[] | null;
     public: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface IdentityUserOfGuid {
@@ -1165,6 +1171,8 @@ export interface Article {
     name: string;
     text: string;
     conlluDocument: Document;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface Document {
@@ -1203,6 +1211,10 @@ export interface ProblemDetails {
     detail?: string | null;
     instance?: string | null;
     extensions?: { [key: string]: any; } | null;
+}
+
+export enum SortBy {
+    LatestFirst = "LatestFirst",
 }
 
 export interface ArticleCollectionCreate {
@@ -1271,6 +1283,7 @@ export interface WordDefinition {
     languageCode: string;
     meaning: string;
     createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface Word {
