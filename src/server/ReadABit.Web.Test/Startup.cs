@@ -50,6 +50,7 @@ namespace ReadABit.Web.Test
             services.AddScoped<DB, DB>();
 
             services.AddMediatR(typeof(SaveChanges));
+            services.AddAutoMapper(typeof(Web.Startup));
         }
     }
 }

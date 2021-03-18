@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -26,8 +27,8 @@ namespace ReadABit.Web.Controller.Utils
         }
 
         protected IMediator Mediator => GetService<IMediator>();
-
         protected IRequestContext RequestContext => GetService<IRequestContext>();
+        protected IMapper Mapper => GetService<IMapper>();
 
         /// <summary>
         /// This should only be used in actions with [Authorize] because it asserts the user ID is not null.

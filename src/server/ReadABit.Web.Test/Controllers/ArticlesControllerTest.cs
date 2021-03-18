@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
+using ReadABit.Web.Contracts;
 using ReadABit.Web.Controllers;
 using ReadABit.Web.Test.Helpers;
 using Shouldly;
@@ -58,7 +59,6 @@ namespace ReadABit.Web.Test.Controllers
             {
                 var created = await Get(createdId);
                 created.Name.ShouldBe(name);
-                created.Text.ShouldBe(text);
                 JsonConvert.SerializeObject(created.ConlluDocument, Formatting.Indented)
                     .ShouldMatchApproved(c => c.WithDiscriminator("CreatedConlluDocument"));
 
@@ -90,7 +90,6 @@ Det beror på att det gör det lättare att förstå vad folk säger.
 
             var updated = await Get(createdId);
             updated.Name.ShouldBe(updatedName);
-            updated.Text.ShouldBe(upadtedText);
             JsonConvert.SerializeObject(updated.ConlluDocument, Formatting.Indented)
                 .ShouldMatchApproved(c => c.WithDiscriminator("UpdatedConlluDocument"));
 
@@ -118,10 +117,10 @@ Det beror på att det gör det lättare att förstå vad folk säger.
                 .Value.ShouldBeOfType<Paginated<ArticleListItemViewModel>>();
         }
 
-        private async Task<Article> Get(Guid id)
+        private async Task<ArticleViewModel> Get(Guid id)
         {
             return (await ArticlesController.Get(id, new ArticleGet { })).ShouldBeOfType<OkObjectResult>()
-                .Value.ShouldBeOfType<Article>();
+                .Value.ShouldBeOfType<ArticleViewModel>();
         }
     }
 }

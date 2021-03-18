@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Commands;
 using ReadABit.Infrastructure.Models;
+using ReadABit.Web.Contracts;
 using ReadABit.Web.Controller.Utils;
 
 namespace ReadABit.Web.Controllers
@@ -29,7 +30,7 @@ namespace ReadABit.Web.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Article))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ArticleViewModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Get(Guid id, [FromQuery] ArticleGet request)
@@ -45,7 +46,7 @@ namespace ReadABit.Web.Controllers
                 return NotFound();
             }
 
-            return Ok(article);
+            return Ok(Mapper.Map<ArticleViewModel>(article));
         }
 
         [HttpPost]
