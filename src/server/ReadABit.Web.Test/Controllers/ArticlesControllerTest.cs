@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ReadABit.Core.Commands;
+using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
-using ReadABit.Web.Contracts;
 using ReadABit.Web.Controllers;
 using ReadABit.Web.Test.Helpers;
 using Shouldly;
@@ -30,7 +30,7 @@ namespace ReadABit.Web.Test.Controllers
                     Public = false,
                 }))
                     .ShouldBeOfType<CreatedAtActionResult>()
-                    .Value.ShouldBeOfType<ArticleCollection>().Id;
+                    .Value.ShouldBeOfType<ArticleCollectionViewModel>().Id;
 
             var name = "dummy";
             var text = "Hallå!";

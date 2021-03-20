@@ -1,23 +1,23 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Security.Cryptography.X509Certificates;
+using FluentValidation.AspNetCore;
+using MediatR;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using ReadABit.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using MediatR;
-using ReadABit.Infrastructure.Models;
-using Microsoft.AspNetCore.Identity;
-using System;
-using static OpenIddict.Abstractions.OpenIddictConstants;
-using ReadABit.Core.Utils;
-using ReadABit.Core.Commands;
-using FluentValidation.AspNetCore;
-using NodaTime.Serialization.JsonNet;
 using NodaTime;
+using NodaTime.Serialization.JsonNet;
 using Npgsql;
-using System.Security.Cryptography.X509Certificates;
+using ReadABit.Core.Commands;
+using ReadABit.Core.Utils;
+using ReadABit.Infrastructure;
+using ReadABit.Infrastructure.Models;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace ReadABit.Web
 {
@@ -158,7 +158,7 @@ namespace ReadABit.Web
             });
             services.AddSwaggerDocument();
 
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(typeof(SaveChanges));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

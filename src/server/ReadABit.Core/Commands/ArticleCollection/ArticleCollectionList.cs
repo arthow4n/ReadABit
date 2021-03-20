@@ -1,14 +1,14 @@
 ﻿using System;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using NSwag.Annotations;
-using ReadABit.Infrastructure.Models;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+using ReadABit.Core.Contracts;
 
 namespace ReadABit.Core.Commands
 {
-    public record ArticleCollectionList : IPaginatedRequest, IRequest<Paginated<ArticleCollection>>
+    public record ArticleCollectionList : IPaginatedRequest, IRequest<Paginated<ArticleCollectionViewModel>>
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; init; }

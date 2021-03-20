@@ -1,8 +1,8 @@
 ﻿using System;
-using MediatR;
 using FluentValidation;
-using NSwag.Annotations;
+using MediatR;
 using Newtonsoft.Json;
+using NSwag.Annotations;
 
 namespace ReadABit.Core.Commands
 {

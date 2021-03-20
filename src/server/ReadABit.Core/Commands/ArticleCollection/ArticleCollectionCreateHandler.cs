@@ -1,26 +1,30 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using ReadABit.Infrastructure.Models;
-using ReadABit.Core.Utils;
+using AutoMapper;
 using FluentValidation;
+using MediatR;
 using NodaTime;
+using ReadABit.Core.Contracts;
+using ReadABit.Core.Utils;
+using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public class ArticleCollectionCreateHandler : IRequestHandler<ArticleCollectionCreate, ArticleCollection>
+    public class ArticleCollectionCreateHandler : IRequestHandler<ArticleCollectionCreate, ArticleCollectionViewModel>
     {
         private readonly DB _db;
         private readonly IClock _clock;
+        private readonly IMapper _mapper;
 
-        public ArticleCollectionCreateHandler(DB db, IClock clock)
+        public ArticleCollectionCreateHandler(DB db, IClock clock, IMapper mapper)
         {
+            _mapper = mapper;
             _db = db;
             _clock = clock;
         }
 
-        public async Task<ArticleCollection> Handle(ArticleCollectionCreate request, CancellationToken cancellationToken)
+        public async Task<ArticleCollectionViewModel> Handle(ArticleCollectionCreate request, CancellationToken cancellationToken)
         {
             new ArticleCollectionCreateValidator().ValidateAndThrow(request);
 
@@ -37,7 +41,7 @@ namespace ReadABit.Core.Commands
 
             await _db.Unsafe.AddAsync(articleCollection, cancellationToken);
 
-            return articleCollection;
+            return _mapper.Map<ArticleCollectionViewModel>(articleCollection);
         }
     }
 }

@@ -2,7 +2,7 @@ using System;
 using NodaTime;
 using ReadABit.Core.Integrations.Contracts.Conllu;
 
-namespace ReadABit.Web.Contracts
+namespace ReadABit.Core.Contracts
 {
     public record ArticleViewModel
     {

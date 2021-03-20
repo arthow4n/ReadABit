@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Commands;
+using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
 using ReadABit.Web.Controllers;
@@ -31,7 +32,7 @@ namespace ReadABit.Web.Test.Controllers
                     Public = true,
                 }))
                 .ShouldBeOfType<CreatedAtActionResult>();
-            var createdId = creationResult.Value.ShouldBeOfType<ArticleCollection>().Id;
+            var createdId = creationResult.Value.ShouldBeOfType<ArticleCollectionViewModel>().Id;
 
             (await List(languageCode)).Items.Count.ShouldBe(1);
 
@@ -78,7 +79,7 @@ namespace ReadABit.Web.Test.Controllers
             (await ArticleCollectionsController.Get(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
-        private async Task<Paginated<ArticleCollection>> List(string languageCode)
+        private async Task<Paginated<ArticleCollectionViewModel>> List(string languageCode)
         {
             return
                 (await ArticleCollectionsController.List(
@@ -95,13 +96,13 @@ namespace ReadABit.Web.Test.Controllers
                     }))
                     .ShouldBeOfType<OkObjectResult>()
                     .Value
-                    .ShouldBeOfType<Paginated<ArticleCollection>>();
+                    .ShouldBeOfType<Paginated<ArticleCollectionViewModel>>();
         }
 
-        private async Task<ArticleCollection> Get(Guid id)
+        private async Task<ArticleCollectionViewModel> Get(Guid id)
         {
             return (await ArticleCollectionsController.Get(id, new ArticleCollectionGet { })).ShouldBeOfType<OkObjectResult>()
-                .Value.ShouldBeOfType<ArticleCollection>();
+                .Value.ShouldBeOfType<ArticleCollectionViewModel>();
         }
     }
 }

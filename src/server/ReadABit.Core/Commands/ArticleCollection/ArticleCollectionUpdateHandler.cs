@@ -1,12 +1,11 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using ReadABit.Core.Utils;
-using EnsureThat;
 using FluentValidation;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using NodaTime;
+using ReadABit.Core.Utils;
 
 namespace ReadABit.Core.Commands
 {

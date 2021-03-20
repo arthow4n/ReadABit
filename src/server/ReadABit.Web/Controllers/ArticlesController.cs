@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Commands;
+using ReadABit.Core.Contracts;
 using ReadABit.Infrastructure.Models;
-using ReadABit.Web.Contracts;
 using ReadABit.Web.Controller.Utils;
 
 namespace ReadABit.Web.Controllers

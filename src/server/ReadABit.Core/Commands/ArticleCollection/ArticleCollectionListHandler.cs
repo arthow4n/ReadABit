@@ -1,24 +1,27 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using MediatR;
-using ReadABit.Infrastructure.Models;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
-using System.Collections.Generic;
 
 namespace ReadABit.Core.Commands
 {
-    public class ArticleCollectionListHandler : IRequestHandler<ArticleCollectionList, Paginated<ArticleCollection>>
+    public class ArticleCollectionListHandler : IRequestHandler<ArticleCollectionList, Paginated<ArticleCollectionViewModel>>
     {
         private readonly DB _db;
+        private readonly IMapper _mapper;
 
-        public ArticleCollectionListHandler(DB db)
+        public ArticleCollectionListHandler(DB db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
-        public async Task<Paginated<ArticleCollection>> Handle(ArticleCollectionList request, CancellationToken cancellationToken)
+        public async Task<Paginated<ArticleCollectionViewModel>> Handle(ArticleCollectionList request, CancellationToken cancellationToken)
         {
             return await _db
                 .ArticleCollectionsOfUserOrPublic(request.UserId)
@@ -27,6 +30,7 @@ namespace ReadABit.Core.Commands
                 .Where(ac => request.Filter.OwnedByUserId == null || ac.UserId == request.Filter.OwnedByUserId)
                 .Where(ac => string.IsNullOrWhiteSpace(request.Filter.Name) || ac.Name.StartsWith(request.Filter.Name))
                 .SortBy(request.SortBy)
+                .ProjectTo<ArticleCollectionViewModel>(_mapper.ConfigurationProvider)
                 .ToPaginatedAsync(request.Page, 50, cancellationToken);
         }
     }

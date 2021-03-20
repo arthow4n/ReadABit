@@ -1,13 +1,14 @@
 using AutoMapper;
 using ReadABit.Infrastructure.Models;
 
-namespace ReadABit.Web.Contracts.Utils
+namespace ReadABit.Core.Contracts.Utils
 {
     public class ViewModelMapperProfile : Profile
     {
         public ViewModelMapperProfile()
         {
             CreateMap<Article, ArticleViewModel>();
+            CreateMap<ArticleCollection, ArticleCollectionViewModel>();
         }
     }
 }
