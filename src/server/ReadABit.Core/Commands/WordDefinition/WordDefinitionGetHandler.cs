@@ -1,25 +1,24 @@
-﻿using System.Threading;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using ReadABit.Infrastructure.Models;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Utils;
+using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public class WordDefinitionGetHandler : IRequestHandler<WordDefinitionGet, WordDefinition?>
+    public class WordDefinitionGetHandler : CommandHandlerBase, IRequestHandler<WordDefinitionGet, WordDefinition?>
     {
-        private readonly DB _db;
-
-        public WordDefinitionGetHandler(DB db)
+        public WordDefinitionGetHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _db = db;
         }
 
         public async Task<WordDefinition?> Handle(WordDefinitionGet request, CancellationToken cancellationToken)
         {
-            return await _db.WordDefinitionsOfUserOrPublic(request.UserId)
+            return await DB.WordDefinitionsOfUserOrPublic(request.UserId)
                             .AsNoTracking()
                             .Where(wd => wd.Id == request.Id)
                             .SingleOrDefaultAsync(cancellationToken: cancellationToken);

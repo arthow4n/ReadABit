@@ -1,30 +1,26 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using NodaTime;
+using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Utils;
 
 namespace ReadABit.Core.Commands
 {
-    public class ArticleCollectionUpdateHandler : IRequestHandler<ArticleCollectionUpdate, bool>
+    public class ArticleCollectionUpdateHandler : CommandHandlerBase, IRequestHandler<ArticleCollectionUpdate, bool>
     {
-        private readonly DB _db;
-        private readonly IClock _clock;
-
-        public ArticleCollectionUpdateHandler(DB db, IClock clock)
+        public ArticleCollectionUpdateHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _db = db;
-            _clock = clock;
         }
 
         public async Task<bool> Handle(ArticleCollectionUpdate request, CancellationToken cancellationToken)
         {
             new ArticleCollectionUpdateValidator().ValidateAndThrow(request);
 
-            var articleCollection = await _db
+            var articleCollection = await DB
                 .ArticleCollectionsOfUser(request.UserId)
                 .Where(ac => ac.Id == request.Id)
                 .SingleOrDefaultAsync(cancellationToken: cancellationToken);
@@ -37,7 +33,7 @@ namespace ReadABit.Core.Commands
             articleCollection.Name = request.Name is not null ? request.Name.Trim() : articleCollection.Name;
             articleCollection.LanguageCode = request.LanguageCode ?? articleCollection.LanguageCode;
             articleCollection.Public = request.Public ?? articleCollection.Public;
-            articleCollection.UpdatedAt = _clock.GetCurrentInstant();
+            articleCollection.UpdatedAt = Clock.GetCurrentInstant();
 
             return true;
         }

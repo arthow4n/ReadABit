@@ -1,29 +1,27 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
-using ReadABit.Infrastructure.Models;
+﻿using System;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using ReadABit.Core.Utils;
-using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentValidation;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using ReadABit.Core.Commands.Utils;
+using ReadABit.Core.Utils;
+using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public class WordDefinitionListPublicSuggestionsHandler : IRequestHandler<WordDefinitionListPublicSuggestions, Paginated<WordDefinitionListPublicSuggestionViewModel>>
+    public class WordDefinitionListPublicSuggestionsHandler : CommandHandlerBase, IRequestHandler<WordDefinitionListPublicSuggestions, Paginated<WordDefinitionListPublicSuggestionViewModel>>
     {
-        private readonly DB _db;
-
-        public WordDefinitionListPublicSuggestionsHandler(DB db)
+        public WordDefinitionListPublicSuggestionsHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _db = db;
         }
 
         public async Task<Paginated<WordDefinitionListPublicSuggestionViewModel>> Handle(WordDefinitionListPublicSuggestions request, CancellationToken cancellationToken)
         {
             new WordDefinitionListPublicSuggestionsValidator().ValidateAndThrow(request);
 
-            var tobePaginated = (await _db.WordDefinitionsOfUserOrPublic(request.UserId)
+            var tobePaginated = (await DB.WordDefinitionsOfUserOrPublic(request.UserId)
                                           .OfWord(request.Filter.Word)
                                           .Select(wd => new
                                           {
@@ -45,7 +43,7 @@ namespace ReadABit.Core.Commands
                                           });
 
             var userPreferredLanguageCode =
-                await _db.UserPreferencesOfUser(request.UserId)
+                await DB.UserPreferencesOfUser(request.UserId)
                          .Where(up => up.Type == UserPreferenceType.LanguageCode)
                          .Select(up => up.Value)
                          .SingleOrDefaultAsync(cancellationToken: cancellationToken);

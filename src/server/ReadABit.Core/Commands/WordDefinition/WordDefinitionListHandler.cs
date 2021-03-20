@@ -1,27 +1,26 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using ReadABit.Infrastructure.Models;
-using Microsoft.EntityFrameworkCore;
-using ReadABit.Core.Utils;
 using FluentValidation;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using ReadABit.Core.Commands.Utils;
+using ReadABit.Core.Utils;
+using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public class WordDefinitionListHandler : IRequestHandler<WordDefinitionList, Paginated<WordDefinition>>
+    public class WordDefinitionListHandler : CommandHandlerBase, IRequestHandler<WordDefinitionList, Paginated<WordDefinition>>
     {
-        private readonly DB _db;
-
-        public WordDefinitionListHandler(DB db)
+        public WordDefinitionListHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _db = db;
         }
 
         public async Task<Paginated<WordDefinition>> Handle(WordDefinitionList request, CancellationToken cancellationToken)
         {
             new WordDefinitionListValidator().ValidateAndThrow(request);
 
-            return await _db.WordDefinitionsOfUser(request.UserId)
+            return await DB.WordDefinitionsOfUser(request.UserId)
                             .AsNoTracking()
                             .OfWord(request.Filter.Word)
                             .ToPaginatedAsync(request.Page, 50, cancellationToken);

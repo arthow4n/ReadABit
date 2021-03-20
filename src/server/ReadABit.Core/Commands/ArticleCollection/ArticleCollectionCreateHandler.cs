@@ -1,27 +1,18 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using AutoMapper;
 using FluentValidation;
 using MediatR;
-using NodaTime;
+using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Contracts;
-using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public class ArticleCollectionCreateHandler : IRequestHandler<ArticleCollectionCreate, ArticleCollectionViewModel>
+    public class ArticleCollectionCreateHandler : CommandHandlerBase, IRequestHandler<ArticleCollectionCreate, ArticleCollectionViewModel>
     {
-        private readonly DB _db;
-        private readonly IClock _clock;
-        private readonly IMapper _mapper;
-
-        public ArticleCollectionCreateHandler(DB db, IClock clock, IMapper mapper)
+        public ArticleCollectionCreateHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _mapper = mapper;
-            _db = db;
-            _clock = clock;
         }
 
         public async Task<ArticleCollectionViewModel> Handle(ArticleCollectionCreate request, CancellationToken cancellationToken)
@@ -35,13 +26,13 @@ namespace ReadABit.Core.Commands
                 Name = request.Name.Trim(),
                 LanguageCode = request.LanguageCode,
                 Public = request.Public,
-                CreatedAt = _clock.GetCurrentInstant(),
-                UpdatedAt = _clock.GetCurrentInstant(),
+                CreatedAt = Clock.GetCurrentInstant(),
+                UpdatedAt = Clock.GetCurrentInstant(),
             };
 
-            await _db.Unsafe.AddAsync(articleCollection, cancellationToken);
+            await DB.Unsafe.AddAsync(articleCollection, cancellationToken);
 
-            return _mapper.Map<ArticleCollectionViewModel>(articleCollection);
+            return Mapper.Map<ArticleCollectionViewModel>(articleCollection);
         }
     }
 }

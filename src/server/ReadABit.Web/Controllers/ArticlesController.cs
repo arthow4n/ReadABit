@@ -34,7 +34,7 @@ namespace ReadABit.Web.Controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Get(Guid id, [FromQuery] ArticleGet request)
         {
-            var article = await Mediator.Send(request with
+            ArticleViewModel article = await Mediator.Send(request with
             {
                 Id = id,
                 UserId = RequestUserId,
@@ -45,7 +45,7 @@ namespace ReadABit.Web.Controllers
                 return NotFound();
             }
 
-            return Ok(Mapper.Map<ArticleViewModel>(article));
+            return Ok(article);
         }
 
         [HttpPost]

@@ -2,11 +2,11 @@
 using MediatR;
 using Newtonsoft.Json;
 using NSwag.Annotations;
-using ReadABit.Infrastructure.Models;
+using ReadABit.Core.Contracts;
 
 namespace ReadABit.Core.Commands
 {
-    public record ArticleGet : IRequest<Article?>
+    public record ArticleGet : IRequest<ArticleViewModel?>
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid Id { get; init; }

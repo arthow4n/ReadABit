@@ -42,7 +42,7 @@ namespace ReadABit.Web.Test.Controllers
                     Text = text,
                 }))
                 .ShouldBeOfType<CreatedAtActionResult>();
-            var createdId = creationResult.Value.ShouldBeOfType<Article>().Id;
+            var createdId = creationResult.Value.ShouldBeOfType<ArticleViewModel>().Id;
 
             (await List(articleCollectionId)).Items.Count.ShouldBe(1);
 

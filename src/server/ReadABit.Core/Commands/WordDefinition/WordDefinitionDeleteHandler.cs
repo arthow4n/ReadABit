@@ -1,25 +1,24 @@
-﻿using System.Threading;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Utils;
 
 namespace ReadABit.Core.Commands
 {
-    public class WordDefinitionDeleteHandler : IRequestHandler<WordDefinitionDelete, bool>
+    public class WordDefinitionDeleteHandler : CommandHandlerBase, IRequestHandler<WordDefinitionDelete, bool>
     {
-        private readonly DB _db;
-
-        public WordDefinitionDeleteHandler(DB db)
+        public WordDefinitionDeleteHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _db = db;
         }
 
         public async Task<bool> Handle(WordDefinitionDelete request, CancellationToken cancellationToken)
         {
             var target =
-                await _db.WordDefinitionsOfUser(request.UserId)
+                await DB.WordDefinitionsOfUser(request.UserId)
                          .Where(wd => wd.Id == request.Id)
                          .SingleOrDefaultAsync(cancellationToken: cancellationToken);
 
@@ -28,7 +27,7 @@ namespace ReadABit.Core.Commands
                 return false;
             }
 
-            _db.Unsafe.Remove(target);
+            DB.Unsafe.Remove(target);
             return true;
         }
     }

@@ -1,38 +1,34 @@
-﻿using System.Linq;
-using System;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using ReadABit.Infrastructure.Models;
-using ReadABit.Core.Utils;
-using ReadABit.Core.Integrations.Services;
-using Microsoft.EntityFrameworkCore;
 using FluentValidation;
-using NodaTime;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using ReadABit.Core.Commands.Utils;
+using ReadABit.Core.Contracts;
+using ReadABit.Core.Integrations.Services;
+using ReadABit.Core.Utils;
+using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public class ArticleCreateHandler : IRequestHandler<ArticleCreate, Article>
+    public class ArticleCreateHandler : CommandHandlerBase, IRequestHandler<ArticleCreate, ArticleViewModel>
     {
-        private readonly DB _db;
-        private readonly IClock _clock;
-
-        public ArticleCreateHandler(DB db, IClock clock)
+        public ArticleCreateHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _db = db;
-            _clock = clock;
         }
 
-        public async Task<Article> Handle(ArticleCreate request, CancellationToken cancellationToken)
+        public async Task<ArticleViewModel> Handle(ArticleCreate request, CancellationToken cancellationToken)
         {
             new ArticleCreateValidator().ValidateAndThrow(request);
 
             var articleCollection =
-                await _db.ArticleCollectionsOfUser(request.UserId)
+                await DB.ArticleCollectionsOfUser(request.UserId)
                          .Where(ac => ac.Id == request.ArticleCollectionId)
                          .SingleOrDefaultAsync(cancellationToken: cancellationToken);
 
-            articleCollection.UpdatedAt = _clock.GetCurrentInstant();
+            articleCollection.UpdatedAt = Clock.GetCurrentInstant();
 
             var article = new Article
             {
@@ -41,13 +37,13 @@ namespace ReadABit.Core.Commands
                 Name = request.Name.Trim(),
                 Text = request.Text,
                 ConlluDocument = UDPipeV1Service.ToConlluDocument(articleCollection.LanguageCode, request.Text),
-                CreatedAt = _clock.GetCurrentInstant(),
-                UpdatedAt = _clock.GetCurrentInstant(),
+                CreatedAt = Clock.GetCurrentInstant(),
+                UpdatedAt = Clock.GetCurrentInstant(),
             };
 
-            await _db.Unsafe.AddAsync(article, cancellationToken);
+            await DB.Unsafe.AddAsync(article, cancellationToken);
 
-            return article;
+            return Mapper.Map<ArticleViewModel>(article);
         }
     }
 }

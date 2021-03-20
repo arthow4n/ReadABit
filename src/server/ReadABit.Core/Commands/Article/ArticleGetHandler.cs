@@ -1,28 +1,29 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
-using ReadABit.Infrastructure.Models;
+﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoMapper.QueryableExtensions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ReadABit.Core.Commands.Utils;
+using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
 
 namespace ReadABit.Core.Commands
 {
-    public class ArticleGetHandler : IRequestHandler<ArticleGet, Article?>
+    public class ArticleGetHandler : CommandHandlerBase, IRequestHandler<ArticleGet, ArticleViewModel?>
     {
-        private readonly DB _db;
-
-        public ArticleGetHandler(DB db)
+        public ArticleGetHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _db = db;
         }
 
-        public async Task<Article?> Handle(ArticleGet request, CancellationToken cancellationToken)
+        public async Task<ArticleViewModel?> Handle(ArticleGet request, CancellationToken cancellationToken)
         {
-            return await _db.ArticleCollectionsOfUserOrPublic(request.UserId)
+            return await DB.ArticleCollectionsOfUserOrPublic(request.UserId)
                             .AsNoTracking()
                             .SelectMany(ac => ac.Articles)
                             .Where(a => a.Id == request.Id)
+                            .ProjectTo<ArticleViewModel>(Mapper.ConfigurationProvider)
                             .SingleOrDefaultAsync(cancellationToken: cancellationToken);
         }
     }

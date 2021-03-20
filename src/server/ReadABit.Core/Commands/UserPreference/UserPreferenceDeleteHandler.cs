@@ -1,26 +1,24 @@
-﻿using System.Threading;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using ReadABit.Infrastructure.Models;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Utils;
 
 namespace ReadABit.Core.Commands
 {
-    public class UserPreferenceDeleteHandler : IRequestHandler<UserPreferenceDelete, bool>
+    public class UserPreferenceDeleteHandler : CommandHandlerBase, IRequestHandler<UserPreferenceDelete, bool>
     {
-        private readonly DB _db;
-
-        public UserPreferenceDeleteHandler(DB db)
+        public UserPreferenceDeleteHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _db = db;
         }
 
         public async Task<bool> Handle(UserPreferenceDelete request, CancellationToken cancellationToken)
         {
             var target =
-                await _db.UserPreferencesOfUser(request.UserId)
+                await DB.UserPreferencesOfUser(request.UserId)
                          .Where(up => up.Id == request.Id)
                          .SingleOrDefaultAsync(cancellationToken: cancellationToken);
 
@@ -29,7 +27,7 @@ namespace ReadABit.Core.Commands
                 return false;
             }
 
-            _db.Unsafe.Remove(target);
+            DB.Unsafe.Remove(target);
             return true;
         }
     }

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using OpenIddict.Validation.AspNetCore;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Utils;
@@ -26,32 +26,19 @@ namespace ReadABit.Web.Controller.Utils
             _serviceProvider = serviceProvider;
         }
 
-        protected IMediator Mediator => GetService<IMediator>();
-        protected IRequestContext RequestContext => GetService<IRequestContext>();
-        protected IMapper Mapper => GetService<IMapper>();
+        protected IMediator Mediator => _serviceProvider.GetRequiredService<IMediator>();
+        protected IRequestContext RequestContext => _serviceProvider.GetRequiredService<IRequestContext>();
 
         /// <summary>
         /// This should only be used in actions with [Authorize] because it asserts the user ID is not null.
         /// </summary>
         protected Guid RequestUserId => RequestContext.UserId!.Value;
 
-        protected UserManager<ApplicationUser> UserManager => GetService<UserManager<ApplicationUser>>();
+        protected UserManager<ApplicationUser> UserManager => _serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
         protected async Task SaveChangesAsync()
         {
             await Mediator.Send(new SaveChanges { });
-        }
-
-        private T GetService<T>()
-        {
-            var s = _serviceProvider.GetService(typeof(T));
-
-            if (s is not T)
-            {
-                throw new NullReferenceException($"Service not found: {typeof(T).FullName}");
-            }
-
-            return (T)s;
         }
     }
 }

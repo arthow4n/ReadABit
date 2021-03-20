@@ -1,34 +1,31 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public class ArticleCollectionGetHandler : IRequestHandler<ArticleCollectionGet, ArticleCollectionViewModel?>
+    public class ArticleCollectionGetHandler : CommandHandlerBase, IRequestHandler<ArticleCollectionGet, ArticleCollectionViewModel?>
     {
-        private readonly DB _db;
-        private readonly IMapper _mapper;
-
-        public ArticleCollectionGetHandler(DB db, IMapper mapper)
+        public ArticleCollectionGetHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _db = db;
-            _mapper = mapper;
         }
 
         public async Task<ArticleCollectionViewModel?> Handle(ArticleCollectionGet request, CancellationToken cancellationToken)
         {
-            return await _db
+            return await DB
                 .ArticleCollectionsOfUserOrPublic(request.UserId)
                 .AsNoTracking()
                 .Where(ac => ac.Id == request.Id)
-                .ProjectTo<ArticleCollectionViewModel>(_mapper.ConfigurationProvider)
+                .ProjectTo<ArticleCollectionViewModel>(Mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync(cancellationToken: cancellationToken);
         }
     }

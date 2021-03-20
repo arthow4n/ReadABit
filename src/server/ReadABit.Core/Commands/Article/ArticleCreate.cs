@@ -3,11 +3,12 @@ using FluentValidation;
 using MediatR;
 using Newtonsoft.Json;
 using NSwag.Annotations;
+using ReadABit.Core.Contracts;
 using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public record ArticleCreate : IRequest<Article>
+    public record ArticleCreate : IRequest<ArticleViewModel>
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; init; }

@@ -1,26 +1,24 @@
-﻿using System.Threading;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using ReadABit.Infrastructure.Models;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Utils;
 
 namespace ReadABit.Core.Commands
 {
-    public class ArticleDeleteHandler : IRequestHandler<ArticleDelete, bool>
+    public class ArticleDeleteHandler : CommandHandlerBase, IRequestHandler<ArticleDelete, bool>
     {
-        private readonly DB _db;
-
-        public ArticleDeleteHandler(DB db)
+        public ArticleDeleteHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _db = db;
         }
 
         public async Task<bool> Handle(ArticleDelete request, CancellationToken cancellationToken)
         {
             var target =
-                await _db.ArticlesOfUser(request.UserId)
+                await DB.ArticlesOfUser(request.UserId)
                          .Where(ac => ac.Id == request.Id)
                          .SingleOrDefaultAsync(cancellationToken: cancellationToken);
 
@@ -29,7 +27,7 @@ namespace ReadABit.Core.Commands
                 return false;
             }
 
-            _db.Unsafe.Remove(target);
+            DB.Unsafe.Remove(target);
             return true;
         }
     }
