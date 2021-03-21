@@ -34,7 +34,7 @@ namespace ReadABit.Web.Controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Get(Guid id, [FromQuery] ArticleGet request)
         {
-            ArticleViewModel article = await Mediator.Send(request with
+            ArticleViewModel? article = await Mediator.Send(request with
             {
                 Id = id,
                 UserId = RequestUserId,

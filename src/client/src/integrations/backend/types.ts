@@ -13,13 +13,13 @@ export module Backend {
 
 export interface IClient {
     articleCollections_List(request: { filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined, sortBy?: SortBy | undefined }): Promise<PaginatedOfArticleCollection>;
-    articleCollections_Create(request: { request: ArticleCollectionCreate }): Promise<ArticleCollection>;
-    articleCollections_Get(request: { id: string }): Promise<ArticleCollection>;
+    articleCollections_Create(request: { request: ArticleCollectionCreate }): Promise<ArticleCollectionViewModel>;
+    articleCollections_Get(request: { id: string }): Promise<ArticleCollectionViewModel>;
     articleCollections_Update(request: { id: string, request: ArticleCollectionUpdate }): Promise<void>;
     articleCollections_Delete(request: { id: string }): Promise<void>;
     articles_List(request: { articleCollectionId?: string | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfArticleListItemViewModel>;
     articles_Create(request: { request: ArticleCreate }): Promise<Article>;
-    articles_Get(request: { id: string }): Promise<Article>;
+    articles_Get(request: { id: string }): Promise<ArticleViewModel>;
     articles_Update(request: { id: string, request: ArticleUpdate }): Promise<void>;
     articles_Delete(request: { id: string }): Promise<void>;
     userPreferences_List(request: {  }): Promise<UserPreference[]>;
@@ -110,7 +110,7 @@ export class Client implements IClient {
         }
     }
 
-    articleCollections_Create(request: { request: ArticleCollectionCreate }, cancelToken?: CancelToken | undefined ): Promise<ArticleCollection> {
+    articleCollections_Create(request: { request: ArticleCollectionCreate }, cancelToken?: CancelToken | undefined ): Promise<ArticleCollectionViewModel> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -138,7 +138,7 @@ export class Client implements IClient {
         });
     }
 
-    protected processArticleCollections_Create(response: AxiosResponse): Promise<ArticleCollection> {
+    protected processArticleCollections_Create(response: AxiosResponse): Promise<ArticleCollectionViewModel> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -163,7 +163,7 @@ export class Client implements IClient {
         }
     }
 
-    articleCollections_Get(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<ArticleCollection> {
+    articleCollections_Get(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<ArticleCollectionViewModel> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections/{id}";
         if (request.id === undefined || request.id === null)
             throw new Error("The parameter 'request.id' must be defined.");
@@ -190,7 +190,7 @@ export class Client implements IClient {
         });
     }
 
-    protected processArticleCollections_Get(response: AxiosResponse): Promise<ArticleCollection> {
+    protected processArticleCollections_Get(response: AxiosResponse): Promise<ArticleCollectionViewModel> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -445,7 +445,7 @@ export class Client implements IClient {
         }
     }
 
-    articles_Get(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<Article> {
+    articles_Get(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<ArticleViewModel> {
         let url_ = this.baseUrl + "/api/v1/Articles/{id}";
         if (request.id === undefined || request.id === null)
             throw new Error("The parameter 'request.id' must be defined.");
@@ -472,7 +472,7 @@ export class Client implements IClient {
         });
     }
 
-    protected processArticles_Get(response: AxiosResponse): Promise<Article> {
+    protected processArticles_Get(response: AxiosResponse): Promise<ArticleViewModel> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1214,7 +1214,19 @@ export interface ProblemDetails {
 }
 
 export enum SortBy {
-    LatestFirst = "LatestFirst",
+    LastUpdated = "LastUpdated",
+    LastCreated = "LastCreated",
+    CreatedAt = "CreatedAt",
+}
+
+export interface ArticleCollectionViewModel {
+    id: string;
+    userId: string;
+    name: string;
+    languageCode: string;
+    public: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface ArticleCollectionCreate {
@@ -1238,6 +1250,15 @@ export interface ArticleListItemViewModel {
     id: string;
     articleCollectionId: string;
     name: string;
+}
+
+export interface ArticleViewModel {
+    id: string;
+    articleCollectionId: string;
+    name: string;
+    conlluDocument: Document;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface ArticleCreate {
