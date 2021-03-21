@@ -8,6 +8,7 @@ namespace ReadABit.Core.Contracts.Utils
         public ViewModelMapperProfile()
         {
             CreateMap<Article, ArticleViewModel>();
+            CreateMap<Article, ArticleListItemViewModel>();
             CreateMap<ArticleCollection, ArticleCollectionViewModel>();
         }
     }

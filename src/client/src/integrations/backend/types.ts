@@ -17,7 +17,7 @@ export interface IClient {
     articleCollections_Get(request: { id: string }): Promise<ArticleCollectionViewModel>;
     articleCollections_Update(request: { id: string, request: ArticleCollectionUpdate }): Promise<void>;
     articleCollections_Delete(request: { id: string }): Promise<void>;
-    articles_List(request: { articleCollectionId?: string | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfArticleListItemViewModel>;
+    articles_List(request: { articleCollectionId?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined, sortBy?: SortBy | undefined }): Promise<PaginatedOfArticleListItemViewModel>;
     articles_Create(request: { request: ArticleCreate }): Promise<Article>;
     articles_Get(request: { id: string }): Promise<ArticleViewModel>;
     articles_Update(request: { id: string, request: ArticleUpdate }): Promise<void>;
@@ -333,11 +333,9 @@ export class Client implements IClient {
         }
     }
 
-    articles_List(request: { articleCollectionId?: string | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfArticleListItemViewModel> {
+    articles_List(request: { articleCollectionId?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined, sortBy?: SortBy | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfArticleListItemViewModel> {
         let url_ = this.baseUrl + "/api/v1/Articles?";
-        if (request.articleCollectionId === null)
-            throw new Error("The parameter 'request.articleCollectionId' cannot be null.");
-        else if (request.articleCollectionId !== undefined)
+        if (request.articleCollectionId !== undefined && request.articleCollectionId !== null)
             url_ += "ArticleCollectionId=" + encodeURIComponent("" + request.articleCollectionId) + "&";
         if (request.page_Index === null)
             throw new Error("The parameter 'request.page_Index' cannot be null.");
@@ -345,6 +343,10 @@ export class Client implements IClient {
             url_ += "Page.Index=" + encodeURIComponent("" + request.page_Index) + "&";
         if (request.page_Size !== undefined && request.page_Size !== null)
             url_ += "Page.Size=" + encodeURIComponent("" + request.page_Size) + "&";
+        if (request.sortBy === null)
+            throw new Error("The parameter 'request.sortBy' cannot be null.");
+        else if (request.sortBy !== undefined)
+            url_ += "SortBy=" + encodeURIComponent("" + request.sortBy) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{

@@ -14,6 +14,7 @@ using NodaTime;
 using NodaTime.Serialization.JsonNet;
 using Npgsql;
 using ReadABit.Core.Commands;
+using ReadABit.Core.Contracts.Utils;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure;
 using ReadABit.Infrastructure.Models;
@@ -158,7 +159,7 @@ namespace ReadABit.Web
             });
             services.AddSwaggerDocument();
 
-            services.AddAutoMapper(typeof(SaveChanges));
+            services.AddAutoMapper(typeof(ViewModelMapperProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

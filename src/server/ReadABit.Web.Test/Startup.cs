@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Npgsql;
 using ReadABit.Core.Commands;
+using ReadABit.Core.Contracts.Utils;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure;
 using ReadABit.Infrastructure.Models;
@@ -50,7 +51,7 @@ namespace ReadABit.Web.Test
             services.AddScoped<DB, DB>();
 
             services.AddMediatR(typeof(SaveChanges));
-            services.AddAutoMapper(typeof(SaveChanges));
+            services.AddAutoMapper(typeof(ViewModelMapperProfile));
         }
     }
 }

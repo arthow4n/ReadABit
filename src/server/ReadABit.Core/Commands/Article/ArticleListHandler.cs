@@ -2,9 +2,11 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReadABit.Core.Commands.Utils;
+using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
 
 namespace ReadABit.Core.Commands
@@ -18,16 +20,11 @@ namespace ReadABit.Core.Commands
         public async Task<Paginated<ArticleListItemViewModel>> Handle(ArticleList request, CancellationToken cancellationToken)
         {
             return await DB.ArticleCollectionsOfUserOrPublic(request.UserId)
-                            .AsNoTracking()
-                            .Where(ac => ac.Id == request.ArticleCollectionId)
-                            .SelectMany(ac => ac.Articles)
-                            .Select(a => new ArticleListItemViewModel
-                            {
-                                Id = a.Id,
-                                ArticleCollectionId = a.ArticleCollectionId,
-                                Name = a.Name,
-                            })
-                            .ToPaginatedAsync(request.Page, 50, cancellationToken);
+                           .Where(ac => !request.ArticleCollectionId.HasValue || ac.Id == request.ArticleCollectionId)
+                           .SelectMany(ac => ac.Articles)
+                           .SortBy(request.SortBy)
+                           .ProjectTo<ArticleListItemViewModel>(Mapper.ConfigurationProvider)
+                           .ToPaginatedAsync(request.Page, 50, cancellationToken);
         }
     }
 }

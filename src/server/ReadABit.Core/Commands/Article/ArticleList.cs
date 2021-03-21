@@ -3,6 +3,7 @@ using FluentValidation;
 using MediatR;
 using Newtonsoft.Json;
 using NSwag.Annotations;
+using ReadABit.Core.Contracts;
 
 namespace ReadABit.Core.Commands
 {
@@ -10,8 +11,9 @@ namespace ReadABit.Core.Commands
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; init; }
-        public Guid ArticleCollectionId { get; init; }
+        public Guid? ArticleCollectionId { get; init; }
         public PageFilter Page { get; init; } = new();
+        public SortBy SortBy { get; init; }
     }
 
     public class ArticleListValidator : AbstractValidator<ArticleList>
@@ -20,12 +22,5 @@ namespace ReadABit.Core.Commands
         {
             RuleFor(x => x.Page).MustBeValidPageFilter();
         }
-    }
-
-    public record ArticleListItemViewModel
-    {
-        public Guid Id { get; init; }
-        public Guid ArticleCollectionId { get; init; }
-        public string Name { get; init; } = "";
     }
 }

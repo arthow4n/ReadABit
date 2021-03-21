@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
-using ReadABit.Infrastructure.Models;
 using ReadABit.Web.Controllers;
 using ReadABit.Web.Test.Helpers;
 using Shouldly;
@@ -99,12 +98,15 @@ Det beror på att det gör det lättare att förstå vad folk säger.
             }
             (await List(articleCollectionId)).Items.Count.ShouldBe(1);
 
+            // Listing without specifying article collection ID should return articles from any article collection
+            (await List(null)).Items.Count.ShouldBe(1);
+
             (await ArticlesController.Delete(createdId, new ArticleDelete { })).ShouldBeOfType<NoContentResult>();
             (await List(articleCollectionId)).Items.Count.ShouldBe(0);
             (await ArticlesController.Get(createdId, new ArticleGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
-        private async Task<Paginated<ArticleListItemViewModel>> List(Guid articleCollectionId)
+        private async Task<Paginated<ArticleListItemViewModel>> List(Guid? articleCollectionId)
         {
             return (await ArticlesController.List(new ArticleList
             {
