@@ -23,5 +23,6 @@ module.exports = {
     'no-nested-ternary': 'off',
     'no-confusing-arrow': 'off',
     'react/jsx-curly-newline': 'off',
+    'react/no-unused-prop-types': 'off',
   },
 };

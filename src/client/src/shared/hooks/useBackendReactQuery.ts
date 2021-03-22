@@ -22,6 +22,15 @@ export function queryCacheKey(
     page_Size?: number | null;
   },
 ): QueryKey;
+
+export function queryCacheKey(
+  base: QueryCacheKey.ArticleList,
+  filter: {
+    articleCollectionId?: string | null;
+    page_Index?: number | null;
+    page_Size?: number | null;
+  },
+): QueryKey;
 export function queryCacheKey(
   base: QueryCacheKey.Article,
   id: string,
