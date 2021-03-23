@@ -20,6 +20,7 @@ const ArticleReader: React.FC<{
 }> = ({ article }) => {
   const onTokenPress = (token: Backend.Token) => {
     // TODO: Show word definition and tags.
+    console.log(token);
   };
 
   return (
@@ -31,15 +32,26 @@ const ArticleReader: React.FC<{
             <Text key={paragraph.id}>
               {paragraph.sentences.map((sentence) => (
                 <Text key={sentence.id}>
-                  {sentence.tokens.map((token) => (
-                    <Text
-                      key={token.id}
-                      onPress={() => onTokenPress(token)}
-                      style={{ fontSize: 28 }}
-                    >
-                      {token.form}
-                    </Text>
-                  ))}
+                  {sentence.tokens.map((token) => {
+                    const spacesAfter = (
+                      token.misc.match(/\|?Spaces?After=(.+)\|?/)?.[1] ?? ' '
+                    )
+                      .replace(/^No$/, '')
+                      .replace(/\\s/g, ' ')
+                      .replace(/\\n/g, '\n');
+
+                    return (
+                      <React.Fragment key={token.id}>
+                        <Text
+                          onPress={() => onTokenPress(token)}
+                          style={{ fontSize: 28 }}
+                        >
+                          {token.form}
+                        </Text>
+                        <Text>{spacesAfter}</Text>
+                      </React.Fragment>
+                    );
+                  })}
                 </Text>
               ))}
             </Text>
