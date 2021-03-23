@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 
-import { Content, Text } from 'native-base';
+import { Content, Grid, Row, Text } from 'native-base';
 
 import { StackScreenProps } from '@react-navigation/stack';
 
@@ -17,28 +16,37 @@ import {
 import { ArticleStackParamList } from '../navigators/ArticleNavigator.types';
 
 const ArticleReader: React.FC<{
-  article: Backend.Article;
+  article: Backend.ArticleViewModel;
 }> = ({ article }) => {
   const onTokenPress = (token: Backend.Token) => {
     // TODO: Show word definition and tags.
   };
 
   return (
-    <Content>
-      {article.conlluDocument.paragraphs.map((paragraph) => (
-        <Text key={paragraph.id}>
-          {paragraph.sentences.map((sentence) => (
-            <Text key={sentence.id}>
-              {sentence.tokens.map((token) => (
-                <Text key={token.id} onPress={() => onTokenPress(token)}>
-                  {token.form}
+    <Grid>
+      <Row size={1}>{/* Render dictionary */}</Row>
+      <Row size={3}>
+        <Content padder>
+          {article.conlluDocument.paragraphs.map((paragraph) => (
+            <Text key={paragraph.id}>
+              {paragraph.sentences.map((sentence) => (
+                <Text key={sentence.id}>
+                  {sentence.tokens.map((token) => (
+                    <Text
+                      key={token.id}
+                      onPress={() => onTokenPress(token)}
+                      style={{ fontSize: 28 }}
+                    >
+                      {token.form}
+                    </Text>
+                  ))}
                 </Text>
               ))}
             </Text>
           ))}
-        </Text>
-      ))}
-    </Content>
+        </Content>
+      </Row>
+    </Grid>
   );
 };
 
