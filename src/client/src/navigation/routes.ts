@@ -3,6 +3,10 @@ import { LinkingOptions } from '@react-navigation/native';
 import { backendBaseUrl } from '../integrations/backend/backend';
 import { redirectUri } from '../integrations/backend/oidcConstants';
 
+// Read the GUIDE: comments for how to add a new route to the app.
+
+// GUIDE:
+// Step 1: Add a new value to `Routes`.
 export enum Routes {
   Login = 'Login',
   Home = 'Home',
@@ -14,6 +18,12 @@ export enum Routes {
   WordDefinitionsDictionaryLookup = 'WordDefinitionsDictionaryLookup',
 }
 
+// GUIDE:
+// Step 2: Add corresponding URL path to `exactPathMapping`
+// The URL should not start with a slash `/`.
+// Use `:` in the URL for parameters that needs to be injected.
+// Query params don't need to be marked here
+// as they are automatically injected by `react-navigation`.
 const exactPathMapping: Record<Routes, string> = {
   [Routes.Home]: '',
   [Routes.Login]: 'Login/',
@@ -25,45 +35,13 @@ const exactPathMapping: Record<Routes, string> = {
   [Routes.WordDefinitionsDictionaryLookup]: 'WordDefinitions/DictionaryLookUp',
 };
 
-export function routeUrl(
-  route: Routes.Article,
-  routeParams: { id: string },
-): string;
-export function routeUrl(route: Routes.ArticleCreate): string;
-export function routeUrl(
-  route: Routes.WordDefinitionsDictionaryLookup,
-  routeParams: null,
-  queryParams: {
-    word: string;
-    wordLanguage: string;
-    dictionaryLanguage: string;
-  },
-): string;
-export function routeUrl(
-  route: Routes,
-  routeParams?: Record<string, string> | null,
-  queryParams?: Record<string, string> | null,
-) {
-  let path = exactPathMapping[route];
-
-  Object.entries(routeParams ?? {}).forEach(([key, value]) => {
-    path = path.replace(`:${key}`, encodeURIComponent(value));
-  });
-
-  const query = Object.entries(queryParams ?? {})
-    .map(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
-    )
-    .join('&');
-
-  return `/${path}${query ? `?${query}` : ''}`;
-}
+// GUIDE:
+// Step 3: Add the new route to the route table below (`linking`).
+// Don't forget to create/edit the corresponding navigator and screen files.
 
 /**
- * Route table of the whole app.
- *
- * Pass this to `react-navigation`'s `NavigationContainer`'s `linking` prop.
+ * This is the route table of the whole app.
+ * Format: https://reactnavigation.org/docs/configuring-links/
  */
 export const linking: LinkingOptions = {
   prefixes: [backendBaseUrl, redirectUri],
@@ -122,3 +100,47 @@ export const linking: LinkingOptions = {
     },
   },
 };
+
+// GUIDE:
+// Step 4: Add an overload to `routeUrl`
+// so we have a standardised and type-safe way for generating URL.
+/**
+ * @example
+ * const linkTo = useLinkTo();
+ * // Navigating away to a specific route.
+ * <Button onPress={() => linkTo(routeUrl(...))} />
+ */
+export function routeUrl(
+  route: Routes.Article,
+  routeParams: { id: string },
+): string;
+export function routeUrl(route: Routes.ArticleCreate): string;
+export function routeUrl(
+  route: Routes.WordDefinitionsDictionaryLookup,
+  routeParams: null,
+  queryParams: {
+    word: string;
+    wordLanguage: string;
+    dictionaryLanguage: string;
+  },
+): string;
+export function routeUrl(
+  route: Routes,
+  routeParams?: Record<string, string> | null,
+  queryParams?: Record<string, string> | null,
+) {
+  let path = exactPathMapping[route];
+
+  Object.entries(routeParams ?? {}).forEach(([key, value]) => {
+    path = path.replace(`:${key}`, encodeURIComponent(value));
+  });
+
+  const query = Object.entries(queryParams ?? {})
+    .map(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+    )
+    .join('&');
+
+  return `/${path}${query ? `?${query}` : ''}`;
+}
