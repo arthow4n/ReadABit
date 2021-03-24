@@ -11,7 +11,7 @@ namespace ReadABit.Core.Utils
     {
         public static T New<T>(IServiceProvider serviceProvider)
         {
-            return (T)ActivatorUtilities.CreateInstance(serviceProvider, typeof(T));
+            return ActivatorUtilities.CreateInstance<T>(serviceProvider);
         }
     }
 }
