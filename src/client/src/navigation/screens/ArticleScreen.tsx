@@ -40,7 +40,7 @@ const ArticleReader: React.FC<{
     <Grid>
       <Row size={1}>
         {selectedToken && (
-          <Card>
+          <Card style={{ flex: 1 }}>
             <CardItem header>
               <Text>{`${selectedToken.form} (${selectedToken.lemma})`}</Text>
             </CardItem>

@@ -55,7 +55,7 @@ export function routeUrl(
       ([key, value]) =>
         `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
     )
-    .join('=');
+    .join('&');
 
   return `/${path}${query ? `?${query}` : ''}`;
 }

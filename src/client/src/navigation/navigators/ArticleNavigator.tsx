@@ -12,6 +12,7 @@ import { SafeArea } from '../../shared/components/SafeArea';
 import { StackNavigatorHeader } from '../../shared/components/StackNavigatorHeader';
 import { ArticleCreateScreen } from '../screens/ArticleCreateScreen';
 import { ArticleScreen } from '../screens/ArticleScreen';
+import { WordDefinitionsDictionaryLookupScreen } from '../screens/WordDefinitionsDictionaryLookupScreen';
 
 const ArticleStack = createStackNavigator<ArticleStackParamList>();
 
@@ -36,6 +37,11 @@ export const ArticleNavigator: React.FC = () => {
             name="Article"
             component={ArticleScreen}
             options={{ headerTitle: t('Read') }}
+          />
+          <ArticleStack.Screen
+            name="WordDefinitionsDictionaryLookup"
+            component={WordDefinitionsDictionaryLookupScreen}
+            options={{ headerTitle: t('Dictionary') }}
           />
         </ArticleStack.Navigator>
       </Container>
