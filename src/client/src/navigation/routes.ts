@@ -11,6 +11,7 @@ export enum Routes {
   ArticleCollection = 'ArticleCollection',
   Article = 'Article',
   ArticleCreate = 'ArticleCreate',
+  WordDefinitionsDictionaryLookup = 'WordDefinitionsDictionaryLookup',
 }
 
 const exactPathMapping: Record<Routes, string> = {
@@ -21,6 +22,7 @@ const exactPathMapping: Record<Routes, string> = {
   [Routes.ArticleCollection]: 'ArticleCollections/:id',
   [Routes.Article]: 'Articles/:id',
   [Routes.ArticleCreate]: 'Articles/Create',
+  [Routes.WordDefinitionsDictionaryLookup]: 'WordDefinitions/DictionaryLookUp',
 };
 
 export function routeUrl(
@@ -29,17 +31,26 @@ export function routeUrl(
 ): string;
 export function routeUrl(route: Routes.ArticleCreate): string;
 export function routeUrl(
+  route: Routes.WordDefinitionsDictionaryLookup,
+  routeParams: null,
+  queryParams: {
+    word: string;
+    wordLanguage: string;
+    dictionaryLanguage: string;
+  },
+): string;
+export function routeUrl(
   route: Routes,
-  routeParams: Record<string, string> = {},
-  queryParams: Record<string, string> = {},
+  routeParams?: Record<string, string> | null,
+  queryParams?: Record<string, string> | null,
 ) {
   let path = exactPathMapping[route];
 
-  Object.entries(routeParams).forEach(([key, value]) => {
+  Object.entries(routeParams ?? {}).forEach(([key, value]) => {
     path = path.replace(`:${key}`, encodeURIComponent(value));
   });
 
-  const query = Object.entries(queryParams)
+  const query = Object.entries(queryParams ?? {})
     .map(
       ([key, value]) =>
         `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
@@ -99,6 +110,10 @@ export const linking: LinkingOptions = {
           },
           [Routes.Article]: {
             path: exactPathMapping[Routes.Article],
+            exact: true,
+          },
+          [Routes.WordDefinitionsDictionaryLookup]: {
+            path: exactPathMapping[Routes.WordDefinitionsDictionaryLookup],
             exact: true,
           },
         },

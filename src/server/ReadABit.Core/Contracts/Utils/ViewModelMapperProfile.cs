@@ -7,7 +7,12 @@ namespace ReadABit.Core.Contracts.Utils
     {
         public ViewModelMapperProfile()
         {
-            CreateMap<Article, ArticleViewModel>();
+            CreateMap<Article, ArticleViewModel>()
+                .ForMember(
+                    vm => vm.LanguageCode,
+                    conf => conf.MapFrom(a => a.ArticleCollection.LanguageCode)
+                );
+
             CreateMap<Article, ArticleListItemViewModel>();
             CreateMap<ArticleCollection, ArticleCollectionViewModel>();
         }

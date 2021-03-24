@@ -1258,6 +1258,7 @@ export interface ArticleViewModel {
     id: string;
     articleCollectionId: string;
     name: string;
+    languageCode: string;
     conlluDocument: Document;
     createdAt: Date;
     updatedAt: Date;
