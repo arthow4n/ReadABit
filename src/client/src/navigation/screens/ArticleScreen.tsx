@@ -36,37 +36,30 @@ const ArticleReader: React.FC<{
   const linkTo = useLinkTo();
   const { appSettings } = useAppSettingsContext();
 
+  const wordDefinitionsListQuery = useQuery(
+    queryCacheKey(QueryCacheKey.WordDefinitionList, {
+      filter_Word_Expression: selectedToken?.form ?? '',
+      filter_Word_LanguageCode: article.languageCode,
+    }),
+    () => {
+      if (!selectedToken) {
+        throw new Error();
+      }
+
+      return api.wordDefinitions_List({
+        filter_Word_Expression: selectedToken.form,
+        filter_Word_LanguageCode: article.languageCode,
+      });
+    },
+    {
+      enabled: !!selectedToken,
+    },
+  );
+
+  // TODO: Save article reading progress.
+
   return (
     <Grid>
-      <Row size={1}>
-        {selectedToken && (
-          <Card style={{ flex: 1 }}>
-            <CardItem header>
-              <Text>{`${selectedToken.form} (${selectedToken.lemma})`}</Text>
-            </CardItem>
-            <CardItem>
-              <Body>
-                {/* TODO: Show saved word definition */}
-                {/* TODO: Render token PoS tags */}
-                <Button
-                  onPress={() =>
-                    linkTo(
-                      routeUrl(Routes.WordDefinitionsDictionaryLookup, null, {
-                        word: selectedToken.form,
-                        wordLanguage: article.languageCode,
-                        // TODO: Allow choosing another dictionary language
-                        dictionaryLanguage: appSettings.languageCodes.ui,
-                      }),
-                    )
-                  }
-                >
-                  <Text>{t('Dictionary')}</Text>
-                </Button>
-              </Body>
-            </CardItem>
-          </Card>
-        )}
-      </Row>
       <Row size={3}>
         <Content padder>
           {article.conlluDocument.paragraphs.map((paragraph) => (
@@ -98,6 +91,37 @@ const ArticleReader: React.FC<{
             </Text>
           ))}
         </Content>
+      </Row>
+      <Row size={1}>
+        {selectedToken && (
+          <Card style={{ flex: 1 }}>
+            <CardItem>
+              <Body>
+                <Text>{`${selectedToken.form} (${selectedToken.lemma})`}</Text>
+                {/* TODO: Load public suggestions  */}
+                {/* TODO: Load ML Kit on-device translation as one of the suggestion. Ref: https://developers.google.com/ml-kit/language/translation */}
+                {/* TODO: Show all the available word definitions in a scrollable block */}
+                <Text>{wordDefinitionsListQuery.data?.items[0]?.meaning}</Text>
+                {/* TODO: Show buttons for changing word familiarity status */}
+                {/* TODO: Render token PoS tags */}
+                <Button
+                  onPress={() =>
+                    linkTo(
+                      routeUrl(Routes.WordDefinitionsDictionaryLookup, null, {
+                        word: selectedToken.form,
+                        wordLanguage: article.languageCode,
+                        // TODO: Allow choosing another dictionary language
+                        dictionaryLanguage: appSettings.languageCodes.ui,
+                      }),
+                    )
+                  }
+                >
+                  <Text>{t('Dictionary')}</Text>
+                </Button>
+              </Body>
+            </CardItem>
+          </Card>
+        )}
       </Row>
     </Grid>
   );

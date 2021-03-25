@@ -25,9 +25,9 @@ export interface IClient {
     userPreferences_List(request: {  }): Promise<UserPreference[]>;
     userPreferences_Upsert(request: { request: UserPreferenceUpsert }): Promise<void>;
     userPreferences_Delete(request: { id: string }): Promise<void>;
-    wordDefinitions_List(request: { filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfWordDefinition>;
+    wordDefinitions_List(request: { filter_Word_LanguageCode: string | null, filter_Word_Expression: string | null, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfWordDefinition>;
     wordDefinitions_Create(request: { request: WordDefinitionCreate }): Promise<WordDefinition>;
-    wordDefinitions_ListPublicSuggestions(request: { filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfWordDefinitionListPublicSuggestionViewModel>;
+    wordDefinitions_ListPublicSuggestions(request: { filter_Word_LanguageCode: string | null, filter_Word_Expression: string | null, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfWordDefinitionListPublicSuggestionViewModel>;
     wordDefinitions_Get(request: { id: string }): Promise<WordDefinition>;
     wordDefinitions_Update(request: { id: string, request: WordDefinitionUpdate }): Promise<void>;
     wordDefinitions_Delete(request: { id: string }): Promise<void>;
@@ -769,11 +769,15 @@ export class Client implements IClient {
         }
     }
 
-    wordDefinitions_List(request: { filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfWordDefinition> {
+    wordDefinitions_List(request: { filter_Word_LanguageCode: string | null, filter_Word_Expression: string | null, page_Index?: number | undefined, page_Size?: number | null | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfWordDefinition> {
         let url_ = this.baseUrl + "/api/v1/WordDefinitions?";
-        if (request.filter_Word_LanguageCode !== undefined && request.filter_Word_LanguageCode !== null)
+        if (request.filter_Word_LanguageCode === undefined)
+            throw new Error("The parameter 'request.filter_Word_LanguageCode' must be defined.");
+        else if(request.filter_Word_LanguageCode !== null)
             url_ += "Filter.Word.LanguageCode=" + encodeURIComponent("" + request.filter_Word_LanguageCode) + "&";
-        if (request.filter_Word_Expression !== undefined && request.filter_Word_Expression !== null)
+        if (request.filter_Word_Expression === undefined)
+            throw new Error("The parameter 'request.filter_Word_Expression' must be defined.");
+        else if(request.filter_Word_Expression !== null)
             url_ += "Filter.Word.Expression=" + encodeURIComponent("" + request.filter_Word_Expression) + "&";
         if (request.page_Index === null)
             throw new Error("The parameter 'request.page_Index' cannot be null.");
@@ -881,11 +885,15 @@ export class Client implements IClient {
         }
     }
 
-    wordDefinitions_ListPublicSuggestions(request: { filter_Word_LanguageCode?: string | null | undefined, filter_Word_Expression?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfWordDefinitionListPublicSuggestionViewModel> {
+    wordDefinitions_ListPublicSuggestions(request: { filter_Word_LanguageCode: string | null, filter_Word_Expression: string | null, page_Index?: number | undefined, page_Size?: number | null | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfWordDefinitionListPublicSuggestionViewModel> {
         let url_ = this.baseUrl + "/suggestions?";
-        if (request.filter_Word_LanguageCode !== undefined && request.filter_Word_LanguageCode !== null)
+        if (request.filter_Word_LanguageCode === undefined)
+            throw new Error("The parameter 'request.filter_Word_LanguageCode' must be defined.");
+        else if(request.filter_Word_LanguageCode !== null)
             url_ += "Filter.Word.LanguageCode=" + encodeURIComponent("" + request.filter_Word_LanguageCode) + "&";
-        if (request.filter_Word_Expression !== undefined && request.filter_Word_Expression !== null)
+        if (request.filter_Word_Expression === undefined)
+            throw new Error("The parameter 'request.filter_Word_Expression' must be defined.");
+        else if(request.filter_Word_Expression !== null)
             url_ += "Filter.Word.Expression=" + encodeURIComponent("" + request.filter_Word_Expression) + "&";
         if (request.page_Index === null)
             throw new Error("The parameter 'request.page_Index' cannot be null.");

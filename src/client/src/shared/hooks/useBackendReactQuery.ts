@@ -7,33 +7,31 @@ import {
 } from 'react-query';
 
 import { api } from '../../integrations/backend/backend';
+import { Backend } from '../../integrations/backend/types';
 
 export enum QueryCacheKey {
   ArticleCollectionList = 'ArticleCollectionList',
   ArticleList = 'ArticleList',
   Article = 'Article',
+  WordDefinitionList = 'WordDefinitionList',
 }
 
+// TODO: Extract language codes and collection IDs to individual cache keys preceding the filter
 export function queryCacheKey(
   base: QueryCacheKey.ArticleCollectionList,
-  filter: {
-    filter_LanguageCode: string;
-    page_Index?: number | null;
-    page_Size?: number | null;
-  },
+  filter: Parameters<Backend.IClient['articleCollections_List']>[0],
 ): QueryKey;
-
 export function queryCacheKey(
   base: QueryCacheKey.ArticleList,
-  filter: {
-    articleCollectionId?: string | null;
-    page_Index?: number | null;
-    page_Size?: number | null;
-  },
+  filter: Parameters<Backend.IClient['articles_List']>[0],
 ): QueryKey;
 export function queryCacheKey(
   base: QueryCacheKey.Article,
   id: string,
+): QueryKey;
+export function queryCacheKey(
+  base: QueryCacheKey.WordDefinitionList,
+  filter: Parameters<Backend.IClient['wordDefinitions_List']>[0],
 ): QueryKey;
 export function queryCacheKey(
   base: QueryCacheKey,
@@ -81,5 +79,11 @@ export const useMutateArticleCollectionsCreate = () => {
 export const useMutateArticleCreate = () => {
   return useMutateAndInvalidate(api.articles_Create, [
     [QueryCacheKey.ArticleList],
+  ]);
+};
+
+export const useMutateWordDefninition = () => {
+  return useMutateAndInvalidate(api.wordDefinitions_Create, [
+    [QueryCacheKey.WordDefinitionList],
   ]);
 };

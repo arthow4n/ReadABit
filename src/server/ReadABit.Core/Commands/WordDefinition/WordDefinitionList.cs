@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using NSwag.Annotations;
 using ReadABit.Infrastructure.Models;

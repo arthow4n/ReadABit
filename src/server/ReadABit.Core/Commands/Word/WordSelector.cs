@@ -1,11 +1,13 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace ReadABit.Core.Commands
 {
     public record WordSelector
     {
+        [BindRequired]
         public string LanguageCode { get; init; } = "";
-
+        [BindRequired]
         public string Expression { get; init; } = "";
     }
 
