@@ -7,6 +7,13 @@
       "problemMatcher": [],
       "label": "npm: backend:regenerate-client",
       "detail": "Regenerate backend types for client."
+    },
+    {
+      "type": "npm",
+      "script": "lang:extract",
+      "problemMatcher": [],
+      "label": "npm: lang:extract",
+      "detail": "Generate and merge i18n dictionary."
     }
   ]
 }
