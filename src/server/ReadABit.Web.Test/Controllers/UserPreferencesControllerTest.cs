@@ -1,14 +1,14 @@
-using ReadABit.Web.Controllers;
-using Xunit;
-using ReadABit.Web.Test.Helpers;
-using System.Threading.Tasks;
 using System;
-using ReadABit.Core.Utils;
 using System.Collections.Generic;
-using ReadABit.Infrastructure.Models;
-using ReadABit.Core.Commands;
-using Shouldly;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ReadABit.Core.Commands;
+using ReadABit.Core.Utils;
+using ReadABit.Infrastructure.Models;
+using ReadABit.Web.Controllers;
+using ReadABit.Web.Test.Helpers;
+using Shouldly;
+using Xunit;
 
 namespace ReadABit.Web.Test.Controllers
 {
@@ -31,6 +31,11 @@ namespace ReadABit.Web.Test.Controllers
                 x => x.Value.ShouldBe("en")
             );
 
+            using (User(2))
+            {
+                (await List()).ShouldBeEmpty();
+            }
+
             await UserPreferencesController.Upsert(new UserPreferenceUpsert
             {
                 Type = UserPreferenceType.LanguageCode,
@@ -41,6 +46,12 @@ namespace ReadABit.Web.Test.Controllers
                 x => x.Type.ShouldBe(UserPreferenceType.LanguageCode),
                 x => x.Value.ShouldBe("sv")
             );
+
+            using (User(2))
+            {
+                await UserPreferencesController.Delete(preference.Id, new UserPreferenceDelete { });
+            }
+            (await List()).ShouldNotBeEmpty();
 
             await UserPreferencesController.Delete(preference.Id, new UserPreferenceDelete { });
             (await List()).ShouldBeEmpty();
