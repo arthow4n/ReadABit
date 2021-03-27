@@ -1,11 +1,11 @@
-using System.Threading;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using ReadABit.Infrastructure.Models;
-using System.Collections.Generic;
 using ReadABit.Infrastructure.Interfaces;
+using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
@@ -26,6 +26,12 @@ namespace ReadABit.Core.Commands
                     w.LanguageCode == selector.LanguageCode &&
                     w.Expression == selector.Expression
                 );
+        }
+        public static Task<Guid> IdOfWord(this IQueryable<Word> query, WordSelector selector, CancellationToken cancellationToken)
+        {
+            return query.OfWord(selector)
+                        .Select(w => w.Id)
+                        .SingleOrDefaultAsync(cancellationToken: cancellationToken);
         }
         public static IQueryable<T> Page<T>(this IQueryable<T> query, PageFilterFilled filter)
         {

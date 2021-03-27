@@ -21,38 +21,7 @@ namespace ReadABit.Core.Commands
         {
             new WordDefinitionCreateValidator().ValidateAndThrow(request);
 
-            Task<Guid> GetWordId()
-            {
-                return DB.Words
-                          .OfWord(request.Word)
-                          .Select(w => w.Id)
-                          .SingleOrDefaultAsync(cancellationToken: cancellationToken);
-            }
-
-            var wordId = await GetWordId();
-
-            if (wordId == default)
-            {
-                try
-                {
-                    var newWord = new Word
-                    {
-                        Id = Guid.NewGuid(),
-                        LanguageCode = request.Word.LanguageCode,
-                        Expression = request.Word.Expression,
-                    };
-                    await DB.Unsafe.Words.AddAsync(newWord, cancellationToken);
-                    await DB.Unsafe.SaveChangesAsync(cancellationToken);
-                    wordId = newWord.Id;
-                }
-                catch (PostgresException ex)
-                {
-                    if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
-                    {
-                        wordId = await GetWordId();
-                    }
-                }
-            }
+            var wordId = await request.Word.GetIdAndEnsureCreated(DB, cancellationToken);
 
             var wordDefinition = new WordDefinition
             {
