@@ -40,6 +40,7 @@ namespace ReadABit.Web.Test.Helpers
         protected ArticlesController ArticlesController => DI.New<ArticlesController>(ServiceProvider);
         protected UserPreferencesController UserPreferencesController => DI.New<UserPreferencesController>(ServiceProvider);
         protected WordDefinitionsController WordDefinitionsController => DI.New<WordDefinitionsController>(ServiceProvider);
+        protected WordFamiliaritiesController WordFamiliaritiesController => DI.New<WordFamiliaritiesController>(ServiceProvider);
 
         protected class ScopedAnotherUser : IDisposable
         {

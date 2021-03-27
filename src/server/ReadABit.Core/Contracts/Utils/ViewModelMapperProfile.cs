@@ -15,6 +15,16 @@ namespace ReadABit.Core.Contracts.Utils
 
             CreateMap<Article, ArticleListItemViewModel>();
             CreateMap<ArticleCollection, ArticleCollectionViewModel>();
+
+            CreateMap<WordFamiliarity, WordFamiliarityListItemViewModel>()
+                .ForMember(
+                    vm => vm.WordLanguageCode,
+                    conf => conf.MapFrom(wf => wf.Word.LanguageCode)
+                )
+                .ForMember(
+                    vm => vm.WordExpression,
+                    conf => conf.MapFrom(wf => wf.Word.Expression)
+                );
         }
     }
 }

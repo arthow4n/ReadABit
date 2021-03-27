@@ -40,6 +40,10 @@ namespace ReadABit.Core.Utils
         {
             return _coreDbContext.WordDefinitions.Where(wd => wd.Public || wd.UserId == userId);
         }
+        public IQueryable<WordFamiliarity> WordFamiliaritiesOfUser(Guid userId)
+        {
+            return _coreDbContext.WordFamiliarities.Where(wf => wf.UserId == userId);
+        }
         public IQueryable<Word> Words => _coreDbContext.Words;
         public IQueryable<UserPreference> UserPreferencesOfUser(Guid userId)
         {

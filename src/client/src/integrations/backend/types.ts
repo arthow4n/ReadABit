@@ -31,6 +31,9 @@ export interface IClient {
     wordDefinitions_Get(request: { id: string }): Promise<WordDefinition>;
     wordDefinitions_Update(request: { id: string, request: WordDefinitionUpdate }): Promise<void>;
     wordDefinitions_Delete(request: { id: string }): Promise<void>;
+    wordFamiliarities_List(request: {  }): Promise<WordFamiliarityListViewModel>;
+    wordFamiliarities_Upsert(request: { request: WordFamiliarityUpsert }): Promise<void>;
+    wordFamiliarities_Delete(request: { id: string }): Promise<void>;
 }
 
 export class Client implements IClient {
@@ -1117,6 +1120,158 @@ export class Client implements IClient {
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
+
+    wordFamiliarities_List(request: {  } = { }, cancelToken?: CancelToken | undefined ): Promise<WordFamiliarityListViewModel> {
+        let url_ = this.baseUrl + "/api/v1/WordFamiliarities";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processWordFamiliarities_List(_response);
+        });
+    }
+
+    protected processWordFamiliarities_List(response: AxiosResponse): Promise<WordFamiliarityListViewModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    wordFamiliarities_Upsert(request: { request: WordFamiliarityUpsert }, cancelToken?: CancelToken | undefined ): Promise<void> {
+        let url_ = this.baseUrl + "/api/v1/WordFamiliarities";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request.request);
+
+        let options_ = <AxiosRequestConfig>{
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processWordFamiliarities_Upsert(_response);
+        });
+    }
+
+    protected processWordFamiliarities_Upsert(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(<any>null);
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    wordFamiliarities_Delete(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<void> {
+        let url_ = this.baseUrl + "/api/v1/WordFamiliarities/{id}";
+        if (request.id === undefined || request.id === null)
+            throw new Error("The parameter 'request.id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "DELETE",
+            url: url_,
+            headers: {
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processWordFamiliarities_Delete(_response);
+        });
+    }
+
+    protected processWordFamiliarities_Delete(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(<any>null);
+        } else if (status === 404) {
+            const _responseText = response.data;
+            let result404: any = null;
+            let resultData404  = _responseText;
+            result404 = JSON.parse(resultData404);
+            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
 }
 
 export interface PaginatedOfArticleCollection {
@@ -1351,6 +1506,22 @@ export interface WordDefinitionUpdate {
     public?: boolean | null;
     languageCode?: string | null;
     meaning?: string | null;
+}
+
+export interface WordFamiliarityListViewModel {
+    groupedWordFamiliarities: { [key: string]: { [key: string]: WordFamiliarityListItemViewModel; }; };
+}
+
+export interface WordFamiliarityListItemViewModel {
+    id: string;
+    wordLanguageCode: string;
+    wordExpression: string;
+    level: number;
+}
+
+export interface WordFamiliarityUpsert {
+    word: WordSelector;
+    level: number;
 }
 
 export class BackendCallException extends Error {
