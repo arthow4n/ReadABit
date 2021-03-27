@@ -1,5 +1,7 @@
 import { LinkingOptions } from '@react-navigation/native';
 
+import { ArticleStackParamList } from './navigators/ArticleNavigator.types';
+
 import { backendBaseUrl } from '../integrations/backend/backend';
 import { redirectUri } from '../integrations/backend/oidcConstants';
 
@@ -118,11 +120,7 @@ export function routeUrl(route: Routes.ArticleCreate): string;
 export function routeUrl(
   route: Routes.WordDefinitionsDictionaryLookup,
   routeParams: null,
-  queryParams: {
-    word: string;
-    wordLanguage: string;
-    dictionaryLanguage: string;
-  },
+  queryParams: ArticleStackParamList['WordDefinitionsDictionaryLookup'],
 ): string;
 export function routeUrl(
   route: Routes,
@@ -136,6 +134,7 @@ export function routeUrl(
   });
 
   const query = Object.entries(queryParams ?? {})
+    .filter(([key, value]) => value !== undefined && value !== null)
     .map(
       ([key, value]) =>
         `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,

@@ -14,6 +14,7 @@ export enum QueryCacheKey {
   ArticleList = 'ArticleList',
   Article = 'Article',
   WordDefinitionList = 'WordDefinitionList',
+  WordDefinition = 'WordDefinition',
 }
 
 // TODO: Extract language codes and collection IDs to individual cache keys preceding the filter
@@ -34,6 +35,10 @@ export function queryCacheKey(
   filter: Parameters<Backend.IClient['wordDefinitions_List']>[0],
 ): QueryKey;
 export function queryCacheKey(
+  base: QueryCacheKey.WordDefinition,
+  filter: Parameters<Backend.IClient['wordDefinitions_Get']>[0],
+): QueryKey;
+export function queryCacheKey(
   base: QueryCacheKey,
   ...args: (object | string)[]
 ): QueryKey {
@@ -42,7 +47,7 @@ export function queryCacheKey(
 
 const useMutateAndInvalidate = <TData, TVariables>(
   mutateFn: MutationFunction<TData, TVariables>,
-  invalidations: Parameters<QueryClient['invalidateQueries']>[],
+  invalidations: Parameters<QueryClient['invalidateQueries']>[0][],
 ) => {
   const queryClient = useQueryClient();
   const mutationHandle = useMutation(mutateFn);
@@ -57,11 +62,11 @@ const useMutateAndInvalidate = <TData, TVariables>(
       // because it will trigger refetch in background
       // when the query is currently being rendered.
       // https://react-query.tanstack.com/guides/query-invalidation
-      // Promise.all(
-      //   invalidations.map((invalidation) =>
-      //     queryClient.invalidateQueries(...invalidation),
-      //   ),
-      // );
+      setTimeout(() => {
+        invalidations.map((invalidation) =>
+          queryClient.invalidateQueries(invalidation),
+        );
+      }, 0);
 
       return result;
     },
@@ -82,8 +87,16 @@ export const useMutateArticleCreate = () => {
   ]);
 };
 
-export const useMutateWordDefninition = () => {
+export const useMutateWordDefninitionCreate = () => {
   return useMutateAndInvalidate(api.wordDefinitions_Create, [
     [QueryCacheKey.WordDefinitionList],
+  ]);
+};
+
+export const useMutateWordDefninitionUpdate = (
+  getRequestParam: Parameters<Backend.IClient['wordDefinitions_List']>[0],
+) => {
+  return useMutateAndInvalidate(api.wordDefinitions_Update, [
+    [QueryCacheKey.WordDefinition, getRequestParam],
   ]);
 };

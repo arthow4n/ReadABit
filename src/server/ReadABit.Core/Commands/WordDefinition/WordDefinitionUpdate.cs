@@ -10,6 +10,7 @@ namespace ReadABit.Core.Commands
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; init; }
+        [OpenApiIgnore, JsonIgnore]
         public Guid Id { get; init; }
         public bool? Public { get; init; }
         public string? LanguageCode { get; init; }

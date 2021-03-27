@@ -1348,7 +1348,6 @@ export interface WordSelector {
 }
 
 export interface WordDefinitionUpdate {
-    id: string;
     public?: boolean | null;
     languageCode?: string | null;
     meaning?: string | null;

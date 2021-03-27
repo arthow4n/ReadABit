@@ -14,7 +14,11 @@ import {
   Text,
 } from 'native-base';
 
-import { useLinkTo } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useLinkTo,
+  useNavigation,
+} from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 
 import { api } from '../../integrations/backend/backend';
@@ -34,6 +38,8 @@ const ArticleReader: React.FC<{
   const { t } = useTranslation();
   const [selectedToken, setSelectedToken] = React.useState<Backend.Token>();
   const linkTo = useLinkTo();
+  const navigation = useNavigation();
+
   const { appSettings } = useAppSettingsContext();
 
   const wordDefinitionsListQuery = useQuery(
@@ -55,6 +61,24 @@ const ArticleReader: React.FC<{
       enabled: !!selectedToken,
     },
   );
+
+  // Refetch word definition when navigating back from other screens,
+  // like `WordDefinitionsDictionaryLookupScreen`.
+  React.useEffect(() => {
+    const refetchCallback = () => {
+      wordDefinitionsListQuery.refetch();
+      navigation.removeListener('focus', refetchCallback);
+    };
+
+    const blurCleanup = navigation.addListener('blur', () => {
+      navigation.addListener('focus', refetchCallback);
+    });
+
+    return () => {
+      blurCleanup();
+      navigation.removeListener('focus', refetchCallback);
+    };
+  }, [wordDefinitionsListQuery.refetch]);
 
   // TODO: Save article reading progress.
 
@@ -82,7 +106,7 @@ const ArticleReader: React.FC<{
                         >
                           {token.form}
                         </Text>
-                        <Text>{spacesAfter}</Text>
+                        <Text style={{ fontSize: 28 }}>{spacesAfter}</Text>
                       </React.Fragment>
                     );
                   })}
@@ -98,7 +122,7 @@ const ArticleReader: React.FC<{
             <CardItem>
               <Body>
                 <Text>{`${selectedToken.form} (${selectedToken.lemma})`}</Text>
-                {/* TODO: Load public suggestions  */}
+                {/* TODO: Load public suggestions */}
                 {/* TODO: Load ML Kit on-device translation as one of the suggestion. Ref: https://developers.google.com/ml-kit/language/translation */}
                 {/* TODO: Show all the available word definitions in a scrollable block */}
                 <Text>{wordDefinitionsListQuery.data?.items[0]?.meaning}</Text>
@@ -112,6 +136,8 @@ const ArticleReader: React.FC<{
                         wordLanguage: article.languageCode,
                         // TODO: Allow choosing another dictionary language
                         dictionaryLanguage: appSettings.languageCodes.ui,
+                        wordDefinitionId:
+                          wordDefinitionsListQuery.data?.items[0]?.id,
                       }),
                     )
                   }

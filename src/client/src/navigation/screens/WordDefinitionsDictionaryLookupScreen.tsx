@@ -24,7 +24,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigation } from '@react-navigation/core';
 import { StackScreenProps } from '@react-navigation/stack';
 
-import { useMutateWordDefninition } from '../../shared/hooks/useBackendReactQuery';
+import {
+  useMutateWordDefninitionCreate,
+  useMutateWordDefninitionUpdate,
+} from '../../shared/hooks/useBackendReactQuery';
 import { ArticleStackParamList } from '../navigators/ArticleNavigator.types';
 
 const formSchema = z.object({
@@ -34,7 +37,13 @@ const formSchema = z.object({
 export const WordDefinitionsDictionaryLookupScreen: React.FC<
   StackScreenProps<ArticleStackParamList, 'WordDefinitionsDictionaryLookup'>
 > = ({ route }) => {
-  const { word, wordLanguage, dictionaryLanguage } = route.params;
+  const {
+    word,
+    wordLanguage,
+    dictionaryLanguage,
+    wordDefinitionId,
+  } = route.params;
+
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -45,7 +54,11 @@ export const WordDefinitionsDictionaryLookupScreen: React.FC<
     resolver: zodResolver(formSchema),
   });
 
-  const { mutateAsync, isLoading } = useMutateWordDefninition();
+  const wordDefinitionCreateHandle = useMutateWordDefninitionCreate();
+  const wordDefinitionUpdateHandle = useMutateWordDefninitionUpdate({
+    filter_Word_Expression: word,
+    filter_Word_LanguageCode: wordLanguage,
+  });
 
   // TODO: Support switching to seach with lemma instead of word form
 
@@ -59,23 +72,38 @@ export const WordDefinitionsDictionaryLookupScreen: React.FC<
 
   const onSubmitPress = handleSubmit(async (values) => {
     // TODO: Optimistic saving & local caching
-    // So the user can jump back to article reader screen immediately and see the new definition.
-    await mutateAsync({
-      request: {
-        languageCode: dictionaryLanguage,
-        meaning: values.meaning,
-        public: true,
-        word: {
-          expression: word,
-          languageCode: wordLanguage,
+    // So the user can jump back to article reader screen immediately and see the new definition
+    // without have to wait for network.
+
+    if (wordDefinitionId) {
+      await wordDefinitionUpdateHandle.mutateAsync({
+        id: wordDefinitionId,
+        request: {
+          languageCode: dictionaryLanguage,
+          meaning: values.meaning,
+          public: true,
         },
-      },
-    });
+      });
+    } else {
+      await wordDefinitionCreateHandle.mutateAsync({
+        request: {
+          languageCode: dictionaryLanguage,
+          meaning: values.meaning,
+          public: true,
+          word: {
+            expression: word,
+            languageCode: wordLanguage,
+          },
+        },
+      });
+    }
 
     navigation.goBack();
   });
 
-  const disabled = isLoading;
+  const disabled =
+    wordDefinitionCreateHandle.isLoading ||
+    wordDefinitionUpdateHandle.isLoading;
 
   return (
     <Grid style={{ flex: 1 }}>

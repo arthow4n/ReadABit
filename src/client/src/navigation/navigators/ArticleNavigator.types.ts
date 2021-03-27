@@ -5,5 +5,6 @@ export type ArticleStackParamList = {
     word: string;
     wordLanguage: string;
     dictionaryLanguage: string;
+    wordDefinitionId?: string;
   };
 };
