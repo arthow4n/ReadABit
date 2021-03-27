@@ -1378,6 +1378,7 @@ export class BackendCallException extends Error {
 }
 
 function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
+    console.error(result);
     throw new BackendCallException(message, status, response, headers, result);
 }
 

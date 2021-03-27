@@ -25,6 +25,7 @@ function throwException(q: ng.IQService, message: string, status: number, respon
 
 {% else -%}
 function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
+    console.error(result);
 {%     if WrapDtoExceptions -%}
     throw new {{ ExceptionClassName }}(message, status, response, headers, result);
 {%     else -%}
