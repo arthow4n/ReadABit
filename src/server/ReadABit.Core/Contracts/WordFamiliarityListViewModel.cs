@@ -1,7 +1,6 @@
-
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using ReadABit.Core.Commands;
 using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Contracts
@@ -26,9 +25,7 @@ namespace ReadABit.Core.Contracts
 
     public record WordFamiliarityListItemViewModel
     {
-        public Guid Id { get; init; }
-        public string WordLanguageCode { get; init; } = "";
-        public string WordExpression { get; init; } = "";
+        public WordSelector Word { get; init; } = new();
         public int Level { get; init; }
     }
 }

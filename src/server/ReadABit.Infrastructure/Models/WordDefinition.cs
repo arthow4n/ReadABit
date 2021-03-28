@@ -5,7 +5,7 @@ using ReadABit.Infrastructure.Interfaces;
 
 namespace ReadABit.Infrastructure.Models
 {
-    public class WordDefinition : ITimestampedEntity
+    public class WordDefinition : ITimestampedEntity, IOwnedByWord
     {
         public Guid Id { get; set; }
         public Guid WordId { get; set; }

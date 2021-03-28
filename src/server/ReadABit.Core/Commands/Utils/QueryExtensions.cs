@@ -11,7 +11,7 @@ namespace ReadABit.Core.Commands
 {
     public static class QueryExtensions
     {
-        public static IQueryable<WordDefinition> OfWord(this IQueryable<WordDefinition> query, WordSelector selector)
+        public static IQueryable<T> OfWord<T>(this IQueryable<T> query, WordSelector selector) where T : IOwnedByWord
         {
             return query
                 .Where(wd =>

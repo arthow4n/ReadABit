@@ -23,10 +23,10 @@ namespace ReadABit.Core.Commands
             var grouped = (await DB.WordFamiliaritiesOfUser(request.UserId)
                         .ProjectTo<WordFamiliarityListItemViewModel>(Mapper.ConfigurationProvider)
                         .ToListAsync(cancellationToken))
-                        .GroupBy(wf => wf.WordLanguageCode)
+                        .GroupBy(wf => wf.Word.LanguageCode)
                         .ToDictionary(
                             wfg => wfg.Key,
-                            wfg => wfg.ToDictionary(wf => wf.WordExpression)
+                            wfg => wfg.ToDictionary(wf => wf.Word.Expression)
                         );
 
             return new WordFamiliarityListViewModel

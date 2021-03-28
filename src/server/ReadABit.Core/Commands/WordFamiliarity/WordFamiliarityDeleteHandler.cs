@@ -19,8 +19,8 @@ namespace ReadABit.Core.Commands
         {
             var target =
                 await DB.WordFamiliaritiesOfUser(request.UserId)
-                         .Where(up => up.Id == request.Id)
-                         .SingleOrDefaultAsync(cancellationToken: cancellationToken);
+                        .OfWord(request.Word)
+                        .SingleOrDefaultAsync(cancellationToken: cancellationToken);
 
             if (target is null)
             {

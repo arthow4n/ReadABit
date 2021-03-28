@@ -41,15 +41,14 @@ namespace ReadABit.Web.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Delete(Guid id, [FromQuery] WordFamiliarityDelete request)
+        public async Task<IActionResult> Delete([FromQuery] WordFamiliarityDelete request)
         {
             var found = await Mediator.Send(request with
             {
-                Id = id,
                 UserId = RequestUserId,
             });
 

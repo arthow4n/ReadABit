@@ -33,7 +33,7 @@ export interface IClient {
     wordDefinitions_Delete(request: { id: string }): Promise<void>;
     wordFamiliarities_List(request: {  }): Promise<WordFamiliarityListViewModel>;
     wordFamiliarities_Upsert(request: { request: WordFamiliarityUpsert }): Promise<void>;
-    wordFamiliarities_Delete(request: { id: string }): Promise<void>;
+    wordFamiliarities_Delete(request: { word_LanguageCode: string | null, word_Expression: string | null }): Promise<void>;
 }
 
 export class Client implements IClient {
@@ -1219,11 +1219,16 @@ export class Client implements IClient {
         }
     }
 
-    wordFamiliarities_Delete(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<void> {
-        let url_ = this.baseUrl + "/api/v1/WordFamiliarities/{id}";
-        if (request.id === undefined || request.id === null)
-            throw new Error("The parameter 'request.id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
+    wordFamiliarities_Delete(request: { word_LanguageCode: string | null, word_Expression: string | null }, cancelToken?: CancelToken | undefined ): Promise<void> {
+        let url_ = this.baseUrl + "/api/v1/WordFamiliarities?";
+        if (request.word_LanguageCode === undefined)
+            throw new Error("The parameter 'request.word_LanguageCode' must be defined.");
+        else if(request.word_LanguageCode !== null)
+            url_ += "Word.LanguageCode=" + encodeURIComponent("" + request.word_LanguageCode) + "&";
+        if (request.word_Expression === undefined)
+            throw new Error("The parameter 'request.word_Expression' must be defined.");
+        else if(request.word_Expression !== null)
+            url_ += "Word.Expression=" + encodeURIComponent("" + request.word_Expression) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ = <AxiosRequestConfig>{
@@ -1513,9 +1518,7 @@ export interface WordFamiliarityListViewModel {
 }
 
 export interface WordFamiliarityListItemViewModel {
-    id: string;
-    wordLanguageCode: string;
-    wordExpression: string;
+    word: WordSelector;
     level: number;
 }
 

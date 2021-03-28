@@ -35,13 +35,13 @@ namespace ReadABit.Web.Test.Controllers
                     .ShouldHaveSingleItem()
                     .ShouldSatisfyAllConditions(
                         vm => vm.Level.ShouldBe(1),
-                        vm => vm.WordLanguageCode.ShouldBe("sv"),
-                        vm => vm.WordExpression.ShouldBe("Hallå")
+                        vm => vm.Word.LanguageCode.ShouldBe("sv"),
+                        vm => vm.Word.Expression.ShouldBe("Hallå")
                     ),
                 x => x.GroupedWordFamiliarities["sv"]["Hallå"].ShouldSatisfyAllConditions(
                         vm => vm.Level.ShouldBe(1),
-                        vm => vm.WordLanguageCode.ShouldBe("sv"),
-                        vm => vm.WordExpression.ShouldBe("Hallå")
+                        vm => vm.Word.LanguageCode.ShouldBe("sv"),
+                        vm => vm.Word.Expression.ShouldBe("Hallå")
                     )
             );
 
@@ -64,25 +64,25 @@ namespace ReadABit.Web.Test.Controllers
                     .ShouldHaveSingleItem()
                     .ShouldSatisfyAllConditions(
                         vm => vm.Level.ShouldBe(2),
-                        vm => vm.WordLanguageCode.ShouldBe("sv"),
-                        vm => vm.WordExpression.ShouldBe("Hallå")
+                        vm => vm.Word.LanguageCode.ShouldBe("sv"),
+                        vm => vm.Word.Expression.ShouldBe("Hallå")
                     ),
                 x => x.GroupedWordFamiliarities["sv"]["Hallå"].ShouldSatisfyAllConditions(
                         vm => vm.Level.ShouldBe(2),
-                        vm => vm.WordLanguageCode.ShouldBe("sv"),
-                        vm => vm.WordExpression.ShouldBe("Hallå")
+                        vm => vm.Word.LanguageCode.ShouldBe("sv"),
+                        vm => vm.Word.Expression.ShouldBe("Hallå")
                     )
             );
 
-            var wordFamiliarityId = (await List()).Flatten().Single().Id;
+            var wordFamiliaritySelector = (await List()).Flatten().Single().Word;
 
             using (User(2))
             {
-                await WordFamiliaritiesController.Delete(wordFamiliarityId, new WordFamiliarityDelete { });
+                await WordFamiliaritiesController.Delete(new WordFamiliarityDelete { Word = wordFamiliaritySelector });
             }
             (await List()).Flatten().ShouldNotBeEmpty();
 
-            await WordFamiliaritiesController.Delete(wordFamiliarityId, new WordFamiliarityDelete { });
+            await WordFamiliaritiesController.Delete(new WordFamiliarityDelete { Word = wordFamiliaritySelector });
             (await List()).Flatten().ShouldBeEmpty();
         }
 

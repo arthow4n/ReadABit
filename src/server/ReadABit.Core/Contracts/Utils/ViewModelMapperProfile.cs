@@ -1,4 +1,5 @@
 using AutoMapper;
+using ReadABit.Core.Commands;
 using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Contracts.Utils
@@ -18,12 +19,12 @@ namespace ReadABit.Core.Contracts.Utils
 
             CreateMap<WordFamiliarity, WordFamiliarityListItemViewModel>()
                 .ForMember(
-                    vm => vm.WordLanguageCode,
-                    conf => conf.MapFrom(wf => wf.Word.LanguageCode)
-                )
-                .ForMember(
-                    vm => vm.WordExpression,
-                    conf => conf.MapFrom(wf => wf.Word.Expression)
+                    vm => vm.Word,
+                    conf => conf.MapFrom(wf => new WordSelector
+                    {
+                        LanguageCode = wf.Word.LanguageCode,
+                        Expression = wf.Word.Expression,
+                    })
                 );
         }
     }

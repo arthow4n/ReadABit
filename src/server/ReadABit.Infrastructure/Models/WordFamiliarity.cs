@@ -1,8 +1,9 @@
 using System;
+using ReadABit.Infrastructure.Interfaces;
 
 namespace ReadABit.Infrastructure.Models
 {
-    public class WordFamiliarity
+    public class WordFamiliarity : IOwnedByWord
     {
         public Guid Id { get; set; }
         public Guid WordId { get; set; }
@@ -10,7 +11,7 @@ namespace ReadABit.Infrastructure.Models
         public Guid UserId { get; set; }
         public ApplicationUser User { get; set; }
         public int Level { get; set; }
-        public static readonly int LevelMax = 5;
+        public static readonly int LevelMax = 3;
         public static readonly int LevelIgnored = -1;
     }
 }
