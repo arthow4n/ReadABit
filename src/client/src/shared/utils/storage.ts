@@ -1,8 +1,9 @@
 import * as SecureStore from 'expo-secure-store';
 
 export enum StorageKey {
-  AuthToken = 'READABIT.OIDC_TOKEN_RESPONSE',
-  AppSettings = 'READABIT.APP_SETTINGS',
+  AuthToken = 'ReadABit.AuthToken',
+  AppSettings = 'ReadABit.AppSettings',
+  WordFamiliarity = 'ReadABit.WordFamiliarity',
 }
 
 const secureStoreAvailabePromise = SecureStore.isAvailableAsync();
