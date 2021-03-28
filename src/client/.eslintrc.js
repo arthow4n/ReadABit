@@ -24,5 +24,9 @@ module.exports = {
     'no-confusing-arrow': 'off',
     'react/jsx-curly-newline': 'off',
     'react/no-unused-prop-types': 'off',
+    'no-param-reassign': [
+      'error',
+      { props: true, ignorePropertyModificationsFor: ['draft'] },
+    ],
   },
 };

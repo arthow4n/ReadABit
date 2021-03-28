@@ -3,8 +3,8 @@ export type ArticleStackParamList = {
   Article: { id: string };
   WordDefinitionsDictionaryLookup: {
     word: string;
-    wordLanguage: string;
-    dictionaryLanguage: string;
+    wordLanguageCode: string;
+    dictionaryLanguageCode: string;
     wordDefinitionId?: string;
   };
 };

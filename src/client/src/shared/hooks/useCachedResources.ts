@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { loadAuthToken } from '../../integrations/backend/backend';
 import { loadAppSettings } from '../contexts/AppSettingsContext';
+import { loadWordFamiliarity } from '../contexts/WordFamiliarityContext';
 
 const ignorePromiseErrors = (promises: Promise<void>[]) => {
   const catched = promises.map((x) => x.catch((e) => console.warn(e)));
@@ -29,6 +30,7 @@ export function useCachedResources() {
       }),
       loadAuthToken(),
       loadAppSettings(),
+      loadWordFamiliarity(),
     ]);
 
     setLoadingComplete(true);

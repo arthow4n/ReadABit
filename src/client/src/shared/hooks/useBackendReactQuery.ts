@@ -15,6 +15,7 @@ export enum QueryCacheKey {
   Article = 'Article',
   WordDefinitionList = 'WordDefinitionList',
   WordDefinition = 'WordDefinition',
+  WordFamiliarityList = 'WordFamiliarityList',
 }
 
 // TODO: Extract language codes and collection IDs to individual cache keys preceding the filter
@@ -37,6 +38,9 @@ export function queryCacheKey(
 export function queryCacheKey(
   base: QueryCacheKey.WordDefinition,
   filter: Parameters<Backend.IClient['wordDefinitions_Get']>[0],
+): QueryKey;
+export function queryCacheKey(
+  base: QueryCacheKey.WordFamiliarityList,
 ): QueryKey;
 export function queryCacheKey(
   base: QueryCacheKey,
@@ -99,4 +103,15 @@ export const useMutateWordDefninitionUpdate = (
   return useMutateAndInvalidate(api.wordDefinitions_Update, [
     [QueryCacheKey.WordDefinition, getRequestParam],
   ]);
+};
+
+// We don't invalidate cache in word familiarity queries because we handle it with storage instead.
+// Ref: `WordFamiliarityContext.tsx`
+
+export const useMutateWordFamiliarityUpsert = () => {
+  return useMutateAndInvalidate(api.wordFamiliarities_Upsert, []);
+};
+
+export const useMutateWordFamiliarityDelete = () => {
+  return useMutateAndInvalidate(api.wordFamiliarities_Delete, []);
 };

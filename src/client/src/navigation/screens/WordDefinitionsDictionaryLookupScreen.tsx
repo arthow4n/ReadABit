@@ -5,11 +5,8 @@ import { useTranslation } from 'react-i18next';
 import WebView from 'react-native-webview';
 
 import {
-  Body,
   Button,
   Card,
-  CardItem,
-  Col,
   Form,
   Grid,
   Input,
@@ -39,8 +36,8 @@ export const WordDefinitionsDictionaryLookupScreen: React.FC<
 > = ({ route }) => {
   const {
     word,
-    wordLanguage,
-    dictionaryLanguage,
+    wordLanguageCode,
+    dictionaryLanguageCode,
     wordDefinitionId,
   } = route.params;
 
@@ -57,7 +54,7 @@ export const WordDefinitionsDictionaryLookupScreen: React.FC<
   const wordDefinitionCreateHandle = useMutateWordDefninitionCreate();
   const wordDefinitionUpdateHandle = useMutateWordDefninitionUpdate({
     filter_Word_Expression: word,
-    filter_Word_LanguageCode: wordLanguage,
+    filter_Word_LanguageCode: wordLanguageCode,
   });
 
   // TODO: Support switching to seach with lemma instead of word form
@@ -65,9 +62,9 @@ export const WordDefinitionsDictionaryLookupScreen: React.FC<
   // TODO: Support choosing another dictionary
   // TODO: Support saving custom dictionary
   const dictionaryWebViewUrl = `https://${encodeURIComponent(
-    dictionaryLanguage,
-  )}.glosbe.com/${encodeURIComponent(wordLanguage)}/${encodeURIComponent(
-    dictionaryLanguage,
+    dictionaryLanguageCode,
+  )}.glosbe.com/${encodeURIComponent(wordLanguageCode)}/${encodeURIComponent(
+    dictionaryLanguageCode,
   )}/${encodeURIComponent(word)}`;
 
   const onSubmitPress = handleSubmit(async (values) => {
@@ -79,7 +76,7 @@ export const WordDefinitionsDictionaryLookupScreen: React.FC<
       await wordDefinitionUpdateHandle.mutateAsync({
         id: wordDefinitionId,
         request: {
-          languageCode: dictionaryLanguage,
+          languageCode: dictionaryLanguageCode,
           meaning: values.meaning,
           public: true,
         },
@@ -87,12 +84,12 @@ export const WordDefinitionsDictionaryLookupScreen: React.FC<
     } else {
       await wordDefinitionCreateHandle.mutateAsync({
         request: {
-          languageCode: dictionaryLanguage,
+          languageCode: dictionaryLanguageCode,
           meaning: values.meaning,
           public: true,
           word: {
             expression: word,
-            languageCode: wordLanguage,
+            languageCode: wordLanguageCode,
           },
         },
       });
