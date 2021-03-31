@@ -1,26 +1,81 @@
 import React from 'react';
 
 import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
 
 import produce from 'immer';
 import { Body, Button, Card, CardItem, Text } from 'native-base';
 
-import { useLinkTo } from '@react-navigation/native';
-import { Backend } from '@src/integrations/backend/types';
+import { useLinkTo, useNavigation } from '@react-navigation/native';
+import { api } from '@src/integrations/backend/backend';
 import { Routes, routeUrl } from '@src/navigation/routes';
 import { wordFamiliarityLevelColorCodeMapping } from '@src/shared/constants/colorCode';
 import { useAppSettingsContext } from '@src/shared/contexts/AppSettingsContext';
-import { useWordFamiliarityContext } from '@src/shared/contexts/WordFamiliarityContext';
+import {
+  queryCacheKey,
+  QueryCacheKey,
+} from '@src/shared/hooks/useBackendReactQuery';
 
-export const SelectedTokenDefinitionCard: React.FC<{
-  definitionListItems: Backend.WordDefinition[];
-  selectedToken: Backend.Token;
-  wordFamiliarityItem: Backend.WordFamiliarityListItemViewModel;
-}> = ({ definitionListItems, selectedToken, wordFamiliarityItem }) => {
+import {
+  useSelectedTokenDefinitionCardHandle,
+  useWordTokenHandle,
+} from './ArticleReaderRenderContext';
+
+export const SelectedTokenDefinitionCard: React.FC = () => {
   const { t } = useTranslation();
   const linkTo = useLinkTo();
-  const { updateWordFamiliarity } = useWordFamiliarityContext();
   const { appSettings } = useAppSettingsContext();
+  const navigation = useNavigation();
+
+  const {
+    articleLanguageCode,
+    getSelectedToken,
+    updateWordFamiliarity,
+  } = useSelectedTokenDefinitionCardHandle();
+  const selectedToken = getSelectedToken();
+  const { wordFamiliarityItem } = useWordTokenHandle(selectedToken?.form || '');
+
+  const wordDefinitionsListQuery = useQuery(
+    queryCacheKey(QueryCacheKey.WordDefinitionList, {
+      filter_Word_Expression: selectedToken?.form ?? '',
+      filter_Word_LanguageCode: articleLanguageCode,
+    }),
+    () => {
+      if (!selectedToken) {
+        throw new Error();
+      }
+
+      return api.wordDefinitions_List({
+        filter_Word_Expression: selectedToken.form,
+        filter_Word_LanguageCode: articleLanguageCode,
+      });
+    },
+    {
+      enabled: !!selectedToken,
+    },
+  );
+
+  // Refetch word definition when navigating back from other screens,
+  // like `WordDefinitionsDictionaryLookupScreen`.
+  React.useEffect(() => {
+    const refetchCallback = () => {
+      wordDefinitionsListQuery.refetch();
+      navigation.removeListener('focus', refetchCallback);
+    };
+
+    const blurCleanup = navigation.addListener('blur', () => {
+      navigation.addListener('focus', refetchCallback);
+    });
+
+    return () => {
+      blurCleanup();
+      navigation.removeListener('focus', refetchCallback);
+    };
+  }, [wordDefinitionsListQuery.refetch]);
+
+  if (!selectedToken) {
+    return null;
+  }
 
   const renderMainWordHeader = () => (
     <Text
@@ -47,6 +102,8 @@ export const SelectedTokenDefinitionCard: React.FC<{
       {`${selectedToken.form} (${selectedToken.lemma})`}
     </Text>
   );
+
+  const definitionListItems = wordDefinitionsListQuery.data?.items ?? [];
 
   const gotoDictionaryLookUp = () =>
     linkTo(

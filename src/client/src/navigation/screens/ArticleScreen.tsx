@@ -6,8 +6,8 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { api } from '@src/integrations/backend/backend';
 import { ArticleStackParamList } from '@src/navigation/navigators/ArticleNavigator.types';
 import { ArticleReader } from '@src/shared/components/ArticleReader/ArticleReader';
+import { ArticleReaderRenderContextProvider } from '@src/shared/components/ArticleReader/ArticleReaderRenderContext';
 import { ContentLoading } from '@src/shared/components/Loading';
-import { WordFamiliarityContextProvider } from '@src/shared/contexts/WordFamiliarityContext';
 import {
   QueryCacheKey,
   queryCacheKey,
@@ -27,8 +27,8 @@ export const ArticleScreen: React.FC<
   }
 
   return (
-    <WordFamiliarityContextProvider>
+    <ArticleReaderRenderContextProvider articleLanguageCode={data.languageCode}>
       <ArticleReader article={data} />
-    </WordFamiliarityContextProvider>
+    </ArticleReaderRenderContextProvider>
   );
 };

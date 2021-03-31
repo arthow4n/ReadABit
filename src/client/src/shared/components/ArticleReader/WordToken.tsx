@@ -5,15 +5,21 @@ import { Text, View } from 'native-base';
 import { Backend } from '@src/integrations/backend/types';
 import { wordFamiliarityLevelColorCodeMapping } from '@src/shared/constants/colorCode';
 
+import { useWordTokenHandle } from './ArticleReaderRenderContext';
+
 export const WordToken: React.FC<{
   token: Backend.Token;
-  wordFamiliarityItem: Backend.WordFamiliarityListItemViewModel;
-  onPress: () => void;
-}> = ({ token, wordFamiliarityItem, onPress }) => {
+}> = ({ token }) => {
+  const { wordFamiliarityItem, updateSelectedToken } = useWordTokenHandle(
+    token.form,
+  );
+
   const spacesAfter = (token.misc.match(/\|?Spaces?After=(.+)\|?/)?.[1] ?? ' ')
     .replace(/^No$/, '')
     .replace(/\\s/g, ' ')
     .replace(/\\n/g, '\n');
+
+  const isPunct = token.upos === 'PUNCT';
 
   return (
     <Text key={token.id}>
@@ -25,16 +31,23 @@ export const WordToken: React.FC<{
           wordFamiliarityLevelColorCodeMapping[wordFamiliarityItem.level]
             ? {
                 borderBottomWidth: 4,
-                borderColor:
-                  wordFamiliarityLevelColorCodeMapping[
-                    wordFamiliarityItem.level
-                  ],
+                borderColor: isPunct
+                  ? 'rgba(0,0,0,0)'
+                  : wordFamiliarityLevelColorCodeMapping[
+                      wordFamiliarityItem.level
+                    ],
               }
             : {}
         }
       >
         <Text
-          onPress={onPress}
+          onPress={() => {
+            if (isPunct) {
+              return;
+            }
+
+            updateSelectedToken(token);
+          }}
           style={{
             fontSize: 28,
           }}
