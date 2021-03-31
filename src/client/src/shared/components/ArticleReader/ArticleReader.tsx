@@ -94,6 +94,48 @@ const SelectedTokenDefinitionCard: React.FC<{
   );
 };
 
+const WordToken: React.FC<{
+  token: Backend.Token;
+  wordFamiliarityItem: Backend.WordFamiliarityListItemViewModel;
+  onPress: () => void;
+}> = ({ token, wordFamiliarityItem, onPress }) => {
+  const spacesAfter = (token.misc.match(/\|?Spaces?After=(.+)\|?/)?.[1] ?? ' ')
+    .replace(/^No$/, '')
+    .replace(/\\s/g, ' ')
+    .replace(/\\n/g, '\n');
+
+  return (
+    <Text key={token.id}>
+      {/* TODO: Render and highlight multiple words token,
+          for example, "på grund av" */}
+      {/* TODO: Support selected multiple words */}
+      <View
+        style={
+          wordFamiliarityLevelColorCodeMapping[wordFamiliarityItem.level]
+            ? {
+                borderBottomWidth: 4,
+                borderColor:
+                  wordFamiliarityLevelColorCodeMapping[
+                    wordFamiliarityItem.level
+                  ],
+              }
+            : {}
+        }
+      >
+        <Text
+          onPress={onPress}
+          style={{
+            fontSize: 28,
+          }}
+        >
+          {token.form}
+        </Text>
+      </View>
+      <Text style={{ fontSize: 28 }}>{spacesAfter}</Text>
+    </Text>
+  );
+};
+
 export const ArticleReader: React.FC<{
   article: Backend.ArticleViewModel;
 }> = ({ article }) => {
@@ -156,6 +198,7 @@ export const ArticleReader: React.FC<{
   };
 
   // TODO: Save article reading progress.
+  // TODO: Split article into pages because it's very slow to re-render the whole article this way.
 
   return (
     <Grid>
@@ -165,49 +208,14 @@ export const ArticleReader: React.FC<{
             <Text key={paragraph.id}>
               {paragraph.sentences.map((sentence) => (
                 <Text key={sentence.id}>
-                  {sentence.tokens.map((token) => {
-                    const spacesAfter = (
-                      token.misc.match(/\|?Spaces?After=(.+)\|?/)?.[1] ?? ' '
-                    )
-                      .replace(/^No$/, '')
-                      .replace(/\\s/g, ' ')
-                      .replace(/\\n/g, '\n');
-
-                    const wordFamiliarityItem = getWordFamiliarityItem(token);
-
-                    return (
-                      <React.Fragment key={token.id}>
-                        {/* TODO: Render and highlight multiple words token,
-                            for example, "på grund av" */}
-                        {/* TODO: Support selected multiple words */}
-                        <View
-                          style={
-                            wordFamiliarityLevelColorCodeMapping[
-                              wordFamiliarityItem.level
-                            ]
-                              ? {
-                                  borderBottomWidth: 4,
-                                  borderColor:
-                                    wordFamiliarityLevelColorCodeMapping[
-                                      wordFamiliarityItem.level
-                                    ],
-                                }
-                              : {}
-                          }
-                        >
-                          <Text
-                            onPress={() => setSelectedToken(token)}
-                            style={{
-                              fontSize: 28,
-                            }}
-                          >
-                            {token.form}
-                          </Text>
-                        </View>
-                        <Text style={{ fontSize: 28 }}>{spacesAfter}</Text>
-                      </React.Fragment>
-                    );
-                  })}
+                  {sentence.tokens.map((token) => (
+                    <WordToken
+                      key={token.id}
+                      token={token}
+                      onPress={() => setSelectedToken(token)}
+                      wordFamiliarityItem={getWordFamiliarityItem(token)}
+                    />
+                  ))}
                 </Text>
               ))}
             </Text>

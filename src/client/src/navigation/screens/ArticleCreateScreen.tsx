@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import WebView from 'react-native-webview';
 import { useQuery } from 'react-query';
 
 import {
@@ -16,7 +15,6 @@ import {
   Label,
   Text,
   Button,
-  View,
 } from 'native-base';
 import * as z from 'zod';
 
@@ -67,7 +65,51 @@ const ArticleCreateForm: React.FC<{
     linkTo(routeUrl(Routes.Article, { id: result.id }));
   });
 
-  const disabled = isLoading || !!loadingFromWebPageUrl;
+  const isLoadingFromWebPageUrl = !!loadingFromWebPageUrl;
+  const disabled = isLoading || isLoadingFromWebPageUrl;
+
+  const renderImportFromUrlInput = () => (
+    <Item stackedLabel disabled={disabled} error={!!errors.importFromUrl}>
+      <Controller
+        control={control}
+        name="importFromUrl"
+        render={({ onChange, value }) => (
+          <>
+            <Label>{t('Import from web page')}</Label>
+            <Input
+              disabled={disabled}
+              onChangeText={onChange}
+              placeholder={t('URL')}
+              value={value}
+            />
+            <Button
+              disabled={disabled}
+              onPress={() => {
+                setLoadingFromWebPageUrl(value);
+              }}
+            >
+              <Text>{t('Load content')}</Text>
+              {isLoadingFromWebPageUrl && <Spinner />}
+            </Button>
+            {isLoadingFromWebPageUrl && (
+              <ImportWebPageWebview
+                url={loadingFromWebPageUrl}
+                onParsed={({ title, content }) => {
+                  setValue('name', title);
+                  setValue('text', content);
+                  setLoadingFromWebPageUrl('');
+                }}
+                onFail={() => {
+                  setLoadingFromWebPageUrl('');
+                }}
+              />
+            )}
+          </>
+        )}
+      />
+      <Text>{errors.importFromUrl?.message}</Text>
+    </Item>
+  );
 
   return (
     <Form>
@@ -90,6 +132,7 @@ const ArticleCreateForm: React.FC<{
         />
         <Text>{errors.articleCollectionId?.message}</Text>
       </Item>
+      {renderImportFromUrlInput()}
       <Item stackedLabel disabled={disabled} error={!!errors.name}>
         <Label>{t('Title')}</Label>
         <Controller
@@ -100,46 +143,6 @@ const ArticleCreateForm: React.FC<{
           )}
         />
         <Text>{errors.name?.message}</Text>
-      </Item>
-      <Item stackedLabel disabled={disabled} error={!!errors.importFromUrl}>
-        <Controller
-          control={control}
-          name="name"
-          render={({ onChange, value }) => (
-            <View>
-              <Label>{t('Import from web page')}</Label>
-              <Input
-                disabled={disabled}
-                onChangeText={onChange}
-                placeholder={t('URL')}
-                value={value}
-              />
-              <Button
-                disabled={disabled}
-                onPress={() => {
-                  setLoadingFromWebPageUrl(value);
-                }}
-              >
-                <Text>{t('Load content')}</Text>
-                {loadingFromWebPageUrl && <Spinner />}
-              </Button>
-            </View>
-          )}
-        />
-        {loadingFromWebPageUrl && (
-          <ImportWebPageWebview
-            url={loadingFromWebPageUrl}
-            onParsed={({ title, content }) => {
-              setValue('name', title);
-              setValue('text', content);
-              setLoadingFromWebPageUrl('');
-            }}
-            onFail={() => {
-              setLoadingFromWebPageUrl('');
-            }}
-          />
-        )}
-        <Text>{errors.importFromUrl?.message}</Text>
       </Item>
       <Controller
         control={control}
@@ -184,14 +187,13 @@ export const ArticleCreateScreen: React.FC<
     {
       onSuccess: async ({ items }) => {
         if (!items.length) {
-          const r = await mutateAsync({
+          await mutateAsync({
             request: {
               languageCode: appSettings.languageCodes.studying,
               name: t('Quick imports'),
               public: false,
             },
           });
-          console.log(r);
           refetch();
         }
       },
