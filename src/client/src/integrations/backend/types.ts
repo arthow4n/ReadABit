@@ -32,8 +32,7 @@ export interface IClient {
     wordDefinitions_Update(request: { id: string, request: WordDefinitionUpdate }): Promise<void>;
     wordDefinitions_Delete(request: { id: string }): Promise<void>;
     wordFamiliarities_List(request: {  }): Promise<WordFamiliarityListViewModel>;
-    wordFamiliarities_Upsert(request: { request: WordFamiliarityUpsert }): Promise<void>;
-    wordFamiliarities_Delete(request: { word_LanguageCode: string | null, word_Expression: string | null }): Promise<void>;
+    wordFamiliarities_UpsertBatch(request: { request: WordFamiliarityUpsertBatch }): Promise<void>;
 }
 
 export class Client implements IClient {
@@ -1170,7 +1169,7 @@ export class Client implements IClient {
         }
     }
 
-    wordFamiliarities_Upsert(request: { request: WordFamiliarityUpsert }, cancelToken?: CancelToken | undefined ): Promise<void> {
+    wordFamiliarities_UpsertBatch(request: { request: WordFamiliarityUpsertBatch }, cancelToken?: CancelToken | undefined ): Promise<void> {
         let url_ = this.baseUrl + "/api/v1/WordFamiliarities";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1193,11 +1192,11 @@ export class Client implements IClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processWordFamiliarities_Upsert(_response);
+            return this.processWordFamiliarities_UpsertBatch(_response);
         });
     }
 
-    protected processWordFamiliarities_Upsert(response: AxiosResponse): Promise<void> {
+    protected processWordFamiliarities_UpsertBatch(response: AxiosResponse): Promise<void> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1210,65 +1209,6 @@ export class Client implements IClient {
         if (status === 204) {
             const _responseText = response.data;
             return Promise.resolve<void>(<any>null);
-        } else {
-            const _responseText = response.data;
-            let resultdefault: any = null;
-            let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
-            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
-        }
-    }
-
-    wordFamiliarities_Delete(request: { word_LanguageCode: string | null, word_Expression: string | null }, cancelToken?: CancelToken | undefined ): Promise<void> {
-        let url_ = this.baseUrl + "/api/v1/WordFamiliarities?";
-        if (request.word_LanguageCode === undefined)
-            throw new Error("The parameter 'request.word_LanguageCode' must be defined.");
-        else if(request.word_LanguageCode !== null)
-            url_ += "Word.LanguageCode=" + encodeURIComponent("" + request.word_LanguageCode) + "&";
-        if (request.word_Expression === undefined)
-            throw new Error("The parameter 'request.word_Expression' must be defined.");
-        else if(request.word_Expression !== null)
-            url_ += "Word.Expression=" + encodeURIComponent("" + request.word_Expression) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <AxiosRequestConfig>{
-            method: "DELETE",
-            url: url_,
-            headers: {
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processWordFamiliarities_Delete(_response);
-        });
-    }
-
-    protected processWordFamiliarities_Delete(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 204) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(<any>null);
-        } else if (status === 404) {
-            const _responseText = response.data;
-            let result404: any = null;
-            let resultData404  = _responseText;
-            result404 = JSON.parse(resultData404);
-            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
         } else {
             const _responseText = response.data;
             let resultdefault: any = null;
@@ -1522,9 +1462,9 @@ export interface WordFamiliarityListItemViewModel {
     level: number;
 }
 
-export interface WordFamiliarityUpsert {
-    word: WordSelector;
+export interface WordFamiliarityUpsertBatch {
     level: number;
+    words: WordSelector[];
 }
 
 export class BackendCallException extends Error {

@@ -17,6 +17,8 @@ namespace ReadABit.Core.Contracts.Utils
             CreateMap<Article, ArticleListItemViewModel>();
             CreateMap<ArticleCollection, ArticleCollectionViewModel>();
 
+            CreateMap<WordSelector, Word>();
+
             CreateMap<WordFamiliarity, WordFamiliarityListItemViewModel>()
                 .ForMember(
                     vm => vm.Word,

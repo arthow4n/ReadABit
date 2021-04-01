@@ -21,13 +21,16 @@ namespace ReadABit.Web.Test.Controllers
         [Fact]
         public async Task CRUD_Succeeds()
         {
-            await WordFamiliaritiesController.Upsert(new WordFamiliarityUpsert
+            await WordFamiliaritiesController.UpsertBatch(new()
             {
                 Level = 1,
-                Word = new WordSelector
+                Words = new()
                 {
-                    LanguageCode = "sv",
-                    Expression = "Hallå",
+                    new()
+                    {
+                        LanguageCode = "sv",
+                        Expression = "Hallå",
+                    }
                 },
             });
             (await List()).ShouldSatisfyAllConditions(
@@ -50,13 +53,16 @@ namespace ReadABit.Web.Test.Controllers
                 (await List()).Flatten().ShouldBeEmpty();
             }
 
-            await WordFamiliaritiesController.Upsert(new WordFamiliarityUpsert
+            await WordFamiliaritiesController.UpsertBatch(new()
             {
                 Level = 2,
-                Word = new WordSelector
+                Words = new()
                 {
-                    LanguageCode = "sv",
-                    Expression = "Hallå",
+                    new()
+                    {
+                        LanguageCode = "sv",
+                        Expression = "Hallå",
+                    },
                 },
             });
             (await List()).ShouldSatisfyAllConditions(
@@ -75,15 +81,6 @@ namespace ReadABit.Web.Test.Controllers
             );
 
             var wordFamiliaritySelector = (await List()).Flatten().Single().Word;
-
-            using (User(2))
-            {
-                await WordFamiliaritiesController.Delete(new WordFamiliarityDelete { Word = wordFamiliaritySelector });
-            }
-            (await List()).Flatten().ShouldNotBeEmpty();
-
-            await WordFamiliaritiesController.Delete(new WordFamiliarityDelete { Word = wordFamiliaritySelector });
-            (await List()).Flatten().ShouldBeEmpty();
         }
 
         private async Task<WordFamiliarityListViewModel> List()

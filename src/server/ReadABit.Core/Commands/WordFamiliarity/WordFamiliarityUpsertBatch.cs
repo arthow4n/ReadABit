@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentValidation;
 using MediatR;
 using Newtonsoft.Json;
@@ -7,19 +8,19 @@ using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public record WordFamiliarityUpsert : IRequest<bool>
+    public record WordFamiliarityUpsertBatch : IRequest<bool>
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; init; }
-        public WordSelector Word { get; init; } = new();
         public int Level { get; set; }
+        public List<WordSelector> Words { get; init; } = new();
     }
 
-    public class WordFamiliarityUpdateValidator : AbstractValidator<WordFamiliarityUpsert>
+    public class WordFamiliarityUpsertBatchValidator : AbstractValidator<WordFamiliarityUpsertBatch>
     {
-        public WordFamiliarityUpdateValidator()
+        public WordFamiliarityUpsertBatchValidator()
         {
-            RuleFor(x => x.Word).MustBeValidWordSelector();
+            RuleForEach(x => x.Words).MustBeValidWordSelector();
             RuleFor(x => x.Level).InclusiveBetween(WordFamiliarity.LevelIgnored, WordFamiliarity.LevelMax);
         }
     }

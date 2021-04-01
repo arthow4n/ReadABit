@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Npgsql;
+using Microsoft.EntityFrameworkCore;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
 
@@ -25,27 +25,30 @@ namespace ReadABit.Core.Commands
         {
             var wordId = await GetId(db, cancellationToken);
 
+            return await EnsureCreated(db, wordId, cancellationToken);
+        }
+
+        public async Task<Guid> EnsureCreated(DB db, Guid wordId, CancellationToken cancellationToken)
+        {
             if (wordId == default)
             {
-                try
-                {
-                    var newWord = new Word
+                var newWordId = Guid.NewGuid();
+
+                await db.Unsafe.Words
+                    .Upsert(new Word
                     {
-                        Id = Guid.NewGuid(),
+                        Id = newWordId,
                         LanguageCode = LanguageCode,
                         Expression = Expression,
-                    };
-                    await db.Unsafe.Words.AddAsync(newWord, cancellationToken);
-                    await db.Unsafe.SaveChangesAsync(cancellationToken);
-                    wordId = newWord.Id;
-                }
-                catch (PostgresException ex)
-                {
-                    if (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+                    })
+                    .On(w => new
                     {
-                        wordId = await GetId(db, cancellationToken);
-                    }
-                }
+                        w.LanguageCode,
+                        w.Expression,
+                    })
+                    .RunAsync(cancellationToken);
+
+                return newWordId;
             }
 
             return wordId;

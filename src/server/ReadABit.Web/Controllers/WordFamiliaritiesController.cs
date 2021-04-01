@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,13 +30,13 @@ namespace ReadABit.Web.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Upsert(WordFamiliarityUpsert request)
+        public async Task<IActionResult> UpsertBatch(WordFamiliarityUpsertBatch request)
         {
             await Mediator.Send(new WordFamiliarityUpsertBatch
             {
                 UserId = RequestUserId,
                 Level = request.Level,
-                Words = new List<WordSelector> { request.Word },
+                Words = request.Words,
             });
 
             await SaveChangesAsync();
