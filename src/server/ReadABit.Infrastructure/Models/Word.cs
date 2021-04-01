@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ReadABit.Infrastructure.Models
 {
@@ -9,6 +10,7 @@ namespace ReadABit.Infrastructure.Models
     /// </summary>
     public class Word
     {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; set; }
         /// <summary>
         /// <see cref="CultureInfo.TwoLetterISOLanguageName" />

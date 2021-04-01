@@ -9,6 +9,7 @@ namespace ReadABit.Infrastructure.Models
 {
     public class Article : ITimestampedEntity
     {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; set; }
         public Guid ArticleCollectionId { get; set; }
         public ArticleCollection ArticleCollection { get; set; }

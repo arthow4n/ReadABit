@@ -46,6 +46,23 @@ namespace ReadABit.Infrastructure
             modelBuilder
                 .Entity<WordDefinition>()
                 .HasIndex(wd => wd.LanguageCode);
+
+            modelBuilder
+                .Entity<WordDefinition>()
+                .HasIndex(wd => new
+                {
+                    wd.UserId,
+                    wd.WordId,
+                });
+
+            modelBuilder
+                .Entity<WordFamiliarity>()
+                .HasIndex(wf => new
+                {
+                    wf.UserId,
+                    wf.WordId,
+                })
+                .IsUnique();
         }
     }
 }

@@ -1,12 +1,14 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using NodaTime;
 using ReadABit.Infrastructure.Interfaces;
 
 namespace ReadABit.Infrastructure.Models
 {
-    public class WordDefinition : ITimestampedEntity, IOwnedByWord
+    public class WordDefinition : ITimestampedEntity, IOfWord
     {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; set; }
         public Guid WordId { get; set; }
         public Word Word { get; set; }
