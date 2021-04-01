@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -32,30 +33,12 @@ namespace ReadABit.Web.Controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Upsert(WordFamiliarityUpsert request)
         {
-            await Mediator.Send(request with
+            await Mediator.Send(new WordFamiliarityUpsertBatch
             {
                 UserId = RequestUserId,
+                Level = request.Level,
+                Words = new List<WordSelector> { request.Word },
             });
-
-            await SaveChangesAsync();
-            return NoContent();
-        }
-
-        [HttpDelete]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
-        public async Task<IActionResult> Delete([FromQuery] WordFamiliarityDelete request)
-        {
-            var found = await Mediator.Send(request with
-            {
-                UserId = RequestUserId,
-            });
-
-            if (!found)
-            {
-                return NotFound();
-            }
 
             await SaveChangesAsync();
             return NoContent();
