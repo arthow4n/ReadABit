@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { compact } from 'lodash';
+
 import { api } from '@src/integrations/backend/backend';
 import { Backend } from '@src/integrations/backend/types';
 import {
@@ -15,6 +17,11 @@ type ArticleReaderRenderContextValue = {
   wordFamiliarity: Backend.WordFamiliarityListViewModel;
   updateWordFamiliarity: (
     wordFamiliarityItem: Backend.WordFamiliarityListItemViewModel,
+  ) => Promise<void>;
+  updateWordFamiliarityForMatchedTokens: (
+    fromLevel: number,
+    toLevel: number,
+    tokens: Backend.Token[],
   ) => Promise<void>;
   subscribeToWordFamiliarity: (
     expression: string,
@@ -48,6 +55,7 @@ const ArticleReaderRenderContext = React.createContext<ArticleReaderRenderContex
     articleLanguageCode: '',
     wordFamiliarity: defaultWordFamiliarity,
     updateWordFamiliarity: () => Promise.resolve(),
+    updateWordFamiliarityForMatchedTokens: () => Promise.resolve(),
     subscribeToWordFamiliarity: () => () => {},
     getSelectedToken: () => null,
     updateSelectedToken: () => {},
@@ -139,13 +147,65 @@ export const ArticleReaderRenderContextProvider: React.FC<{
 
     // TODO: Consider reverting the change on error
 
-    api.wordFamiliarities_Upsert({
-      request: wordFamiliarityItem,
+    api.wordFamiliarities_UpsertBatch({
+      request: {
+        level: wordFamiliarityItem.level,
+        words: [wordFamiliarityItem.word],
+      },
     });
 
     saveWordFamiliarity();
 
     subscriptionManager.current.notifyWordFamiliarityChange(expression);
+  };
+
+  const updateWordFamiliarityForMatchedTokens = async (
+    fromLevel: number,
+    toLevel: number,
+    tokens: Backend.Token[],
+  ) => {
+    const words = compact(
+      tokens.map((token) => {
+        const expression = token.form;
+
+        savedWordFamiliarity.groupedWordFamiliarities[articleLanguageCode] =
+          savedWordFamiliarity.groupedWordFamiliarities[articleLanguageCode] ??
+          {};
+
+        if (
+          (savedWordFamiliarity.groupedWordFamiliarities[articleLanguageCode][
+            token.form
+          ]?.level ?? 0) !== fromLevel
+        ) {
+          return null;
+        }
+
+        const word = {
+          languageCode: articleLanguageCode,
+          expression,
+        };
+
+        savedWordFamiliarity.groupedWordFamiliarities[articleLanguageCode][
+          token.form
+        ] = {
+          level: toLevel,
+          word,
+        };
+
+        subscriptionManager.current.notifyWordFamiliarityChange(expression);
+
+        return word;
+      }),
+    );
+
+    api.wordFamiliarities_UpsertBatch({
+      request: {
+        level: toLevel,
+        words,
+      },
+    });
+
+    saveWordFamiliarity();
   };
 
   return (
@@ -154,6 +214,7 @@ export const ArticleReaderRenderContextProvider: React.FC<{
         articleLanguageCode,
         wordFamiliarity: savedWordFamiliarity,
         updateWordFamiliarity,
+        updateWordFamiliarityForMatchedTokens,
         subscribeToWordFamiliarity: (expression, onChange) => {
           return subscriptionManager.current.subscribeToWordFamiliarity(
             expression,
@@ -231,5 +292,15 @@ export const useSelectedTokenDefinitionCardHandle = () => {
     articleLanguageCode,
     getSelectedToken,
     updateWordFamiliarity,
+  };
+};
+
+export const useArticleReaderHandle = () => {
+  const {
+    updateWordFamiliarityForMatchedTokens: updateWordFamiliarityForTokens,
+  } = React.useContext(ArticleReaderRenderContext);
+
+  return {
+    updateWordFamiliarityForTokens,
   };
 };
