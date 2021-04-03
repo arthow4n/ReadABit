@@ -39,6 +39,12 @@ namespace ReadABit.Core.Commands
                     w.LanguageCode,
                     w.Expression,
                 })
+                .WhenMatched((existing, updated) => new Word
+                {
+                    Id = existing.Id,
+                    LanguageCode = existing.LanguageCode,
+                    Expression = existing.Expression,
+                })
                 .RunAsync(cancellationToken);
 
             await DB.Unsafe.SaveChangesAsync(cancellationToken);
