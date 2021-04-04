@@ -104,14 +104,3 @@ export const useMutateWordDefninitionUpdate = (
     [QueryCacheKey.WordDefinition, getRequestParam],
   ]);
 };
-
-// We don't invalidate cache in word familiarity queries because we handle it with storage instead.
-// Ref: `WordFamiliarityContext.tsx`
-
-export const useMutateWordFamiliarityUpsert = () => {
-  return useMutateAndInvalidate(api.wordFamiliarities_Upsert, []);
-};
-
-export const useMutateWordFamiliarityDelete = () => {
-  return useMutateAndInvalidate(api.wordFamiliarities_Delete, []);
-};

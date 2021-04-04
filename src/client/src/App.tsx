@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { LogBox } from 'react-native';
+import { MenuProvider } from 'react-native-popup-menu';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -28,12 +29,14 @@ const App: React.FC = () => {
   }
   return (
     <SafeAreaProvider>
-      <QueryClientProvider client={queryClient}>
-        <AppSettingsContextProvider>
-          <RootNavigator />
-        </AppSettingsContextProvider>
-      </QueryClientProvider>
-      <StatusBar />
+      <MenuProvider>
+        <QueryClientProvider client={queryClient}>
+          <AppSettingsContextProvider>
+            <RootNavigator />
+          </AppSettingsContextProvider>
+        </QueryClientProvider>
+        <StatusBar />
+      </MenuProvider>
     </SafeAreaProvider>
   );
 };
