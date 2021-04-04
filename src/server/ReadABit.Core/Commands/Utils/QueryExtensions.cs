@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using ReadABit.Infrastructure.Interfaces;
 using ReadABit.Infrastructure.Models;
@@ -26,6 +27,42 @@ namespace ReadABit.Core.Commands
                     w.LanguageCode == selector.LanguageCode &&
                     w.Expression == selector.Expression
                 );
+        }
+        public static IQueryable<Word> OfWords(this IQueryable<Word> query, ICollection<WordSelector> selectors)
+        {
+            var predicate = PredicateBuilder.New<Word>();
+
+            foreach (var rw in selectors)
+            {
+                var languageCode = rw.LanguageCode;
+                var expression = rw.Expression;
+                predicate = predicate.Or(w =>
+                    w.LanguageCode == languageCode &&
+                    w.Expression == expression
+                );
+            }
+
+            return query
+                .AsExpandableEFCore()
+                .Where(predicate);
+        }
+        public static IQueryable<T> OfWords<T>(this IQueryable<T> query, ICollection<WordSelector> selectors) where T : IOfWord
+        {
+            var predicate = PredicateBuilder.New<T>();
+
+            foreach (var rw in selectors)
+            {
+                var languageCode = rw.LanguageCode;
+                var expression = rw.Expression;
+                predicate = predicate.Or(w =>
+                    w.Word.LanguageCode == languageCode &&
+                    w.Word.Expression == expression
+                );
+            }
+
+            return query
+                .AsExpandableEFCore()
+                .Where(predicate);
         }
         public static Task<Guid> IdOfWord(this IQueryable<Word> query, WordSelector selector, CancellationToken cancellationToken)
         {

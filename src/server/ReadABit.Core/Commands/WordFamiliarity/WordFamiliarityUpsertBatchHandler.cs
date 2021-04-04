@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
-using LinqKit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
+using Z.EntityFramework.Plus;
 
 namespace ReadABit.Core.Commands
 {
@@ -49,21 +48,35 @@ namespace ReadABit.Core.Commands
 
             await DB.Unsafe.SaveChangesAsync(cancellationToken);
 
-            var predicate = PredicateBuilder.New<Word>();
-
-            foreach (var rw in request.Words)
+            if (request.Level == 0)
             {
-                var languageCode = rw.LanguageCode;
-                var expression = rw.Expression;
-                predicate = predicate.Or(w =>
-                    w.LanguageCode == languageCode &&
-                    w.Expression == expression
-                );
+                // Not sure why but this doesn't run.
+                //    System.ArgumentException : Field '_queryCompiler' defined on type 'Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryProvider' is not a field on the target object which is of type 'LinqKit.ExpandableQueryProvider`1[ReadABit.Infrastructure.Models.WordFamiliarity]'.
+                // await DB.WordFamiliaritiesOfUser(request.UserId)
+                //     .OfWords(request.Words)
+                //     .DeleteAsync(cancellationToken);
+
+                var wordFamiliarityIds = await DB.WordFamiliaritiesOfUser(request.UserId)
+                    .OfWords(request.Words)
+                    .Select(wf => wf.Id)
+                    .ToListAsync(cancellationToken);
+
+                await DB.WordFamiliaritiesOfUser(request.UserId)
+                    .Where(wf => wordFamiliarityIds.Contains(wf.Id))
+                    .DeleteAsync(cancellationToken);
+
+                return true;
             }
 
+            await UpsertWordFamiliarity(request, cancellationToken);
+
+            return true;
+        }
+
+        private async Task UpsertWordFamiliarity(WordFamiliarityUpsertBatch request, CancellationToken cancellationToken)
+        {
             var wordFamiliarities = await DB.Unsafe.Words
-                .AsExpandableEFCore()
-                .Where(predicate)
+                .OfWords(request.Words)
                 .Select(w => new WordFamiliarity
                 {
                     Id = Guid.NewGuid(),
@@ -85,8 +98,6 @@ namespace ReadABit.Core.Commands
                     Level = updated.Level,
                 })
                 .RunAsync(cancellationToken);
-
-            return true;
         }
     }
 }

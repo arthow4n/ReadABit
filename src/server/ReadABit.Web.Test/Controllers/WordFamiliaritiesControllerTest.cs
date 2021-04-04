@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Commands;
@@ -80,7 +79,21 @@ namespace ReadABit.Web.Test.Controllers
                     )
             );
 
-            var wordFamiliaritySelector = (await List()).Flatten().Single().Word;
+            // Setting a word familiarity level to 0 should delete it instead,
+            // because uncreated word familiarity is treated as 0.
+            await WordFamiliaritiesController.UpsertBatch(new()
+            {
+                Level = 0,
+                Words = new()
+                {
+                    new()
+                    {
+                        LanguageCode = "sv",
+                        Expression = "Hallå",
+                    },
+                },
+            });
+            (await List()).Flatten().ShouldBeEmpty();
         }
 
         private async Task<WordFamiliarityListViewModel> List()
