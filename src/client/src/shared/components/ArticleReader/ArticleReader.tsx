@@ -43,9 +43,6 @@ export const ArticleReader: React.FC<{
           <Button onPress={() => markAllNewAs(3)}>
             <Text>{t('Mark all new words as known')}</Text>
           </Button>
-          <Button onPress={() => markAllNewAs(-1)}>
-            <Text>{t('Mark all new words as ignored')}</Text>
-          </Button>
         </Content>
       </Row>
       <Row size={1}>

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 
 import produce from 'immer';
-import { Body, Button, Card, CardItem, Text } from 'native-base';
+import { Button, Col, Grid, Icon, Row, Text, View } from 'native-base';
 
 import { useLinkTo, useNavigation } from '@react-navigation/native';
 import { api } from '@src/integrations/backend/backend';
@@ -80,25 +80,14 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
   const renderMainWordHeader = () => (
     <Text
       style={{
+        fontSize: 28,
         width: '100%',
         backgroundColor:
           wordFamiliarityLevelColorCodeMapping[
             wordFamiliarityItem.level.toString()
           ],
       }}
-      onPress={() => {
-        updateWordFamiliarity(
-          produce(wordFamiliarityItem, (draft) => {
-            draft.level += 1;
-            if (draft.level > 3) {
-              draft.level = -1;
-            }
-          }),
-        );
-      }}
     >
-      {/* TODO: An icon indicating this is clickable for changing familiarity status. */}
-      {/* TODO: Mark as known button. */}
       {`${selectedToken.form} (${selectedToken.lemma})`}
     </Text>
   );
@@ -117,20 +106,58 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
     );
 
   return (
-    <Card style={{ flex: 1 }}>
-      <CardItem>
-        <Body>
-          {renderMainWordHeader()}
+    <View style={{ flex: 1 }}>
+      <Grid>
+        <Row>{renderMainWordHeader()}</Row>
+        <Row>
           {/* TODO: Load public suggestions */}
           {/* TODO: Load ML Kit on-device translation as one of the suggestion. Ref: https://developers.google.com/ml-kit/language/translation */}
           {/* TODO: Show all the available word definitions in a scrollable block */}
-          <Text>{definitionListItems[0]?.meaning}</Text>
+          <Text style={{ fontSize: 28 }}>
+            {definitionListItems[0]?.meaning}
+          </Text>
           {/* TODO: Render token PoS tags */}
-          <Button onPress={gotoDictionaryLookUp}>
-            <Text>{t('Dictionary')}</Text>
-          </Button>
-        </Body>
-      </CardItem>
-    </Card>
+        </Row>
+        <Row>
+          <Col>
+            <Button onPress={gotoDictionaryLookUp}>
+              <Icon name="search-circle-outline" />
+            </Button>
+          </Col>
+          {[0, 1, 2, 3, -1].map((level) => (
+            <Col
+              key={level}
+              // @ts-ignore
+              onPress={() => {
+                updateWordFamiliarity(
+                  produce(wordFamiliarityItem, (draft) => {
+                    draft.level = level;
+                  }),
+                );
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text
+                  style={{
+                    color:
+                      wordFamiliarityItem.level === level
+                        ? '#FF0000'
+                        : '#000000',
+                  }}
+                >
+                  {level}
+                </Text>
+              </View>
+            </Col>
+          ))}
+        </Row>
+      </Grid>
+    </View>
   );
 };
