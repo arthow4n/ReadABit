@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import produce from 'immer';
 import { compact } from 'lodash';
 
 import { api } from '@src/integrations/backend/backend';
@@ -7,9 +8,7 @@ import { Backend } from '@src/integrations/backend/types';
 import {
   AsyncStorageKey,
   readFromAsyncStore,
-  readFromSecureStore,
   writeToAsyncStore,
-  writeToSecureStore,
 } from '@src/shared/utils/storage';
 
 import { ContentLoading } from '../Loading';
@@ -140,6 +139,10 @@ export const ArticleReaderRenderContextProvider: React.FC<{
     wordFamiliarityItem: Backend.WordFamiliarityListItemViewModel,
   ) => {
     const { languageCode, expression } = wordFamiliarityItem.word;
+    if (!expression) {
+      return;
+    }
+
     savedWordFamiliarity.groupedWordFamiliarities[languageCode] =
       savedWordFamiliarity.groupedWordFamiliarities[languageCode] ?? {};
 
@@ -248,8 +251,28 @@ const useRerender = () => {
   };
 };
 
-export const useWordTokenHandle = (expression: string) => {
+const retriveWordFamiliarityItem = (
+  wordFamiliarity: Backend.WordFamiliarityListViewModel,
+  articleLanguageCode: string,
+  token?: Backend.Token | null,
+): Backend.WordFamiliarityListItemViewModel => {
+  const wordFamiliarityItem = wordFamiliarity.groupedWordFamiliarities[
+    articleLanguageCode
+  ]?.[token?.form ?? ''] ?? {
+    level: 0,
+    word: {
+      expression: token?.form ?? '',
+      languageCode: articleLanguageCode,
+    },
+  };
+
+  return wordFamiliarityItem;
+};
+
+export const useWordTokenHandle = (token?: Backend.Token | null) => {
   const { rerender } = useRerender();
+
+  const expression = token?.form ?? '';
 
   const {
     articleLanguageCode,
@@ -263,15 +286,11 @@ export const useWordTokenHandle = (expression: string) => {
   }, [expression]);
 
   return {
-    wordFamiliarityItem: wordFamiliarity.groupedWordFamiliarities[
-      articleLanguageCode
-    ]?.[expression] ?? {
-      level: 0,
-      word: {
-        expression,
-        languageCode: articleLanguageCode,
-      },
-    },
+    wordFamiliarityItem: retriveWordFamiliarityItem(
+      wordFamiliarity,
+      articleLanguageCode,
+      token,
+    ),
     updateSelectedToken,
   };
 };
@@ -283,12 +302,29 @@ export const useSelectedTokenDefinitionCardHandle = () => {
     articleLanguageCode,
     getSelectedToken,
     subscribeToSelectedToken,
+    wordFamiliarity,
     updateWordFamiliarity,
   } = React.useContext(ArticleReaderRenderContext);
 
   React.useEffect(() => {
     return subscribeToSelectedToken(rerender);
   }, []);
+
+  React.useEffect(() => {
+    const wordFamiliarityItem = retriveWordFamiliarityItem(
+      wordFamiliarity,
+      articleLanguageCode,
+      getSelectedToken(),
+    );
+
+    if (wordFamiliarityItem.level === 0) {
+      updateWordFamiliarity(
+        produce(wordFamiliarityItem, (draft) => {
+          draft.level = 1;
+        }),
+      );
+    }
+  }, [getSelectedToken()]);
 
   return {
     articleLanguageCode,

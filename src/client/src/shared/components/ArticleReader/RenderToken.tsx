@@ -12,7 +12,7 @@ export const RenderToken: React.FC<{
   token: Backend.Token;
 }> = ({ token }) => {
   const { wordFamiliarityItem, updateSelectedToken } = useWordTokenHandle(
-    token.form,
+    token,
   );
 
   const spacesAfter = (token.misc.match(/\|?Spaces?After=(.+)\|?/)?.[1] ?? ' ')
@@ -41,6 +41,7 @@ export const RenderToken: React.FC<{
       >
         <Text
           onPress={() => {
+            console.log('Pressed in RenderToken: ', token);
             if (!isWord(token)) {
               return;
             }
