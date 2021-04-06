@@ -2,7 +2,7 @@ import axios from 'axios';
 import { fetchDiscoveryAsync, TokenResponse, TokenResponseConfig } from 'expo-auth-session';
 import Constants from 'expo-constants';
 import React from 'react';
-import { readFromSecureStore, StorageKey, writeToSecureStore } from '../../shared/utils/storage';
+import { readFromSecureStore, SecureStorageKey, writeToSecureStore } from '../../shared/utils/storage';
 
 import { clientId, scopes } from './oidcConstants';
 import { Backend } from './types';
@@ -66,7 +66,10 @@ export const configAuthorizationHeader = async (
   axiosIntance.defaults.headers.common.Authorization = `Bearer ${t.accessToken}`;
 
   if (shouldSave) {
-    await writeToSecureStore(StorageKey.AuthToken, tokenManager.currentToken.getRequestConfig());
+    await writeToSecureStore(
+      SecureStorageKey.AuthToken,
+      tokenManager.currentToken.getRequestConfig(),
+    );
   }
 };
 
@@ -91,7 +94,7 @@ const refreshToken = async (t: TokenResponse) => {
 };
 
 export const loadAuthToken = async () => {
-  const saved = await readFromSecureStore<TokenResponseConfig>(StorageKey.AuthToken);
+  const saved = await readFromSecureStore(SecureStorageKey.AuthToken);
   if (saved == null) {
     return;
   }

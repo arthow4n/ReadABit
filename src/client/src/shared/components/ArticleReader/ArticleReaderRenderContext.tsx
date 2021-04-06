@@ -5,8 +5,10 @@ import { compact } from 'lodash';
 import { api } from '@src/integrations/backend/backend';
 import { Backend } from '@src/integrations/backend/types';
 import {
+  AsyncStorageKey,
+  readFromAsyncStore,
   readFromSecureStore,
-  StorageKey,
+  writeToAsyncStore,
   writeToSecureStore,
 } from '@src/shared/utils/storage';
 
@@ -41,13 +43,13 @@ let savedWordFamiliarity: Backend.WordFamiliarityListViewModel = {
 };
 
 export const loadWordFamiliarity = async () => {
-  savedWordFamiliarity = (await readFromSecureStore<Backend.WordFamiliarityListViewModel>(
-    StorageKey.WordFamiliarity,
+  savedWordFamiliarity = (await readFromAsyncStore(
+    AsyncStorageKey.WordFamiliarity,
   )) ?? { groupedWordFamiliarities: {} };
 };
 
 const saveWordFamiliarity = async () => {
-  writeToSecureStore(StorageKey.WordFamiliarity, savedWordFamiliarity);
+  writeToAsyncStore(AsyncStorageKey.WordFamiliarity, savedWordFamiliarity);
 };
 
 const ArticleReaderRenderContext = React.createContext<ArticleReaderRenderContextValue>(

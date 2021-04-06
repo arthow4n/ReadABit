@@ -1,18 +1,12 @@
 import * as React from 'react';
 
+import { AppSettings } from './AppSettingsContext.types';
+
 import {
   readFromSecureStore,
-  StorageKey,
+  SecureStorageKey,
   writeToSecureStore,
 } from '../utils/storage';
-
-type AppSettings = {
-  languageCodes: {
-    // TODO: Use enum for language codes.
-    studying: string;
-    ui: string;
-  };
-};
 
 type AppSettingsContextValue = {
   appSettings: AppSettings;
@@ -29,9 +23,7 @@ const defaultAppSettings: AppSettings = {
 let savedAppSettings: AppSettings | null = null;
 
 export const loadAppSettings = async () => {
-  savedAppSettings = await readFromSecureStore<AppSettings>(
-    StorageKey.AppSettings,
-  );
+  savedAppSettings = await readFromSecureStore(SecureStorageKey.AppSettings);
 };
 
 const AppSettingsContext = React.createContext<AppSettingsContextValue>({
@@ -49,7 +41,7 @@ export const AppSettingsContextProvider: React.FC = ({ children }) => {
       value={{
         appSettings: appSettingsState,
         updateAppSettings: async (appSettings) => {
-          await writeToSecureStore(StorageKey.AppSettings, appSettings);
+          await writeToSecureStore(SecureStorageKey.AppSettings, appSettings);
           savedAppSettings = appSettings;
           setAppSettingsState(appSettings);
         },
