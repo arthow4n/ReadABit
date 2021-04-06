@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 
 import produce from 'immer';
@@ -9,7 +8,6 @@ import { Button, Col, Grid, Icon, Row, Text, View } from 'native-base';
 import { useLinkTo, useNavigation } from '@react-navigation/native';
 import { api } from '@src/integrations/backend/backend';
 import { Routes, routeUrl } from '@src/navigation/routes';
-import { wordFamiliarityLevelColorCodeMapping } from '@src/shared/constants/colorCode';
 import { useAppSettingsContext } from '@src/shared/contexts/AppSettingsContext';
 import {
   queryCacheKey,
@@ -22,7 +20,6 @@ import {
 } from './ArticleReaderRenderContext';
 
 export const SelectedTokenDefinitionCard: React.FC = () => {
-  const { t } = useTranslation();
   const linkTo = useLinkTo();
   const { appSettings } = useAppSettingsContext();
   const navigation = useNavigation();
@@ -33,7 +30,7 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
     updateWordFamiliarity,
   } = useSelectedTokenDefinitionCardHandle();
   const selectedToken = getSelectedToken();
-  const { wordFamiliarityItem } = useWordTokenHandle(selectedToken?.form || '');
+  const { wordFamiliarityItem } = useWordTokenHandle(selectedToken);
 
   const wordDefinitionsListQuery = useQuery(
     queryCacheKey(QueryCacheKey.WordDefinitionList, {
@@ -82,10 +79,6 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
       style={{
         fontSize: 28,
         width: '100%',
-        backgroundColor:
-          wordFamiliarityLevelColorCodeMapping[
-            wordFamiliarityItem.level.toString()
-          ],
       }}
     >
       {`${selectedToken.form} (${selectedToken.lemma})`}
@@ -106,7 +99,9 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
     );
 
   return (
-    <View style={{ flex: 1 }}>
+    <View
+      style={{ flex: 1, borderTopWidth: 4, borderColor: '#000', marginTop: 4 }}
+    >
       <Grid>
         <Row>{renderMainWordHeader()}</Row>
         <Row>
