@@ -6,8 +6,9 @@ import { Backend } from '@src/integrations/backend/types';
 import { wordFamiliarityLevelColorCodeMapping } from '@src/shared/constants/colorCode';
 
 import { useWordTokenHandle } from './ArticleReaderRenderContext';
+import { isWord } from './TokenUtils';
 
-export const WordToken: React.FC<{
+export const RenderToken: React.FC<{
   token: Backend.Token;
 }> = ({ token }) => {
   const { wordFamiliarityItem, updateSelectedToken } = useWordTokenHandle(
@@ -19,8 +20,6 @@ export const WordToken: React.FC<{
     .replace(/\\s/g, ' ')
     .replace(/\\n/g, '\n');
 
-  const isPunct = token.upos === 'PUNCT';
-
   return (
     <Text key={token.id}>
       {/* TODO: Render and highlight multiple words token,
@@ -31,7 +30,7 @@ export const WordToken: React.FC<{
           wordFamiliarityLevelColorCodeMapping[wordFamiliarityItem.level]
             ? {
                 borderBottomWidth: 4,
-                borderColor: isPunct
+                borderColor: !isWord(token)
                   ? 'rgba(0,0,0,0)'
                   : wordFamiliarityLevelColorCodeMapping[
                       wordFamiliarityItem.level
@@ -42,7 +41,7 @@ export const WordToken: React.FC<{
       >
         <Text
           onPress={() => {
-            if (isPunct) {
+            if (!isWord(token)) {
               return;
             }
 

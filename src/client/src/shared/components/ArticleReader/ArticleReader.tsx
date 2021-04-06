@@ -7,8 +7,9 @@ import { Button, Content, Grid, Row, Text } from 'native-base';
 import { Backend } from '@src/integrations/backend/types';
 
 import { useArticleReaderHandle } from './ArticleReaderRenderContext';
+import { RenderToken } from './RenderToken';
 import { SelectedTokenDefinitionCard } from './SelectedTokenDefinitionCard';
-import { WordToken } from './WordToken';
+import { isWord } from './TokenUtils';
 
 export const ArticleReader: React.FC<{
   article: Backend.ArticleViewModel;
@@ -21,7 +22,8 @@ export const ArticleReader: React.FC<{
   const markAllNewAs = (level: number) => {
     const flattenedTokens = article.conlluDocument.paragraphs
       .flatMap((p) => p.sentences)
-      .flatMap((s) => s.tokens);
+      .flatMap((s) => s.tokens)
+      .filter(isWord);
     updateWordFamiliarityForTokens(0, level, flattenedTokens);
   };
 
@@ -34,7 +36,7 @@ export const ArticleReader: React.FC<{
               {paragraph.sentences.map((sentence) => (
                 <Text key={sentence.id}>
                   {sentence.tokens.map((token) => (
-                    <WordToken key={token.id} token={token} />
+                    <RenderToken key={token.id} token={token} />
                   ))}
                 </Text>
               ))}
