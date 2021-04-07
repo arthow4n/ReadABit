@@ -19,49 +19,44 @@ namespace ReadABit.Web.Test.Controllers
         }
 
         [Fact]
-        public async Task CRUD_Succeeds()
+        public async Task Upsert_Succeeds()
         {
             await UserPreferencesController.Upsert(new UserPreferenceUpsert
             {
-                Type = UserPreferenceType.LanguageCode,
-                Value = "en",
+                Data = new()
+                {
+                    WordDefinitionLanguageCode = "zh",
+                }
             });
-            (await List()).ShouldHaveSingleItem().ShouldSatisfyAllConditions(
-                x => x.Type.ShouldBe(UserPreferenceType.LanguageCode),
-                x => x.Value.ShouldBe("en")
-            );
+            (await Get()).WordDefinitionLanguageCode.ShouldBe("zh");
 
             using (User(2))
             {
-                (await List()).ShouldBeEmpty();
+                await UserPreferencesController.Upsert(new UserPreferenceUpsert
+                {
+                    Data = new()
+                    {
+                        WordDefinitionLanguageCode = "en",
+                    }
+                });
             }
-
-            await UserPreferencesController.Upsert(new UserPreferenceUpsert
-            {
-                Type = UserPreferenceType.LanguageCode,
-                Value = "sv",
-            });
-            var preference = (await List()).ShouldHaveSingleItem();
-            preference.ShouldSatisfyAllConditions(
-                x => x.Type.ShouldBe(UserPreferenceType.LanguageCode),
-                x => x.Value.ShouldBe("sv")
-            );
-
-            using (User(2))
-            {
-                await UserPreferencesController.Delete(preference.Id, new UserPreferenceDelete { });
-            }
-            (await List()).ShouldNotBeEmpty();
-
-            await UserPreferencesController.Delete(preference.Id, new UserPreferenceDelete { });
-            (await List()).ShouldBeEmpty();
+            (await Get()).WordDefinitionLanguageCode.ShouldBe("zh");
         }
 
-        private async Task<List<UserPreference>> List()
+        [Fact]
+        public async Task Get_ShouldReturnDefaultValueWhenUserDoesNotOwnAnUserPreference()
         {
-            return (await UserPreferencesController.List(new UserPreferenceList { }))
+            using (User(3))
+            {
+                (await Get()).WordDefinitionLanguageCode.ShouldNotBeNullOrWhiteSpace();
+            }
+        }
+
+        private async Task<UserPreferenceData> Get()
+        {
+            return (await UserPreferencesController.Get(new UserPreferenceGet { }))
                 .ShouldBeOfType<OkObjectResult>()
-                .Value.ShouldBeOfType<List<UserPreference>>();
+                .Value.ShouldBeOfType<UserPreferenceData>();
         }
     }
 }

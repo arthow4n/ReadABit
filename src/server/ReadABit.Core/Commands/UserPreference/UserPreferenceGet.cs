@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
+using System.Text.Json.Serialization;
 using MediatR;
-using Newtonsoft.Json;
 using NSwag.Annotations;
 using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
-    public record UserPreferenceList : IRequest<List<UserPreference>>
+    public record UserPreferenceGet : IRequest<UserPreferenceData>
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; init; }

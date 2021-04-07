@@ -11,17 +11,14 @@ namespace ReadABit.Core.Commands
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; init; }
-        public UserPreferenceType Type { get; init; }
-        public string Value { get; init; } = "";
+        public UserPreferenceData Data { get; init; } = new();
     }
 
     public class UserPreferenceUpdateValidator : AbstractValidator<UserPreferenceUpsert>
     {
         public UserPreferenceUpdateValidator()
         {
-            // TODO: Expand this when we add more preference types.
-            RuleFor(x => x.Type).Must(t => t == UserPreferenceType.LanguageCode);
-            RuleFor(x => x.Value).MustBeValidLanguageCode().When(x => x.Type == UserPreferenceType.LanguageCode);
+            RuleFor(x => x.Data.WordDefinitionLanguageCode).MustBeValidLanguageCode();
         }
     }
 }

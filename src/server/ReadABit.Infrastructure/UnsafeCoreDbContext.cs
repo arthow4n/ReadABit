@@ -63,6 +63,11 @@ namespace ReadABit.Infrastructure
                     wf.WordId,
                 })
                 .IsUnique();
+
+            modelBuilder
+                .Entity<UserPreference>()
+                .HasIndex(up => up.UserId)
+                .IsUnique();
         }
     }
 }

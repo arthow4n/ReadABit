@@ -44,9 +44,8 @@ namespace ReadABit.Core.Commands
 
             var userPreferredLanguageCode =
                 await DB.UserPreferencesOfUser(request.UserId)
-                         .Where(up => up.Type == UserPreferenceType.LanguageCode)
-                         .Select(up => up.Value)
-                         .SingleOrDefaultAsync(cancellationToken: cancellationToken);
+                        .Select(x => x.Data.WordDefinitionLanguageCode)
+                        .SingleOrDefaultAsync(cancellationToken: cancellationToken);
 
             return tobePaginated.OrderByDescending(vm => vm.LanguageCode == userPreferredLanguageCode ? 1 : 0)
                                 .ThenByDescending(vm => vm.Count)

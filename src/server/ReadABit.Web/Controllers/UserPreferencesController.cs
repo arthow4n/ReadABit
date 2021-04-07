@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +16,11 @@ namespace ReadABit.Web.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<UserPreference>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserPreferenceData))]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> List([FromQuery] UserPreferenceList request)
+        public async Task<IActionResult> Get([FromQuery] UserPreferenceGet request)
         {
-            List<UserPreference> list = await Mediator.Send(request with
+            UserPreferenceData list = await Mediator.Send(request with
             {
                 UserId = RequestUserId,
             });
@@ -37,27 +36,6 @@ namespace ReadABit.Web.Controllers
             {
                 UserId = RequestUserId,
             });
-
-            await SaveChangesAsync();
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesDefaultResponseType]
-        public async Task<IActionResult> Delete(Guid id, [FromQuery] UserPreferenceDelete request)
-        {
-            var found = await Mediator.Send(request with
-            {
-                Id = id,
-                UserId = RequestUserId,
-            });
-
-            if (!found)
-            {
-                return NotFound();
-            }
 
             await SaveChangesAsync();
             return NoContent();

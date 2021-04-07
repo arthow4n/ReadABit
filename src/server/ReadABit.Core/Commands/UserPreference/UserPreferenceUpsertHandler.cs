@@ -21,23 +21,21 @@ namespace ReadABit.Core.Commands
         {
             new UserPreferenceUpdateValidator().ValidateAndThrow(request);
 
-            var userPreference = await DB.UserPreferencesOfUser(request.UserId)
-                                          .Where(up => up.Type == request.Type)
-                                          .SingleOrDefaultAsync(cancellationToken: cancellationToken);
-
-            if (userPreference is not null)
-            {
-                userPreference.Value = request.Value;
-                return true;
-            }
-
-            await DB.Unsafe.AddAsync(new UserPreference
-            {
-                Id = Guid.NewGuid(),
-                UserId = request.UserId,
-                Type = request.Type,
-                Value = request.Value,
-            }, cancellationToken);
+            await DB.Unsafe.UserPreferences
+                .Upsert(new()
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = request.UserId,
+                    Data = request.Data,
+                })
+                .On(x => x.UserId)
+                .WhenMatched((existing, updated) => new()
+                {
+                    Id = existing.Id,
+                    UserId = existing.UserId,
+                    Data = updated.Data,
+                })
+                .RunAsync(cancellationToken);
 
             return true;
         }

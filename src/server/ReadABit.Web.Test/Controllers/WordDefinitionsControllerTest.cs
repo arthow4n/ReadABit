@@ -146,8 +146,10 @@ namespace ReadABit.Web.Test.Controllers
                 // Word definitions of preferred language should always show up first.
                 await UserPreferencesController.Upsert(new UserPreferenceUpsert
                 {
-                    Type = UserPreferenceType.LanguageCode,
-                    Value = "sv",
+                    Data = new()
+                    {
+                        WordDefinitionLanguageCode = "sv"
+                    }
                 });
 
                 (await ListPublicSuggestions()).Items.ShouldSatisfyAllConditions(
