@@ -20,6 +20,10 @@ export const RenderToken: React.FC<{
     .replace(/\\s/g, ' ')
     .replace(/\\n/g, '\n');
 
+  const renderSpaceAfter = () => (
+    <Text style={{ fontSize: 28 }}>{spacesAfter}</Text>
+  );
+
   return (
     <Text key={token.id}>
       {/* TODO: Render and highlight multiple words token,
@@ -55,7 +59,19 @@ export const RenderToken: React.FC<{
           {token.form}
         </Text>
       </View>
-      <Text style={{ fontSize: 28 }}>{spacesAfter}</Text>
+      {/* To catch the edge case where tokenizer marks `?` as SpaceAfter */}
+      {spacesAfter.trim() ? (
+        <View
+          style={{
+            borderBottomWidth: 4,
+            borderColor: 'rgba(0,0,0,0)',
+          }}
+        >
+          {renderSpaceAfter()}
+        </View>
+      ) : (
+        renderSpaceAfter()
+      )}
     </Text>
   );
 };
