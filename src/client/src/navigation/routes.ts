@@ -1,8 +1,8 @@
+import { BackendBaseUrl } from '@env';
 import { LinkingOptions } from '@react-navigation/native';
 
 import { ArticleStackParamList } from './navigators/ArticleNavigator.types';
 
-import { backendBaseUrl } from '../integrations/backend/backend';
 import { redirectUri } from '../integrations/backend/oidcConstants';
 
 // Read the GUIDE: comments for how to add a new route to the app.
@@ -46,7 +46,7 @@ const exactPathMapping: Record<Routes, string> = {
  * Format: https://reactnavigation.org/docs/configuring-links/
  */
 export const linking: LinkingOptions = {
-  prefixes: [backendBaseUrl, redirectUri],
+  prefixes: [BackendBaseUrl, redirectUri],
   config: {
     screens: {
       LoginNavigator: {

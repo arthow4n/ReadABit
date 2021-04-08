@@ -1,16 +1,11 @@
+import { BackendBaseUrl } from '@env';
 import axios from 'axios';
-import { fetchDiscoveryAsync, TokenResponse, TokenResponseConfig } from 'expo-auth-session';
-import Constants from 'expo-constants';
+import { fetchDiscoveryAsync, TokenResponse } from 'expo-auth-session';
 import React from 'react';
 import { readFromSecureStore, SecureStorageKey, writeToSecureStore } from '../../shared/utils/storage';
 
 import { clientId, scopes } from './oidcConstants';
 import { Backend } from './types';
-
-// TODO: Make this compatible with production env.
-export const backendBaseUrl = `http://${
-  (Constants.manifest.debuggerHost ?? 'localhost').split(':')[0]
-}:5000`;
 
 const axiosIntance = axios.create();
 // Get rid of the default transform because it overrides NSWag's transform.
@@ -73,12 +68,12 @@ export const configAuthorizationHeader = async (
   }
 };
 
-const innerClient = new Backend.Client(backendBaseUrl, axiosIntance);
+const innerClient = new Backend.Client(BackendBaseUrl, axiosIntance);
 
 let ongoingRefreshTokenPromise: Promise<void> | null = null;
 
 const refreshToken = async (t: TokenResponse) => {
-  const discovery = await fetchDiscoveryAsync(backendBaseUrl);
+  const discovery = await fetchDiscoveryAsync(BackendBaseUrl);
 
   // FIXME: Bounce user back to login screen if got exception here.
   const newTokenResponse = await t.refreshAsync(

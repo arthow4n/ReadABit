@@ -7,8 +7,9 @@ import {
   exchangeCodeAsync,
 } from 'expo-auth-session';
 
+import { BackendBaseUrl } from '@env';
+
 import {
-  backendBaseUrl,
   configAuthorizationHeader,
   useBackendApiTokenState,
 } from '../../integrations/backend/backend';
@@ -21,7 +22,8 @@ import {
 export const useBackendLogin = () => {
   const { hasValidToken } = useBackendApiTokenState();
 
-  const discovery = useAutoDiscovery(backendBaseUrl);
+  // TODO: Migrate to `react-native-app-auth` because this is working weird after expo eject
+  const discovery = useAutoDiscovery(BackendBaseUrl);
   const [authRequest, authResult, promptAsync] = useAuthRequest(
     {
       clientId,
