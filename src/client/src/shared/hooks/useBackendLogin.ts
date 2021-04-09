@@ -16,7 +16,7 @@ export const useBackendLogin = () => {
         dangerouslyAllowInsecureHttpRequests: true,
       });
 
-      configAuthorizationHeader(result);
+      await configAuthorizationHeader(result);
     },
     isLoggedIn: !!hasValidToken,
   };

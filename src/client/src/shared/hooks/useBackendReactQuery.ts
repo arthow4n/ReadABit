@@ -80,19 +80,19 @@ const useMutateAndInvalidate = <TData, TVariables>(
 };
 
 export const useMutateArticleCollectionsCreate = () => {
-  return useMutateAndInvalidate(api.articleCollections_Create, [
+  return useMutateAndInvalidate(api().articleCollections_Create, [
     [QueryCacheKey.ArticleCollectionList],
   ]);
 };
 
 export const useMutateArticleCreate = () => {
-  return useMutateAndInvalidate(api.articles_Create, [
+  return useMutateAndInvalidate(api().articles_Create, [
     [QueryCacheKey.ArticleList],
   ]);
 };
 
 export const useMutateWordDefninitionCreate = () => {
-  return useMutateAndInvalidate(api.wordDefinitions_Create, [
+  return useMutateAndInvalidate(api().wordDefinitions_Create, [
     [QueryCacheKey.WordDefinitionList],
   ]);
 };
@@ -100,7 +100,7 @@ export const useMutateWordDefninitionCreate = () => {
 export const useMutateWordDefninitionUpdate = (
   getRequestParam: Parameters<Backend.IClient['wordDefinitions_List']>[0],
 ) => {
-  return useMutateAndInvalidate(api.wordDefinitions_Update, [
+  return useMutateAndInvalidate(api().wordDefinitions_Update, [
     [QueryCacheKey.WordDefinition, getRequestParam],
   ]);
 };

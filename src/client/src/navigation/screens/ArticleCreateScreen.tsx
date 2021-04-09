@@ -181,7 +181,7 @@ export const ArticleCreateScreen: React.FC<
     }),
     // TODO: Handle large list
     () =>
-      api.articleCollections_List({
+      api().articleCollections_List({
         filter_LanguageCode: appSettings.languageCodes.studying,
       }),
     {

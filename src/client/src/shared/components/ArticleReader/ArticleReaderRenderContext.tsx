@@ -125,7 +125,7 @@ export const ArticleReaderRenderContextProvider: React.FC<{
   React.useEffect(() => {
     (async () => {
       // TODO: Use local cache first
-      savedWordFamiliarity = await api.wordFamiliarities_List();
+      savedWordFamiliarity = await api().wordFamiliarities_List();
       saveWordFamiliarity();
       setIsReady(true);
     })();
@@ -152,7 +152,7 @@ export const ArticleReaderRenderContextProvider: React.FC<{
 
     // TODO: Consider reverting the change on error
 
-    api.wordFamiliarities_UpsertBatch({
+    api().wordFamiliarities_UpsertBatch({
       request: {
         level: wordFamiliarityItem.level,
         words: [wordFamiliarityItem.word],
@@ -203,7 +203,7 @@ export const ArticleReaderRenderContextProvider: React.FC<{
       }),
     );
 
-    api.wordFamiliarities_UpsertBatch({
+    api().wordFamiliarities_UpsertBatch({
       request: {
         level: toLevel,
         words,

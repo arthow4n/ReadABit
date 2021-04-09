@@ -124,8 +124,11 @@ export const loadAuthToken = async () => {
   await refreshToken(saved);
 };
 
-// FIXME: Fix the template of types.ts instead of doing it like this.
-export const api = new Proxy(innerClient, {
+// This is wrapped in a function mainly because if we don't wrap this object,
+// something related to React fast refresh will call into `.$$typeof`
+// of every exported member in a module, which would then calls into the Proxy and
+// cause weird crash that could take hours to debug.
+export const api = () => new Proxy(innerClient, {
   get(t, p, r) {
     const actual = Reflect.get(t, p, r);
 
@@ -148,14 +151,14 @@ export const api = new Proxy(innerClient, {
         );
       }
 
-      if (
-        +tokenManager.currentToken.accessTokenExpirationDate <
-        Date.now() + 1000 * 60 * 60
-      ) {
-        // Ensure there's only one ongoing token refresh request
-        ongoingRefreshTokenPromise =
-          ongoingRefreshTokenPromise ?? refreshToken(tokenManager.currentToken);
-      }
+      // if (
+      //   +tokenManager.currentToken.accessTokenExpirationDate <
+      //   Date.now() + 1000 * 60 * 60
+      // ) {
+      //   // Ensure there's only one ongoing token refresh request
+      //   ongoingRefreshTokenPromise =
+      //     ongoingRefreshTokenPromise ?? refreshToken(tokenManager.currentToken);
+      // }
 
       await ongoingRefreshTokenPromise;
 

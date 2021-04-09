@@ -53,7 +53,7 @@ export const ArticleList: React.FC<{
     // TODO: Confirm the cache is keyed correctly here
     queryKey,
     ({ pageParam }) =>
-      api.articles_List({
+      api().articles_List({
         articleCollectionId,
         page_Index: pageParam ?? 1,
         page_Size: 50,
@@ -64,7 +64,7 @@ export const ArticleList: React.FC<{
     },
   );
 
-  const articleDeleteHandle = useMutation(api.articles_Delete);
+  const articleDeleteHandle = useMutation(api().articles_Delete);
 
   const deleteArticle = async (articleId: string) => {
     await articleDeleteHandle.mutateAsync({ id: articleId });

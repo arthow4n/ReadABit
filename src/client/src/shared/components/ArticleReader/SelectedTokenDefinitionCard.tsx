@@ -42,7 +42,7 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
         throw new Error();
       }
 
-      return api.wordDefinitions_List({
+      return api().wordDefinitions_List({
         filter_Word_Expression: selectedToken.form,
         filter_Word_LanguageCode: articleLanguageCode,
       });
