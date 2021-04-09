@@ -1,7 +1,7 @@
-import { TokenResponseConfig } from 'expo-auth-session';
 import * as SecureStore from 'expo-secure-store';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { OidcTokenSet } from '@src/integrations/backend/backend';
 import { Backend } from '@src/integrations/backend/types';
 
 import { AppSettings } from '../contexts/AppSettingsContext.types';
@@ -22,7 +22,7 @@ export async function readFromSecureStore(
 ): Promise<AppSettings | null>;
 export async function readFromSecureStore(
   key: SecureStorageKey.AuthToken,
-): Promise<TokenResponseConfig | null>;
+): Promise<OidcTokenSet | null>;
 export async function readFromSecureStore<T>(
   key: SecureStorageKey,
 ): Promise<T | null> {

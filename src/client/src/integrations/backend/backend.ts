@@ -1,18 +1,32 @@
-import { BackendBaseUrl } from '@env';
-import axios from 'axios';
-import { fetchDiscoveryAsync, TokenResponse } from 'expo-auth-session';
 import React from 'react';
-import { readFromSecureStore, SecureStorageKey, writeToSecureStore } from '../../shared/utils/storage';
 
-import { clientId, scopes } from './oidcConstants';
+import { refresh } from 'react-native-app-auth';
+
+import axios from 'axios';
+
+import { BackendBaseUrl } from '@env';
+
+import { oidcAuthConfig } from './oidcConstants';
 import { Backend } from './types';
+
+import {
+  readFromSecureStore,
+  SecureStorageKey,
+  writeToSecureStore,
+} from '../../shared/utils/storage';
 
 const axiosIntance = axios.create();
 // Get rid of the default transform because it overrides NSWag's transform.
 axiosIntance.defaults.transformResponse = [];
 
+export type OidcTokenSet = {
+  accessToken: string;
+  accessTokenExpirationDate: Date;
+  refreshToken: string | null;
+};
+
 class TokenManager {
-  #currentToken: TokenResponse | null = null;
+  #currentToken: OidcTokenSet | null = null;
 
   #tokenChangeListeners: Set<(() => void)> = new Set();
 
@@ -52,18 +66,25 @@ export const useBackendApiTokenState = () => {
 };
 
 export const configAuthorizationHeader = async (
-  t: TokenResponse,
+  newToken: {
+    accessToken: string;
+    refreshToken: string;
+    accessTokenExpirationDate: string;
+  },
   shouldSave = true,
 ) => {
-  // This is for ensuring class methods exist on the object since we are going to use them.
-  tokenManager.currentToken = t instanceof TokenResponse ? t : new TokenResponse(t);
+  tokenManager.currentToken = {
+    accessToken: newToken.accessToken,
+    refreshToken: newToken.refreshToken,
+    accessTokenExpirationDate: new Date(newToken.accessTokenExpirationDate),
+  };
 
-  axiosIntance.defaults.headers.common.Authorization = `Bearer ${t.accessToken}`;
+  axiosIntance.defaults.headers.common.Authorization = `Bearer ${newToken.accessToken}`;
 
   if (shouldSave) {
     await writeToSecureStore(
       SecureStorageKey.AuthToken,
-      tokenManager.currentToken.getRequestConfig(),
+      tokenManager.currentToken,
     );
   }
 };
@@ -72,19 +93,25 @@ const innerClient = new Backend.Client(BackendBaseUrl, axiosIntance);
 
 let ongoingRefreshTokenPromise: Promise<void> | null = null;
 
-const refreshToken = async (t: TokenResponse) => {
-  const discovery = await fetchDiscoveryAsync(BackendBaseUrl);
+const refreshToken = async (token: OidcTokenSet) => {
+  if (!token.refreshToken) {
+    throw new Error('Missing refresh token');
+  }
 
-  // FIXME: Bounce user back to login screen if got exception here.
-  const newTokenResponse = await t.refreshAsync(
-    {
-      clientId,
-      scopes,
-    },
-    discovery,
-  );
+  const result = await refresh(oidcAuthConfig, {
+    refreshToken: token.refreshToken,
+  });
 
-  await configAuthorizationHeader(newTokenResponse);
+  if (!result.refreshToken) {
+    throw new Error('Missing refresh token');
+  }
+
+  await configAuthorizationHeader({
+    accessToken: result.accessToken,
+    accessTokenExpirationDate: result.accessTokenExpirationDate,
+    refreshToken: result.refreshToken,
+  });
+
   ongoingRefreshTokenPromise = null;
 };
 
@@ -94,7 +121,7 @@ export const loadAuthToken = async () => {
     return;
   }
 
-  await refreshToken(new TokenResponse(saved));
+  await refreshToken(saved);
 };
 
 // FIXME: Fix the template of types.ts instead of doing it like this.
@@ -121,7 +148,10 @@ export const api = new Proxy(innerClient, {
         );
       }
 
-      if (tokenManager.currentToken.shouldRefresh()) {
+      if (
+        +tokenManager.currentToken.accessTokenExpirationDate <
+        Date.now() + 1000 * 60 * 60
+      ) {
         // Ensure there's only one ongoing token refresh request
         ongoingRefreshTokenPromise =
           ongoingRefreshTokenPromise ?? refreshToken(tokenManager.currentToken);

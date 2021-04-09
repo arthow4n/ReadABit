@@ -40,11 +40,15 @@ Recreating the client entry will immediately invalidate all issued access/refres
                 DisplayName = "ReadABit public client",
                 PostLogoutRedirectUris =
                     {
-                        configuration.GetValue<Uri>("OpenIddictWorker:ReadABit:PostLogoutRedirectUri"),
+                        new Uri("com.readabit.client.auth://"),
+                        new Uri("com.readabit.client://"),
+                        new Uri("readabit://"),
                     },
                 RedirectUris =
                     {
-                        configuration.GetValue<Uri>("OpenIddictWorker:ReadABit:RedirectUri"),
+                        new Uri("com.readabit.client.auth://"),
+                        new Uri("com.readabit.client://"),
+                        new Uri("readabit://"),
                     },
                 Permissions =
                     {
