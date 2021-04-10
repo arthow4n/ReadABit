@@ -29,7 +29,7 @@ export const ArticleReader: React.FC<{
 
   return (
     <Grid>
-      <Row size={3}>
+      <Row size={2}>
         <Content padder>
           {article.conlluDocument.paragraphs.map((paragraph) => (
             <Text key={paragraph.id}>

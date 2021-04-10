@@ -18,6 +18,7 @@ import {
   useSelectedTokenDefinitionCardHandle,
   useWordTokenHandle,
 } from './ArticleReaderRenderContext';
+import { OnDeviceTranslation } from './OnDeviceTranslation';
 
 export const SelectedTokenDefinitionCard: React.FC = () => {
   const linkTo = useLinkTo();
@@ -100,22 +101,35 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
 
   return (
     <View
-      style={{ flex: 1, borderTopWidth: 4, borderColor: '#000', marginTop: 4 }}
+      style={{
+        flex: 1,
+        borderTopWidth: 4,
+        borderColor: '#000',
+        marginTop: 4,
+        padding: 4,
+      }}
     >
-      <Grid>
-        <Row>{renderMainWordHeader()}</Row>
-        <Row>
-          {/* TODO: Load public suggestions */}
-          {/* TODO: Load ML Kit on-device translation as one of the suggestion. Ref: https://developers.google.com/ml-kit/language/translation */}
-          {/* TODO: Show all the available word definitions in a scrollable block */}
-          <Text style={{ fontSize: 28 }}>
+      <View>{renderMainWordHeader()}</View>
+      <View>
+        {/* TODO: Load public suggestions */}
+        <OnDeviceTranslation
+          sourceLanguageCode={articleLanguageCode}
+          sourceText={selectedToken.form}
+          sourceText2={selectedToken.lemma}
+          targetLanguageCode={appSettings.languageCodes.ui}
+        />
+        {/* TODO: Show all the available word definitions in a scrollable block */}
+        <View>
+          <Text style={{ fontSize: 24 }}>
             {definitionListItems[0]?.meaning}
           </Text>
-          {/* TODO: Render token PoS tags */}
-        </Row>
+        </View>
+        {/* TODO: Render token PoS tags */}
+      </View>
+      <Grid>
         <Row>
           <Col>
-            <Button onPress={gotoDictionaryLookUp}>
+            <Button style={{ height: 100 }} onPress={gotoDictionaryLookUp}>
               <Icon name="search-circle-outline" />
             </Button>
           </Col>
