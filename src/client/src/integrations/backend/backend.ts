@@ -5,50 +5,23 @@ import { refresh } from 'react-native-app-auth';
 import axios from 'axios';
 
 import { BackendBaseUrl } from '@env';
-
-import { oidcAuthConfig } from './oidcConstants';
-import { Backend } from './types';
-
 import {
   readFromSecureStore,
   SecureStorageKey,
   writeToSecureStore,
-} from '../../shared/utils/storage';
+} from '@src/shared/utils/storage';
+
+import { oidcAuthConfig } from './oidcConstants';
+import {
+  tokenManager,
+  OidcTokenSetStringified,
+  OidcTokenSet,
+} from './tokenManager';
+import { Backend } from './types';
 
 const axiosIntance = axios.create();
 // Get rid of the default transform because it overrides NSWag's transform.
 axiosIntance.defaults.transformResponse = [];
-
-export type OidcTokenSet = {
-  accessToken: string;
-  accessTokenExpirationDate: Date;
-  refreshToken: string | null;
-};
-
-class TokenManager {
-  #currentToken: OidcTokenSet | null = null;
-
-  #tokenChangeListeners: Set<(() => void)> = new Set();
-
-  get currentToken() {
-    return this.#currentToken;
-  }
-
-  set currentToken(value) {
-    this.#currentToken = value;
-    this.#tokenChangeListeners.forEach((listener) => listener());
-  }
-
-  subscribeToTokenChange = (listener: () => void) => {
-    this.#tokenChangeListeners.add(listener);
-  };
-
-  unsubscribeToTokenChange = (listener: () => void) => {
-    this.#tokenChangeListeners.delete(listener);
-  };
-}
-
-const tokenManager = new TokenManager();
 
 export const useBackendApiTokenState = () => {
   const [, setBumper] = React.useState({});
@@ -66,11 +39,7 @@ export const useBackendApiTokenState = () => {
 };
 
 export const configAuthorizationHeader = async (
-  newToken: {
-    accessToken: string;
-    refreshToken: string;
-    accessTokenExpirationDate: string;
-  },
+  newToken: OidcTokenSetStringified,
   shouldSave = true,
 ) => {
   tokenManager.currentToken = {
@@ -102,67 +71,70 @@ const refreshToken = async (token: OidcTokenSet) => {
     refreshToken: token.refreshToken,
   });
 
-  if (!result.refreshToken) {
-    throw new Error('Missing refresh token');
-  }
-
   await configAuthorizationHeader({
     accessToken: result.accessToken,
     accessTokenExpirationDate: result.accessTokenExpirationDate,
-    refreshToken: result.refreshToken,
+    refreshToken:
+      result.refreshToken ??
+      tokenManager.currentToken?.refreshToken ??
+      (() => {
+        throw new Error('Missing refresh token');
+      })(),
   });
 
   ongoingRefreshTokenPromise = null;
 };
 
 export const loadAuthToken = async () => {
-  const saved = await readFromSecureStore(SecureStorageKey.AuthToken);
-  if (saved == null) {
+  const result = await readFromSecureStore(SecureStorageKey.AuthToken);
+  if (!result) {
     return;
   }
 
-  await refreshToken(saved);
+  await configAuthorizationHeader(result);
 };
 
 // This is wrapped in a function mainly because if we don't wrap this object,
 // something related to React fast refresh will call into `.$$typeof`
 // of every exported member in a module, which would then calls into the Proxy and
 // cause weird crash that could take hours to debug.
-export const api = () => new Proxy(innerClient, {
-  get(t, p, r) {
-    const actual = Reflect.get(t, p, r);
+export const api = () =>
+  new Proxy(innerClient, {
+    get(t, p, r) {
+      const actual = Reflect.get(t, p, r);
 
-    // Assuming every API function:
-    // - has a `_` in it
-    // - doesn't start with `process`
-    // and filter non-API calls away, this is not cool, I know.
-    if (!(typeof p === 'string' && /^(?!process).+_.+/.test(p))) {
-      return actual;
-    }
-
-    if (typeof actual !== 'function') {
-      throw new Error('Please fix the hack in backend.ts.');
-    }
-
-    return async (...args: any[]) => {
-      if (tokenManager.currentToken === null) {
-        throw new Error(
-          'Calling backend API without a valid token. Did you forget to call `configAuthorizationHeader`?',
-        );
+      // Assuming every API function:
+      // - has a `_` in it
+      // - doesn't start with `process`
+      // and filter non-API calls away, this is not cool, I know.
+      if (!(typeof p === 'string' && /^(?!process).+_.+/.test(p))) {
+        return actual;
       }
 
-      // if (
-      //   +tokenManager.currentToken.accessTokenExpirationDate <
-      //   Date.now() + 1000 * 60 * 60
-      // ) {
-      //   // Ensure there's only one ongoing token refresh request
-      //   ongoingRefreshTokenPromise =
-      //     ongoingRefreshTokenPromise ?? refreshToken(tokenManager.currentToken);
-      // }
+      if (typeof actual !== 'function') {
+        throw new Error('Please fix the hack in backend.ts.');
+      }
 
-      await ongoingRefreshTokenPromise;
+      return async (...args: any[]) => {
+        if (tokenManager.currentToken === null) {
+          throw new Error(
+            'Calling backend API without a valid token. Did you forget to call `configAuthorizationHeader`?',
+          );
+        }
 
-      return actual.call(innerClient, ...args);
-    };
-  },
-});
+        if (
+          +tokenManager.currentToken.accessTokenExpirationDate <
+          Date.now() + 1000 * 60 * 60
+        ) {
+          // Ensure there's only one ongoing token refresh request
+          ongoingRefreshTokenPromise =
+            ongoingRefreshTokenPromise ??
+            refreshToken(tokenManager.currentToken);
+        }
+
+        await ongoingRefreshTokenPromise;
+
+        return actual.call(innerClient, ...args);
+      };
+    },
+  });

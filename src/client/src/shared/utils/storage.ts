@@ -1,10 +1,9 @@
 import * as SecureStore from 'expo-secure-store';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { OidcTokenSet } from '@src/integrations/backend/backend';
+import { OidcTokenSetStringified } from '@src/integrations/backend/tokenManager';
 import { Backend } from '@src/integrations/backend/types';
-
-import { AppSettings } from '../contexts/AppSettingsContext.types';
+import { AppSettings } from '@src/shared/contexts/AppSettingsContext.types';
 
 export enum SecureStorageKey {
   AuthToken = 'ReadABit.AuthToken',
@@ -22,7 +21,7 @@ export async function readFromSecureStore(
 ): Promise<AppSettings | null>;
 export async function readFromSecureStore(
   key: SecureStorageKey.AuthToken,
-): Promise<OidcTokenSet | null>;
+): Promise<OidcTokenSetStringified | null>;
 export async function readFromSecureStore<T>(
   key: SecureStorageKey,
 ): Promise<T | null> {
