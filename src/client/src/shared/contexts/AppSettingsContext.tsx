@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { defaultsDeep } from 'lodash';
+
 import { AppSettings } from './AppSettingsContext.types';
 
 import {
@@ -18,6 +20,7 @@ const defaultAppSettings: AppSettings = {
     studying: 'sv',
     ui: 'en',
   },
+  useMobileDataForAllDataTransfer: false,
 };
 
 let savedAppSettings: AppSettings | null = null;
@@ -33,7 +36,9 @@ const AppSettingsContext = React.createContext<AppSettingsContextValue>({
 
 export const AppSettingsContextProvider: React.FC = ({ children }) => {
   const [appSettingsState, setAppSettingsState] = React.useState<AppSettings>(
-    savedAppSettings || defaultAppSettings,
+    savedAppSettings
+      ? defaultsDeep(savedAppSettings, defaultAppSettings)
+      : defaultAppSettings,
   );
 
   return (

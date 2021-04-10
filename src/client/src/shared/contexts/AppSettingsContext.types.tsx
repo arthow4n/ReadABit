@@ -4,4 +4,8 @@ export type AppSettings = {
     studying: string;
     ui: string;
   };
+  /**
+   * If true, mobile data will be used as well for downloading larger content.
+   */
+  useMobileDataForAllDataTransfer: boolean;
 };
