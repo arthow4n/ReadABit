@@ -60,10 +60,18 @@ const ArticleCreateForm: React.FC<{
   const [loadingFromWebPageUrl, setLoadingFromWebPageUrl] = React.useState('');
 
   const { mutateAsync, isLoading } = useMutateArticleCreate();
-  const onSubmitPress = handleSubmit(async (values) => {
-    const result = await mutateAsync({ request: values });
-    linkTo(routeUrl(Routes.Article, { id: result.id }));
-  });
+  const onSubmitPress = handleSubmit(
+    async ({ articleCollectionId, name, text }) => {
+      const result = await mutateAsync({
+        request: {
+          articleCollectionId,
+          name,
+          text: `${name}\n\n${text}`,
+        },
+      });
+      linkTo(routeUrl(Routes.Article, { id: result.id }));
+    },
+  );
 
   const isLoadingFromWebPageUrl = !!loadingFromWebPageUrl;
   const disabled = isLoading || isLoadingFromWebPageUrl;
