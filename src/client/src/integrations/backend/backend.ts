@@ -124,7 +124,7 @@ export const api = () =>
 
         if (
           +tokenManager.currentToken.accessTokenExpirationDate <
-          Date.now() + 1000 * 60 * 60
+          Date.now() + 1000 * 60 * 5
         ) {
           // Ensure there's only one ongoing token refresh request
           ongoingRefreshTokenPromise =
