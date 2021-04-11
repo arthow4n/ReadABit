@@ -16,5 +16,6 @@
   "URL": "網址",
   "Load content": "載入內容",
   "Mark all new words as known": "標記所有新字為已知",
-  "Mark all new words as ignored": "標記所有新字為已忽略"
+  "Mark all new words as ignored": "標記所有新字為已忽略",
+  "Import from file": "從檔案匯入"
 }

@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import DocumentPicker from 'react-native-document-picker';
+import { readFile } from 'react-native-fs';
 import { useQuery } from 'react-query';
 
 import {
@@ -119,6 +121,31 @@ const ArticleCreateForm: React.FC<{
     </Item>
   );
 
+  const renderImportFromFileInput = () => (
+    <Button
+      disabled={disabled}
+      onPress={async () => {
+        try {
+          const { uri, name } = await DocumentPicker.pick({
+            type: ['text/plain'],
+          });
+
+          const content = await readFile(uri);
+
+          setValue('name', name.replace(/\.txt$/, ''));
+          setValue('text', content);
+        } catch (err) {
+          if (DocumentPicker.isCancel(err)) {
+            return;
+          }
+          throw err;
+        }
+      }}
+    >
+      <Text>{t('Import from file')}</Text>
+    </Button>
+  );
+
   return (
     <Form>
       <Item picker disabled={disabled} error={!!errors.articleCollectionId}>
@@ -140,6 +167,7 @@ const ArticleCreateForm: React.FC<{
         />
         <Text>{errors.articleCollectionId?.message}</Text>
       </Item>
+      {renderImportFromFileInput()}
       {renderImportFromUrlInput()}
       <Item stackedLabel disabled={disabled} error={!!errors.name}>
         <Label>{t('Title')}</Label>
