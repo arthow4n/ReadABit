@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection.Emit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ namespace ReadABit.Infrastructure
 
         public DbSet<Article> Articles => Set<Article>();
         public DbSet<ArticleCollection> ArticleCollections => Set<ArticleCollection>();
+        public DbSet<ArticleReadingProgress> ArticleReadingProgress => Set<ArticleReadingProgress>();
         public DbSet<UserPreference> UserPreferences => Set<UserPreference>();
         public DbSet<Word> Words => Set<Word>();
         public DbSet<WordDefinition> WordDefinitions => Set<WordDefinition>();
@@ -67,6 +69,15 @@ namespace ReadABit.Infrastructure
             modelBuilder
                 .Entity<UserPreference>()
                 .HasIndex(up => up.UserId)
+                .IsUnique();
+
+            modelBuilder
+                .Entity<ArticleReadingProgress>()
+                .HasIndex(arp => new
+                {
+                    arp.UserId,
+                    arp.ArticleId,
+                })
                 .IsUnique();
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using NodaTime;
@@ -31,5 +32,7 @@ namespace ReadABit.Infrastructure.Models
         public Instant CreatedAt { get; set; }
         [Required]
         public Instant UpdatedAt { get; set; }
+
+        public List<ArticleReadingProgress> ArticleReadingProgress { get; set; }
     }
 }

@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Text, View } from 'native-base';
 
+import { api } from '@src/integrations/backend/backend';
 import { Backend } from '@src/integrations/backend/types';
 import { wordFamiliarityLevelColorCodeMapping } from '@src/shared/constants/colorCode';
 
@@ -10,7 +11,12 @@ import { isWord } from './TokenUtils';
 
 export const RenderToken: React.FC<{
   token: Backend.Token;
-}> = ({ token }) => {
+  articleId: string;
+  documentId: string;
+  paragraphId: string;
+  sentenceId: string;
+  readRatio: number;
+}> = ({ token, articleId, documentId, paragraphId, sentenceId, readRatio }) => {
   const { wordFamiliarityItem, updateSelectedToken } = useWordTokenHandle(
     token,
   );
@@ -49,6 +55,19 @@ export const RenderToken: React.FC<{
             if (!isWord(token)) {
               return;
             }
+
+            api().articles_UpsertReadingProgress({
+              id: articleId,
+              request: {
+                conlluTokenPointer: {
+                  documentId,
+                  paragraphId,
+                  sentenceId,
+                  tokenId: token.id,
+                },
+                readRatio,
+              },
+            });
 
             updateSelectedToken(token);
           }}

@@ -43,7 +43,11 @@ namespace ReadABit.Core.Commands
 
             await DB.Unsafe.AddAsync(article, cancellationToken);
 
-            return Mapper.Map<ArticleViewModel>(article);
+            var vm = Mapper.Map<ArticleViewModel>(article);
+            // FIXME: Find a better way to not do this hack.
+            vm.ReadingProgress = new();
+
+            return vm;
         }
     }
 }

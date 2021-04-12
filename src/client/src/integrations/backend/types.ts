@@ -22,9 +22,9 @@ export interface IClient {
     articles_Get(request: { id: string }): Promise<ArticleViewModel>;
     articles_Update(request: { id: string, request: ArticleUpdate }): Promise<void>;
     articles_Delete(request: { id: string }): Promise<void>;
-    userPreferences_List(request: {  }): Promise<UserPreference[]>;
+    articles_UpsertReadingProgress(request: { id: string, request: ArticleReadingProgressUpsert }): Promise<void>;
+    userPreferences_Get(request: {  }): Promise<UserPreferenceData>;
     userPreferences_Upsert(request: { request: UserPreferenceUpsert }): Promise<void>;
-    userPreferences_Delete(request: { id: string }): Promise<void>;
     wordDefinitions_List(request: { filter_Word_LanguageCode: string | null, filter_Word_Expression: string | null, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfWordDefinition>;
     wordDefinitions_Create(request: { request: WordDefinitionCreate }): Promise<WordDefinition>;
     wordDefinitions_ListPublicSuggestions(request: { filter_Word_LanguageCode: string | null, filter_Word_Expression: string | null, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfWordDefinitionListPublicSuggestionViewModel>;
@@ -619,7 +619,59 @@ export class Client implements IClient {
         }
     }
 
-    userPreferences_List(request: {  } = { }, cancelToken?: CancelToken | undefined ): Promise<UserPreference[]> {
+    articles_UpsertReadingProgress(request: { id: string, request: ArticleReadingProgressUpsert }, cancelToken?: CancelToken | undefined ): Promise<void> {
+        let url_ = this.baseUrl + "/api/v1/Articles/{id}";
+        if (request.id === undefined || request.id === null)
+            throw new Error("The parameter 'request.id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request.request);
+
+        let options_ = <AxiosRequestConfig>{
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processArticles_UpsertReadingProgress(_response);
+        });
+    }
+
+    protected processArticles_UpsertReadingProgress(response: AxiosResponse): Promise<void> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 204) {
+            const _responseText = response.data;
+            return Promise.resolve<void>(<any>null);
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    userPreferences_Get(request: {  } = { }, cancelToken?: CancelToken | undefined ): Promise<UserPreferenceData> {
         let url_ = this.baseUrl + "/api/v1/UserPreferences";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -639,11 +691,11 @@ export class Client implements IClient {
                 throw _error;
             }
         }).then((_response: AxiosResponse) => {
-            return this.processUserPreferences_List(_response);
+            return this.processUserPreferences_Get(_response);
         });
     }
 
-    protected processUserPreferences_List(response: AxiosResponse): Promise<UserPreference[]> {
+    protected processUserPreferences_Get(response: AxiosResponse): Promise<UserPreferenceData> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -708,60 +760,6 @@ export class Client implements IClient {
         if (status === 204) {
             const _responseText = response.data;
             return Promise.resolve<void>(<any>null);
-        } else {
-            const _responseText = response.data;
-            let resultdefault: any = null;
-            let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
-            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
-        }
-    }
-
-    userPreferences_Delete(request: { id: string }, cancelToken?: CancelToken | undefined ): Promise<void> {
-        let url_ = this.baseUrl + "/api/v1/UserPreferences/{id}";
-        if (request.id === undefined || request.id === null)
-            throw new Error("The parameter 'request.id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + request.id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ = <AxiosRequestConfig>{
-            method: "DELETE",
-            url: url_,
-            headers: {
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processUserPreferences_Delete(_response);
-        });
-    }
-
-    protected processUserPreferences_Delete(response: AxiosResponse): Promise<void> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (let k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 204) {
-            const _responseText = response.data;
-            return Promise.resolve<void>(<any>null);
-        } else if (status === 404) {
-            const _responseText = response.data;
-            let result404: any = null;
-            let resultData404  = _responseText;
-            result404 = JSON.parse(resultData404);
-            return throwException("A server side error occurred.", status, _responseText, _headers, result404);
         } else {
             const _responseText = response.data;
             let resultdefault: any = null;
@@ -1283,6 +1281,7 @@ export interface Article {
     conlluDocument: Document;
     createdAt: Date;
     updatedAt: Date;
+    articleReadingProgress?: ArticleReadingProgress[] | null;
 }
 
 export interface Document {
@@ -1312,6 +1311,25 @@ export interface Token {
     deprel: string;
     deps: string;
     misc: string;
+}
+
+export interface ArticleReadingProgress {
+    id: string;
+    userId: string;
+    user?: ApplicationUser | null;
+    articleId: string;
+    article?: Article | null;
+    conlluTokenPointer: TokenPointer;
+    readRatio: number;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface TokenPointer {
+    documentId: string;
+    paragraphId: string;
+    sentenceId: string;
+    tokenId: string;
 }
 
 export interface ProblemDetails {
@@ -1370,6 +1388,14 @@ export interface ArticleViewModel {
     conlluDocument: Document;
     createdAt: Date;
     updatedAt: Date;
+    readingProgress: ArticleReadingProgressViewModel;
+}
+
+export interface ArticleReadingProgressViewModel {
+    conlluTokenPointer: TokenPointer;
+    readRatio: number;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface ArticleCreate {
@@ -1383,21 +1409,17 @@ export interface ArticleUpdate {
     text?: string | null;
 }
 
-export interface UserPreference {
-    id: string;
-    userId: string;
-    type: UserPreferenceType;
-    value?: string | null;
+export interface ArticleReadingProgressUpsert {
+    conlluTokenPointer: TokenPointer;
+    readRatio: number;
 }
 
-export enum UserPreferenceType {
-    Invalid = "Invalid",
-    LanguageCode = "LanguageCode",
+export interface UserPreferenceData {
+    wordDefinitionLanguageCode?: string | null;
 }
 
 export interface UserPreferenceUpsert {
-    type: UserPreferenceType;
-    value: string;
+    data: UserPreferenceData;
 }
 
 export interface PaginatedOfWordDefinition {

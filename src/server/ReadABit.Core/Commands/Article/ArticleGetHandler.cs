@@ -19,12 +19,18 @@ namespace ReadABit.Core.Commands
 
         public async Task<ArticleViewModel?> Handle(ArticleGet request, CancellationToken cancellationToken)
         {
-            return await DB.ArticleCollectionsOfUserOrPublic(request.UserId)
-                            .AsNoTracking()
-                            .SelectMany(ac => ac.Articles)
-                            .Where(a => a.Id == request.Id)
-                            .ProjectTo<ArticleViewModel>(Mapper.ConfigurationProvider)
-                            .SingleOrDefaultAsync(cancellationToken: cancellationToken);
+            var result = await DB.ArticleCollectionsOfUserOrPublic(request.UserId)
+                                 .SelectMany(ac => ac.Articles)
+                                 .Where(a => a.Id == request.Id)
+                                 .ProjectTo<ArticleViewModel>(Mapper.ConfigurationProvider, new { userId = request.UserId })
+                                 .SingleOrDefaultAsync(cancellationToken: cancellationToken);
+
+            if (result is not null)
+            {
+                result.ReadingProgress ??= new();
+            }
+
+            return result;
         }
     }
 }

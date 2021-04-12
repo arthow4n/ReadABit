@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using AutoMapper;
 using ReadABit.Core.Commands;
 using ReadABit.Infrastructure.Models;
@@ -8,10 +10,27 @@ namespace ReadABit.Core.Contracts.Utils
     {
         public ViewModelMapperProfile()
         {
+            var userId = default(Guid);
+
             CreateMap<Article, ArticleViewModel>()
                 .ForMember(
                     vm => vm.LanguageCode,
                     conf => conf.MapFrom(a => a.ArticleCollection.LanguageCode)
+                )
+                .ForMember(
+                    vm => vm.ReadingProgress,
+                    conf => conf.MapFrom(a =>
+                        a.ArticleReadingProgress
+                            .Where(arp => arp.UserId == userId)
+                            .Select(arp => new ArticleViewModel.ArticleReadingProgressViewModel
+                            {
+                                ConlluTokenPointer = arp.ConlluTokenPointer,
+                                ReadRatio = arp.ReadRatio,
+                                CreatedAt = arp.CreatedAt,
+                                UpdatedAt = arp.UpdatedAt,
+                            })
+                            .SingleOrDefault()
+                    )
                 );
 
             CreateMap<Article, ArticleListItemViewModel>();

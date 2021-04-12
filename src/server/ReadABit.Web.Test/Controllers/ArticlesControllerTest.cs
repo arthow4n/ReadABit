@@ -21,34 +21,22 @@ namespace ReadABit.Web.Test.Controllers
         [Fact]
         public async Task CRUD_Succeeds()
         {
-            var articleCollectionId =
-                (await ArticleCollectionsController.Create(new ArticleCollectionCreate
-                {
-                    LanguageCode = "sv",
-                    Name = "collection",
-                    Public = false,
-                }))
-                    .ShouldBeOfType<CreatedAtActionResult>()
-                    .Value.ShouldBeOfType<ArticleCollectionViewModel>().Id;
+            var created = await SetupArticle(
+                articleCollectionLanguageCode: "sv",
+                articleCollectionName: "collection",
+                articleCollectionIsPublic: false,
+                articleName: "dummy",
+                articleText: "Hallå!"
+            );
 
-            var name = "dummy";
-            var text = "Hallå!";
-            var creationResult =
-                (await ArticlesController.Create(new ArticleCreate
-                {
-                    ArticleCollectionId = articleCollectionId,
-                    Name = name,
-                    Text = text,
-                }))
-                .ShouldBeOfType<CreatedAtActionResult>();
-            var createdId = creationResult.Value.ShouldBeOfType<ArticleViewModel>().Id;
+            var articleCollectionId = created.ArticleCollectionId;
 
             (await List(articleCollectionId)).Items.Count.ShouldBe(1);
 
             // Article in private article collection should not be accessible by another user.
             using (User(2))
             {
-                (await ArticlesController.Get(createdId, new ArticleGet { })).ShouldBeOfType<NotFoundResult>();
+                (await ArticlesController.Get(created.Id, new ArticleGet { })).ShouldBeOfType<NotFoundResult>();
             }
 
             await ArticleCollectionsController.Update(articleCollectionId, new ArticleCollectionUpdate { Public = true });
@@ -56,12 +44,15 @@ namespace ReadABit.Web.Test.Controllers
             // Article in public article collection should be accessible by another user.
             using (User(2))
             {
-                var created = await Get(createdId);
-                created.Name.ShouldBe(name);
-                JsonConvert.SerializeObject(created.ConlluDocument, Formatting.Indented)
-                    .ShouldMatchApproved(c => c.WithDiscriminator("CreatedConlluDocument"));
 
-                (await ArticlesController.Update(createdId, new ArticleUpdate
+                (await Get(created.Id)).ShouldSatisfyAllConditions(
+                    x => x.Name.ShouldBe(created.Name),
+                    x => JsonConvert
+                            .SerializeObject(x.ConlluDocument, Formatting.Indented)
+                            .ShouldMatchApproved(c => c.WithDiscriminator("CreatedConlluDocument"))
+                );
+
+                (await ArticlesController.Update(created.Id, new ArticleUpdate
                 {
                     Name = "another",
                     Text = "another",
@@ -81,29 +72,72 @@ de är mina föräldrar.
 Varför vill du lära dig svenska?
 Det beror på att det gör det lättare att förstå vad folk säger.
 ";
-            await ArticlesController.Update(createdId, new ArticleUpdate
+            await ArticlesController.Update(created.Id, new ArticleUpdate
             {
                 Name = updatedName,
                 Text = upadtedText,
             });
 
-            var updated = await Get(createdId);
+            var updated = await Get(created.Id);
             updated.Name.ShouldBe(updatedName);
             JsonConvert.SerializeObject(updated.ConlluDocument, Formatting.Indented)
                 .ShouldMatchApproved(c => c.WithDiscriminator("UpdatedConlluDocument"));
 
             using (User(2))
             {
-                (await ArticlesController.Delete(createdId, new ArticleDelete { })).ShouldBeOfType<NotFoundResult>();
+                (await ArticlesController.Delete(created.Id, new ArticleDelete { })).ShouldBeOfType<NotFoundResult>();
             }
             (await List(articleCollectionId)).Items.Count.ShouldBe(1);
 
             // Listing without specifying article collection ID should return articles from any article collection
             (await List(null)).Items.Count.ShouldBe(1);
 
-            (await ArticlesController.Delete(createdId, new ArticleDelete { })).ShouldBeOfType<NoContentResult>();
+            (await ArticlesController.Delete(created.Id, new ArticleDelete { })).ShouldBeOfType<NoContentResult>();
             (await List(articleCollectionId)).Items.Count.ShouldBe(0);
-            (await ArticlesController.Get(createdId, new ArticleGet { })).ShouldBeOfType<NotFoundResult>();
+            (await ArticlesController.Get(created.Id, new ArticleGet { })).ShouldBeOfType<NotFoundResult>();
+        }
+
+        [Fact]
+        public async Task ArticleReadingProgress_ShouldBeAbleToReadAndWrite()
+        {
+            var created = await SetupArticle(
+                articleCollectionLanguageCode: "sv",
+                articleCollectionIsPublic: true,
+                articleText: "Jag kommer att cykla till stan."
+            );
+
+            // Should default to 0 if never read.
+            (await Get(created.Id)).ReadingProgress.ShouldSatisfyAllConditions(
+                x => x.ReadRatio.ShouldBe(0),
+                x => x.ConlluTokenPointer.ShouldBe(new())
+            );
+
+            var upsertRequest = new ArticleReadingProgressUpsert()
+            {
+                ConlluTokenPointer = new()
+                {
+                    DocumentId = "DocumentId",
+                    ParagraphId = "ParagraphId",
+                    SentenceId = "SentenceId",
+                    TokenId = "TokenId",
+                },
+                ReadRatio = 0.5m,
+            };
+            await ArticlesController.UpsertReadingProgress(created.Id, upsertRequest);
+
+            (await Get(created.Id)).ReadingProgress.ShouldSatisfyAllConditions(
+                x => x.ReadRatio.ShouldBe(upsertRequest.ReadRatio),
+                x => x.ConlluTokenPointer.ShouldBe(upsertRequest.ConlluTokenPointer)
+            );
+
+            // Should not mix read progress between users.
+            using (User(2))
+            {
+                (await Get(created.Id)).ReadingProgress.ShouldSatisfyAllConditions(
+                    x => x.ReadRatio.ShouldBe(0),
+                    x => x.ConlluTokenPointer.ShouldBe(new())
+                );
+            }
         }
 
         private async Task<Paginated<ArticleListItemViewModel>> List(Guid? articleCollectionId)

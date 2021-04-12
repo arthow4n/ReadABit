@@ -20,11 +20,11 @@ namespace ReadABit.Web.Controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> Get([FromQuery] UserPreferenceGet request)
         {
-            UserPreferenceData list = await Mediator.Send(request with
+            UserPreferenceData vm = await Mediator.Send(request with
             {
                 UserId = RequestUserId,
             });
-            return Ok(list);
+            return Ok(vm);
         }
 
         [HttpPost]

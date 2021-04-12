@@ -1,7 +1,7 @@
 // Reference: https://universaldependencies.org/format.html
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 
 #nullable enable
 
@@ -165,6 +165,17 @@ namespace ReadABit.Core.Integrations.Contracts.Conllu
             /// </summary>
             /// <value></value>
             public string Misc { get; init; } = "_";
+        }
+
+        /// <summary>
+        /// A general pointer for pointing to a specific place in the <see cref="Document" />.
+        /// </summary>
+        public record TokenPointer
+        {
+            public string DocumentId { get; init; } = "";
+            public string ParagraphId { get; init; } = "";
+            public string SentenceId { get; init; } = "";
+            public string TokenId { get; init; } = "";
         }
     }
 }

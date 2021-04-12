@@ -13,5 +13,14 @@ namespace ReadABit.Core.Contracts
         public Conllu.Document ConlluDocument { get; init; } = new();
         public Instant CreatedAt { get; init; }
         public Instant UpdatedAt { get; init; }
+        public ArticleReadingProgressViewModel ReadingProgress { get; set; } = new();
+
+        public record ArticleReadingProgressViewModel
+        {
+            public Conllu.TokenPointer ConlluTokenPointer { get; init; } = new();
+            public decimal ReadRatio { get; init; } = 0;
+            public Instant CreatedAt { get; init; }
+            public Instant UpdatedAt { get; init; }
+        }
     }
 }

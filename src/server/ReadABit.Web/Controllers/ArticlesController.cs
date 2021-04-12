@@ -102,5 +102,20 @@ namespace ReadABit.Web.Controllers
             await SaveChangesAsync();
             return NoContent();
         }
+
+        [HttpPost("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> UpsertReadingProgress(Guid id, ArticleReadingProgressUpsert request)
+        {
+            await Mediator.Send(request with
+            {
+                UserId = RequestUserId,
+                ArticleId = id,
+            });
+
+            await SaveChangesAsync();
+            return NoContent();
+        }
     }
 }

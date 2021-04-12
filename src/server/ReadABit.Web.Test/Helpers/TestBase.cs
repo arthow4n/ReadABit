@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Transactions;
 using ReadABit.Core.Utils;
 using ReadABit.Web.Controllers;
 
 namespace ReadABit.Web.Test.Helpers
 {
-    public class TestBase : IDisposable
+    public partial class TestBase : IDisposable
     {
         public TestBase(IServiceProvider serviceProvider, IRequestContext requestContext)
         {
