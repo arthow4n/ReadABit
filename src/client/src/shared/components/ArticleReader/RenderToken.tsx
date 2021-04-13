@@ -16,7 +16,16 @@ export const RenderToken: React.FC<{
   paragraphId: string;
   sentenceId: string;
   readRatio: number;
-}> = ({ token, articleId, documentId, paragraphId, sentenceId, readRatio }) => {
+  isLastTokenInSentence: boolean;
+}> = ({
+  token,
+  articleId,
+  documentId,
+  paragraphId,
+  sentenceId,
+  readRatio,
+  isLastTokenInSentence,
+}) => {
   const { wordFamiliarityItem, updateSelectedToken } = useWordTokenHandle(
     token,
   );
@@ -79,18 +88,19 @@ export const RenderToken: React.FC<{
         </Text>
       </View>
       {/* To catch the edge case where tokenizer marks `?` as SpaceAfter */}
-      {spacesAfter.trim() ? (
-        <View
-          style={{
-            borderBottomWidth: 4,
-            borderColor: 'rgba(0,0,0,0)',
-          }}
-        >
-          {renderSpaceAfter()}
-        </View>
-      ) : (
-        renderSpaceAfter()
-      )}
+      {!isLastTokenInSentence &&
+        (spacesAfter.trim() ? (
+          <View
+            style={{
+              borderBottomWidth: 4,
+              borderColor: 'rgba(0,0,0,0)',
+            }}
+          >
+            {renderSpaceAfter()}
+          </View>
+        ) : (
+          renderSpaceAfter()
+        ))}
     </Text>
   );
 };
