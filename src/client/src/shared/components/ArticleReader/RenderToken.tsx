@@ -7,7 +7,7 @@ import { Backend } from '@src/integrations/backend/types';
 import { wordFamiliarityLevelColorCodeMapping } from '@src/shared/constants/colorCode';
 
 import { useWordTokenHandle } from './ArticleReaderRenderContext';
-import { isWord } from './TokenUtils';
+import { getSpacesAfter, isWord } from './TokenUtils';
 
 export const RenderToken: React.FC<{
   token: Backend.Token;
@@ -26,14 +26,13 @@ export const RenderToken: React.FC<{
   readRatio,
   isLastTokenInSentence,
 }) => {
-  const { wordFamiliarityItem, updateSelectedToken } = useWordTokenHandle(
-    token,
-  );
+  const {
+    wordFamiliarityItem,
+    updateSelectedToken,
+    ttsSpeak,
+  } = useWordTokenHandle(token);
 
-  const spacesAfter = (token.misc.match(/\|?Spaces?After=(.+)\|?/)?.[1] ?? ' ')
-    .replace(/^No$/, '')
-    .replace(/\\s/g, ' ')
-    .replace(/\\n/g, '\n');
+  const spacesAfter = getSpacesAfter(token);
 
   const renderSpaceAfter = () => (
     <Text style={{ fontSize: 28 }}>{spacesAfter}</Text>
@@ -79,6 +78,7 @@ export const RenderToken: React.FC<{
             });
 
             updateSelectedToken(token);
+            ttsSpeak(token.form);
           }}
           style={{
             fontSize: 28,

@@ -11,13 +11,13 @@ import { Backend } from '@src/integrations/backend/types';
 import { useArticleReaderHandle } from './ArticleReaderRenderContext';
 import { RenderToken } from './RenderToken';
 import { SelectedTokenDefinitionCard } from './SelectedTokenDefinitionCard';
-import { isWord } from './TokenUtils';
+import { getSpacesAfter, isWord } from './TokenUtils';
 
 export const ArticleReader: React.FC<{
   article: Backend.ArticleViewModel;
 }> = ({ article }) => {
   const { t } = useTranslation();
-  const { updateWordFamiliarityForTokens } = useArticleReaderHandle();
+  const { updateWordFamiliarityForTokens, ttsSpeak } = useArticleReaderHandle();
 
   const flattenedTokens = article.conlluDocument.paragraphs
     .flatMap((p) => p.sentences)
@@ -40,6 +40,21 @@ export const ArticleReader: React.FC<{
               <View>
                 {paragraph.sentences.map((sentence) => (
                   <Text key={sentence.id}>
+                    <Button
+                      transparent
+                      onPress={() => {
+                        ttsSpeak(
+                          sentence.tokens
+                            .map(
+                              (token) =>
+                                `${token.form}${getSpacesAfter(token)}`,
+                            )
+                            .join(''),
+                        );
+                      }}
+                    >
+                      <Icon name="volume-medium-outline" />
+                    </Button>
                     {sentence.tokens.map((token, index) => {
                       tokenCounter += 1;
 
@@ -76,8 +91,8 @@ export const ArticleReader: React.FC<{
                 ].map(({ fromLevel, iconName }) => (
                   <Button
                     key={iconName}
-                    style={{ marginRight: 8 }}
                     transparent
+                    style={{ marginRight: 8 }}
                     onPress={() => {
                       const lastSentenceInParagraph = paragraph.sentences.slice(
                         -1,

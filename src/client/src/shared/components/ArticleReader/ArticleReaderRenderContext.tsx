@@ -1,10 +1,13 @@
 import * as React from 'react';
 
+import Tts from 'react-native-tts';
+
 import produce from 'immer';
 import { compact } from 'lodash';
 
 import { api } from '@src/integrations/backend/backend';
 import { Backend } from '@src/integrations/backend/types';
+import { useAppSettingsContext } from '@src/shared/contexts/AppSettingsContext';
 import {
   AsyncStorageKey,
   readFromAsyncStore,
@@ -31,6 +34,7 @@ type ArticleReaderRenderContextValue = {
   getSelectedToken: () => Backend.Token | null;
   updateSelectedToken: (token: Backend.Token) => void;
   subscribeToSelectedToken: (onChange: () => void) => () => void;
+  ttsSpeak: (text: string) => void;
 };
 
 const defaultWordFamiliarity: Backend.WordFamiliarityListViewModel = {
@@ -52,16 +56,7 @@ const saveWordFamiliarity = async () => {
 };
 
 const ArticleReaderRenderContext = React.createContext<ArticleReaderRenderContextValue>(
-  {
-    articleLanguageCode: '',
-    wordFamiliarity: defaultWordFamiliarity,
-    updateWordFamiliarity: () => Promise.resolve(),
-    updateWordFamiliarityForMatchedTokens: () => Promise.resolve(),
-    subscribeToWordFamiliarity: () => () => {},
-    getSelectedToken: () => null,
-    updateSelectedToken: () => {},
-    subscribeToSelectedToken: () => () => {},
-  },
+  (null as unknown) as ArticleReaderRenderContextValue,
 );
 
 // Tried to write this with private field (.#) syntax
@@ -117,10 +112,28 @@ class SubscriptionManager {
 export const ArticleReaderRenderContextProvider: React.FC<{
   articleLanguageCode: string;
 }> = ({ articleLanguageCode, children }) => {
+  const { appSettings } = useAppSettingsContext();
   const subscriptionManager = React.useRef(
     new SubscriptionManager(articleLanguageCode),
   );
   const [isReady, setIsReady] = React.useState(false);
+  const ttsVoicePromiseRef = React.useRef(
+    (async () => {
+      await Tts.getInitStatus();
+      const voices = await Tts.voices();
+
+      const voice = voices.find((v) =>
+        v.language.startsWith(articleLanguageCode),
+      );
+      if (voice) {
+        await Tts.setDefaultLanguage(voice.language);
+      }
+
+      // TODO: Maybe allow choosing engine/voice/...etc.
+
+      return voice;
+    })(),
+  );
 
   React.useEffect(() => {
     (async () => {
@@ -235,6 +248,22 @@ export const ArticleReaderRenderContextProvider: React.FC<{
         subscribeToSelectedToken: (onChange) => {
           return subscriptionManager.current.subscribeToSelectedToken(onChange);
         },
+        ttsSpeak: async (text: string) => {
+          const voice = await ttsVoicePromiseRef.current;
+
+          if (!voice) {
+            return;
+          }
+
+          if (
+            (voice.networkConnectionRequired || voice.notInstalled) &&
+            !appSettings.useMobileDataForAllDataTransfer
+          ) {
+            return;
+          }
+
+          Tts.speak(text);
+        },
       }}
     >
       {children}
@@ -279,6 +308,7 @@ export const useWordTokenHandle = (token?: Backend.Token | null) => {
     wordFamiliarity,
     subscribeToWordFamiliarity,
     updateSelectedToken,
+    ttsSpeak,
   } = React.useContext(ArticleReaderRenderContext);
 
   React.useEffect(() => {
@@ -292,6 +322,7 @@ export const useWordTokenHandle = (token?: Backend.Token | null) => {
       token,
     ),
     updateSelectedToken,
+    ttsSpeak,
   };
 };
 
@@ -336,9 +367,11 @@ export const useSelectedTokenDefinitionCardHandle = () => {
 export const useArticleReaderHandle = () => {
   const {
     updateWordFamiliarityForMatchedTokens: updateWordFamiliarityForTokens,
+    ttsSpeak,
   } = React.useContext(ArticleReaderRenderContext);
 
   return {
     updateWordFamiliarityForTokens,
+    ttsSpeak,
   };
 };
