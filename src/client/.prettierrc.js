@@ -11,4 +11,12 @@ module.exports = {
     '.*',
   ],
   importOrderSeparation: true,
+  overrides: [
+    {
+      files: '*.{ts,tsx}',
+      options: {
+        parser: 'babel-ts',
+      },
+    },
+  ],
 };

@@ -13,7 +13,7 @@ export type OidcTokenSetStringified = {
 class TokenManager {
   #currentToken: OidcTokenSet | null = null;
 
-  #tokenChangeListeners: Set<(() => void)> = new Set();
+  #tokenChangeListeners: Set<() => void> = new Set();
 
   get currentToken() {
     return this.#currentToken;
