@@ -4,7 +4,7 @@ import { findNodeHandle, ScrollView, View as RNView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { noop, round } from 'lodash';
-import { Button, Content, Grid, Icon, Row, Text, View } from 'native-base';
+import { Button, Grid, Icon, Row, Text, View } from 'native-base';
 
 import { api } from '@src/integrations/backend/backend';
 
@@ -67,63 +67,66 @@ export const ArticleReader: React.FC = () => {
             tryScrollToTheTokenToScrollToOnMount();
           }}
         >
-          {/* TODO: Flatten the child tree,
-           so it's possible to scroll to at least sentence level.
-           because `measureLayout` can't work correctly/directly
-           with the `Text` in `RenderToken` */}
           {article.conlluDocument.paragraphs.map((paragraph) => (
-            <RNView
+            <View
               key={paragraph.id}
-              ref={
-                paragraph.id ===
-                article.readingProgress.conlluTokenPointer.paragraphId
-                  ? (ref) => {
-                      viewToScrollToOnMountRef.current = ref;
-                      tryScrollToTheTokenToScrollToOnMount();
-                    }
-                  : undefined
-              }
               style={{
                 padding: 4,
               }}
             >
               <View>
                 {paragraph.sentences.map((sentence) => (
-                  <Text key={sentence.id}>
-                    <Button
-                      transparent
-                      onPress={() => {
-                        ttsSpeak(
-                          sentence.tokens
-                            .map(
-                              (token) =>
-                                `${token.form}${getSpacesAfter(token)}`,
-                            )
-                            .join(''),
-                        );
-                      }}
-                    >
-                      <Icon name="volume-medium-outline" />
-                    </Button>
-                    {sentence.tokens.map((token, index) => {
-                      tokenCounter += 1;
-
-                      return (
-                        <RenderToken
-                          key={token.id}
-                          token={token}
-                          articleId={article.id}
-                          documentId={documentId}
-                          paragraphId={paragraph.id}
-                          sentenceId={sentence.id}
-                          readRatio={round(tokenCounter / allTokensCount, 2)}
-                          isLastTokenInSentence={
-                            index === sentence.tokens.length - 1
+                  <RNView
+                    key={sentence.id}
+                    ref={
+                      paragraph.id ===
+                        article.readingProgress.conlluTokenPointer
+                          .paragraphId &&
+                      sentence.id ===
+                        article.readingProgress.conlluTokenPointer.sentenceId
+                        ? (ref) => {
+                            viewToScrollToOnMountRef.current = ref;
+                            tryScrollToTheTokenToScrollToOnMount();
                           }
-                        />
-                      );
-                    })}
-                  </Text>
+                        : undefined
+                    }
+                  >
+                    <Text>
+                      <Button
+                        transparent
+                        onPress={() => {
+                          ttsSpeak(
+                            sentence.tokens
+                              .map(
+                                (token) =>
+                                  `${token.form}${getSpacesAfter(token)}`,
+                              )
+                              .join(''),
+                          );
+                        }}
+                      >
+                        <Icon name="volume-medium-outline" />
+                      </Button>
+                      {sentence.tokens.map((token, index) => {
+                        tokenCounter += 1;
+
+                        return (
+                          <RenderToken
+                            key={token.id}
+                            token={token}
+                            articleId={article.id}
+                            documentId={documentId}
+                            paragraphId={paragraph.id}
+                            sentenceId={sentence.id}
+                            readRatio={round(tokenCounter / allTokensCount, 2)}
+                            isLastTokenInSentence={
+                              index === sentence.tokens.length - 1
+                            }
+                          />
+                        );
+                      })}
+                    </Text>
+                  </RNView>
                 ))}
               </View>
               <View
@@ -179,7 +182,7 @@ export const ArticleReader: React.FC = () => {
                   </Button>
                 ))}
               </View>
-            </RNView>
+            </View>
           ))}
           <Button onPress={() => markAllNewWordAs(3)}>
             <Text>{t('Mark all new words as known')}</Text>
