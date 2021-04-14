@@ -13,11 +13,13 @@ import { RenderToken } from './RenderToken';
 import { SelectedTokenDefinitionCard } from './SelectedTokenDefinitionCard';
 import { getSpacesAfter, isWord } from './TokenUtils';
 
-export const ArticleReader: React.FC<{
-  article: Backend.ArticleViewModel;
-}> = ({ article }) => {
+export const ArticleReader: React.FC = () => {
   const { t } = useTranslation();
-  const { updateWordFamiliarityForTokens, ttsSpeak } = useArticleReaderHandle();
+  const {
+    updateWordFamiliarityForTokens,
+    ttsSpeak,
+    article,
+  } = useArticleReaderHandle();
 
   const flattenedTokens = article.conlluDocument.paragraphs
     .flatMap((p) => p.sentences)

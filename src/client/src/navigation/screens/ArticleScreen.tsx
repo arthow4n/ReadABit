@@ -27,8 +27,8 @@ export const ArticleScreen: React.FC<
   }
 
   return (
-    <ArticleReaderRenderContextProvider articleLanguageCode={data.languageCode}>
-      <ArticleReader article={data} />
+    <ArticleReaderRenderContextProvider article={data}>
+      <ArticleReader />
     </ArticleReaderRenderContextProvider>
   );
 };

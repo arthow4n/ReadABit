@@ -17,6 +17,7 @@ import {
 import { ContentLoading } from '../Loading';
 
 type ArticleReaderRenderContextValue = {
+  article: Backend.ArticleViewModel;
   articleLanguageCode: string;
   wordFamiliarity: Backend.WordFamiliarityListViewModel;
   updateWordFamiliarity: (
@@ -35,10 +36,7 @@ type ArticleReaderRenderContextValue = {
   updateSelectedToken: (token: Backend.Token) => void;
   subscribeToSelectedToken: (onChange: () => void) => () => void;
   ttsSpeak: (text: string) => void;
-};
-
-const defaultWordFamiliarity: Backend.WordFamiliarityListViewModel = {
-  groupedWordFamiliarities: {},
+  tokenToScrollToOnMount: Backend.Token | null;
 };
 
 let savedWordFamiliarity: Backend.WordFamiliarityListViewModel = {
@@ -110,30 +108,48 @@ class SubscriptionManager {
 }
 
 export const ArticleReaderRenderContextProvider: React.FC<{
-  articleLanguageCode: string;
-}> = ({ articleLanguageCode, children }) => {
+  article: Backend.ArticleViewModel;
+}> = ({ article, children }) => {
   const { appSettings } = useAppSettingsContext();
   const subscriptionManager = React.useRef(
-    new SubscriptionManager(articleLanguageCode),
+    new SubscriptionManager(article.languageCode),
   );
   const [isReady, setIsReady] = React.useState(false);
-  const ttsVoicePromiseRef = React.useRef(
-    (async () => {
-      await Tts.getInitStatus();
-      const voices = await Tts.voices();
+  const ttsVoice = React.useMemo(async () => {
+    await Tts.getInitStatus();
+    const voices = await Tts.voices();
 
-      const voice = voices.find((v) =>
-        v.language.startsWith(articleLanguageCode),
-      );
-      if (voice) {
-        await Tts.setDefaultLanguage(voice.language);
-      }
+    const voice = voices.find((v) =>
+      v.language.startsWith(article.languageCode),
+    );
+    if (voice) {
+      await Tts.setDefaultLanguage(voice.language);
+    }
 
-      // TODO: Maybe allow choosing engine/voice/...etc.
+    // TODO: Maybe allow choosing engine/voice/...etc.
 
-      return voice;
-    })(),
-  );
+    return voice;
+  }, [article]);
+
+  const tokenToScrollToOnMount = React.useMemo<Backend.Token | null>(() => {
+    const {
+      documentId,
+      paragraphId,
+      sentenceId,
+      tokenId,
+    } = article.readingProgress.conlluTokenPointer;
+
+    if (article.conlluDocument.id !== documentId) {
+      return null;
+    }
+
+    return (
+      article.conlluDocument.paragraphs
+        .find((p) => p.id === paragraphId)
+        ?.sentences.find((s) => s.id === sentenceId)
+        ?.tokens.find((t) => t.id === tokenId) ?? null
+    );
+  }, [article]);
 
   React.useEffect(() => {
     (async () => {
@@ -186,12 +202,12 @@ export const ArticleReaderRenderContextProvider: React.FC<{
       tokens.map((token) => {
         const expression = token.form;
 
-        savedWordFamiliarity.groupedWordFamiliarities[articleLanguageCode] =
-          savedWordFamiliarity.groupedWordFamiliarities[articleLanguageCode] ??
+        savedWordFamiliarity.groupedWordFamiliarities[article.languageCode] =
+          savedWordFamiliarity.groupedWordFamiliarities[article.languageCode] ??
           {};
 
         if (
-          (savedWordFamiliarity.groupedWordFamiliarities[articleLanguageCode][
+          (savedWordFamiliarity.groupedWordFamiliarities[article.languageCode][
             token.form
           ]?.level ?? 0) !== fromLevel
         ) {
@@ -199,11 +215,11 @@ export const ArticleReaderRenderContextProvider: React.FC<{
         }
 
         const word = {
-          languageCode: articleLanguageCode,
+          languageCode: article.languageCode,
           expression,
         };
 
-        savedWordFamiliarity.groupedWordFamiliarities[articleLanguageCode][
+        savedWordFamiliarity.groupedWordFamiliarities[article.languageCode][
           token.form
         ] = {
           level: toLevel,
@@ -229,7 +245,8 @@ export const ArticleReaderRenderContextProvider: React.FC<{
   return (
     <ArticleReaderRenderContext.Provider
       value={{
-        articleLanguageCode,
+        article,
+        articleLanguageCode: article.languageCode,
         wordFamiliarity: savedWordFamiliarity,
         updateWordFamiliarity,
         updateWordFamiliarityForMatchedTokens,
@@ -249,7 +266,7 @@ export const ArticleReaderRenderContextProvider: React.FC<{
           return subscriptionManager.current.subscribeToSelectedToken(onChange);
         },
         ttsSpeak: async (text: string) => {
-          const voice = await ttsVoicePromiseRef.current;
+          const voice = await ttsVoice;
 
           if (!voice) {
             return;
@@ -264,6 +281,7 @@ export const ArticleReaderRenderContextProvider: React.FC<{
 
           Tts.speak(text);
         },
+        tokenToScrollToOnMount,
       }}
     >
       {children}
@@ -368,10 +386,14 @@ export const useArticleReaderHandle = () => {
   const {
     updateWordFamiliarityForMatchedTokens: updateWordFamiliarityForTokens,
     ttsSpeak,
+    article,
+    tokenToScrollToOnMount,
   } = React.useContext(ArticleReaderRenderContext);
 
   return {
     updateWordFamiliarityForTokens,
     ttsSpeak,
+    article,
+    tokenToScrollToOnMount,
   };
 };
