@@ -1,12 +1,12 @@
 import React from 'react';
 
+import { findNodeHandle, ScrollView, View as RNView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { round } from 'lodash';
+import { noop, round } from 'lodash';
 import { Button, Content, Grid, Icon, Row, Text, View } from 'native-base';
 
 import { api } from '@src/integrations/backend/backend';
-import { Backend } from '@src/integrations/backend/types';
 
 import { useArticleReaderHandle } from './ArticleReaderRenderContext';
 import { RenderToken } from './RenderToken';
@@ -20,6 +20,31 @@ export const ArticleReader: React.FC = () => {
     ttsSpeak,
     article,
   } = useArticleReaderHandle();
+
+  const scrollViewRef = React.useRef<ScrollView | null>(null);
+  const viewToScrollToOnMountRef = React.useRef<RNView | null>(null);
+
+  const tryScrollToTheTokenToScrollToOnMount = () => {
+    if (!scrollViewRef.current || !viewToScrollToOnMountRef.current) {
+      return;
+    }
+
+    const scrollViewNodeHandle = findNodeHandle(scrollViewRef.current);
+
+    if (!scrollViewNodeHandle) {
+      return;
+    }
+
+    viewToScrollToOnMountRef.current.measureLayout(
+      scrollViewNodeHandle,
+      (left, top, width, height) => {
+        scrollViewRef.current?.scrollTo({
+          y: top,
+        });
+      },
+      noop,
+    );
+  };
 
   const flattenedTokens = article.conlluDocument.paragraphs
     .flatMap((p) => p.sentences)
@@ -36,9 +61,32 @@ export const ArticleReader: React.FC = () => {
   return (
     <Grid>
       <Row size={2}>
-        <Content padder>
+        <ScrollView
+          ref={(ref) => {
+            scrollViewRef.current = ref;
+            tryScrollToTheTokenToScrollToOnMount();
+          }}
+        >
+          {/* TODO: Flatten the child tree,
+           so it's possible to scroll to at least sentence level.
+           because `measureLayout` can't work correctly/directly
+           with the `Text` in `RenderToken` */}
           {article.conlluDocument.paragraphs.map((paragraph) => (
-            <View key={paragraph.id}>
+            <RNView
+              key={paragraph.id}
+              ref={
+                paragraph.id ===
+                article.readingProgress.conlluTokenPointer.paragraphId
+                  ? (ref) => {
+                      viewToScrollToOnMountRef.current = ref;
+                      tryScrollToTheTokenToScrollToOnMount();
+                    }
+                  : undefined
+              }
+              style={{
+                padding: 4,
+              }}
+            >
               <View>
                 {paragraph.sentences.map((sentence) => (
                   <Text key={sentence.id}>
@@ -131,12 +179,12 @@ export const ArticleReader: React.FC = () => {
                   </Button>
                 ))}
               </View>
-            </View>
+            </RNView>
           ))}
           <Button onPress={() => markAllNewWordAs(3)}>
             <Text>{t('Mark all new words as known')}</Text>
           </Button>
-        </Content>
+        </ScrollView>
       </Row>
       <Row size={1}>
         <SelectedTokenDefinitionCard />

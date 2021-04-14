@@ -36,7 +36,6 @@ type ArticleReaderRenderContextValue = {
   updateSelectedToken: (token: Backend.Token) => void;
   subscribeToSelectedToken: (onChange: () => void) => () => void;
   ttsSpeak: (text: string) => void;
-  tokenToScrollToOnMount: Backend.Token | null;
 };
 
 let savedWordFamiliarity: Backend.WordFamiliarityListViewModel = {
@@ -129,26 +128,6 @@ export const ArticleReaderRenderContextProvider: React.FC<{
     // TODO: Maybe allow choosing engine/voice/...etc.
 
     return voice;
-  }, [article]);
-
-  const tokenToScrollToOnMount = React.useMemo<Backend.Token | null>(() => {
-    const {
-      documentId,
-      paragraphId,
-      sentenceId,
-      tokenId,
-    } = article.readingProgress.conlluTokenPointer;
-
-    if (article.conlluDocument.id !== documentId) {
-      return null;
-    }
-
-    return (
-      article.conlluDocument.paragraphs
-        .find((p) => p.id === paragraphId)
-        ?.sentences.find((s) => s.id === sentenceId)
-        ?.tokens.find((t) => t.id === tokenId) ?? null
-    );
   }, [article]);
 
   React.useEffect(() => {
@@ -281,7 +260,6 @@ export const ArticleReaderRenderContextProvider: React.FC<{
 
           Tts.speak(text);
         },
-        tokenToScrollToOnMount,
       }}
     >
       {children}
@@ -387,13 +365,11 @@ export const useArticleReaderHandle = () => {
     updateWordFamiliarityForMatchedTokens: updateWordFamiliarityForTokens,
     ttsSpeak,
     article,
-    tokenToScrollToOnMount,
   } = React.useContext(ArticleReaderRenderContext);
 
   return {
     updateWordFamiliarityForTokens,
     ttsSpeak,
     article,
-    tokenToScrollToOnMount,
   };
 };
