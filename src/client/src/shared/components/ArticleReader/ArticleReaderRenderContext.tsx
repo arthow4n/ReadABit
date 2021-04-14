@@ -258,6 +258,7 @@ export const ArticleReaderRenderContextProvider: React.FC<{
             return;
           }
 
+          Tts.stop();
           Tts.speak(text);
         },
       }}
