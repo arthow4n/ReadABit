@@ -70,7 +70,10 @@ export const ArticleReader: React.FC = () => {
           {article.conlluDocument.paragraphs.map(
             (paragraph, paragraphIndex) => (
               <View
-                key={paragraph.id}
+                // Using index because the whole article never changes during lifecycle,
+                // besides there were some buggy documents with duplicated paragraph ID.
+                // eslint-disable-next-line react/no-array-index-key
+                key={paragraphIndex}
                 style={{
                   padding: 4,
                 }}
@@ -78,7 +81,8 @@ export const ArticleReader: React.FC = () => {
                 <View>
                   {paragraph.sentences.map((sentence, sentenceIndex) => (
                     <RNView
-                      key={sentence.id}
+                      // eslint-disable-next-line react/no-array-index-key
+                      key={sentenceIndex}
                       ref={
                         paragraphIndex ===
                           article.readingProgress.conlluTokenPointer
@@ -114,7 +118,8 @@ export const ArticleReader: React.FC = () => {
 
                           return (
                             <RenderToken
-                              key={token.id}
+                              // eslint-disable-next-line react/no-array-index-key
+                              key={tokenIndex}
                               token={token}
                               articleId={article.id}
                               documentIndex={documentIndex}
