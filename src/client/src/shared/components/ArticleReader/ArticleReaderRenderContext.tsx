@@ -13,6 +13,7 @@ import {
   readFromAsyncStore,
   writeToAsyncStore,
 } from '@src/shared/utils/storage';
+import { useRerender } from '@src/shared/hooks/useRerender';
 
 import { ContentLoading } from '../Loading';
 
@@ -266,15 +267,6 @@ export const ArticleReaderRenderContextProvider: React.FC<{
       {children}
     </ArticleReaderRenderContext.Provider>
   );
-};
-
-const useRerender = () => {
-  const [, rerender] = React.useReducer((s) => s + 1, 0);
-  return {
-    rerender: () => {
-      rerender();
-    },
-  };
 };
 
 const retriveWordFamiliarityItem = (
