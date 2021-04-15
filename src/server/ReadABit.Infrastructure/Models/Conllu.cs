@@ -172,10 +172,10 @@ namespace ReadABit.Core.Integrations.Contracts.Conllu
         /// </summary>
         public record TokenPointer
         {
-            public string DocumentId { get; init; } = "";
-            public string ParagraphId { get; init; } = "";
-            public string SentenceId { get; init; } = "";
-            public string TokenId { get; init; } = "";
+            public int DocumentIndex { get; init; }
+            public int ParagraphIndex { get; init; }
+            public int SentenceIndex { get; init; }
+            public int TokenIndex { get; init; }
         }
     }
 }

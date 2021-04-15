@@ -12,17 +12,19 @@ import { getSpacesAfter, isWord } from './TokenUtils';
 export const RenderToken: React.FC<{
   token: Backend.Token;
   articleId: string;
-  documentId: string;
-  paragraphId: string;
-  sentenceId: string;
+  documentIndex: number;
+  paragraphIndex: number;
+  sentenceIndex: number;
+  tokenIndex: number;
   readRatio: number;
   isLastTokenInSentence: boolean;
 }> = ({
   token,
   articleId,
-  documentId,
-  paragraphId,
-  sentenceId,
+  documentIndex,
+  paragraphIndex,
+  sentenceIndex,
+  tokenIndex,
   readRatio,
   isLastTokenInSentence,
 }) => {
@@ -68,10 +70,10 @@ export const RenderToken: React.FC<{
               id: articleId,
               request: {
                 conlluTokenPointer: {
-                  documentId,
-                  paragraphId,
-                  sentenceId,
-                  tokenId: token.id,
+                  documentIndex,
+                  paragraphIndex,
+                  sentenceIndex,
+                  tokenIndex,
                 },
                 readRatio,
               },

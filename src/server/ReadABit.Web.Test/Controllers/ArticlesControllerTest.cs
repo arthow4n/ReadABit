@@ -116,10 +116,10 @@ Det beror på att det gör det lättare att förstå vad folk säger.
             {
                 ConlluTokenPointer = new()
                 {
-                    DocumentId = "DocumentId",
-                    ParagraphId = "ParagraphId",
-                    SentenceId = "SentenceId",
-                    TokenId = "TokenId",
+                    DocumentIndex = 0,
+                    ParagraphIndex = 1,
+                    SentenceIndex = 2,
+                    TokenIndex = 3,
                 },
                 ReadRatio = 0.5m,
             };

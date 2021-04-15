@@ -54,7 +54,7 @@ export const ArticleReader: React.FC = () => {
     updateWordFamiliarityForTokens(0, level, flattenedTokens.filter(isWord));
   };
 
-  const documentId = article.conlluDocument.id;
+  const documentIndex = 0;
   const allTokensCount = flattenedTokens.length;
   let tokenCounter = 0;
 
@@ -67,123 +67,132 @@ export const ArticleReader: React.FC = () => {
             tryScrollToTheTokenToScrollToOnMount();
           }}
         >
-          {article.conlluDocument.paragraphs.map((paragraph) => (
-            <View
-              key={paragraph.id}
-              style={{
-                padding: 4,
-              }}
-            >
-              <View>
-                {paragraph.sentences.map((sentence) => (
-                  <RNView
-                    key={sentence.id}
-                    ref={
-                      paragraph.id ===
-                        article.readingProgress.conlluTokenPointer
-                          .paragraphId &&
-                      sentence.id ===
-                        article.readingProgress.conlluTokenPointer.sentenceId
-                        ? (ref) => {
-                            viewToScrollToOnMountRef.current = ref;
-                            tryScrollToTheTokenToScrollToOnMount();
-                          }
-                        : undefined
-                    }
-                  >
-                    <Text>
-                      <Button
-                        transparent
-                        onPress={() => {
-                          ttsSpeak(
-                            sentence.tokens
-                              .map(
-                                (token) =>
-                                  `${token.form}${getSpacesAfter(token)}`,
-                              )
-                              .join(''),
-                          );
-                        }}
-                      >
-                        <Icon name="volume-medium-outline" />
-                      </Button>
-                      {sentence.tokens.map((token, index) => {
-                        tokenCounter += 1;
-
-                        return (
-                          <RenderToken
-                            key={token.id}
-                            token={token}
-                            articleId={article.id}
-                            documentId={documentId}
-                            paragraphId={paragraph.id}
-                            sentenceId={sentence.id}
-                            readRatio={round(tokenCounter / allTokensCount, 2)}
-                            isLastTokenInSentence={
-                              index === sentence.tokens.length - 1
-                            }
-                          />
-                        );
-                      })}
-                    </Text>
-                  </RNView>
-                ))}
-              </View>
+          {article.conlluDocument.paragraphs.map(
+            (paragraph, paragraphIndex) => (
               <View
+                key={paragraph.id}
                 style={{
-                  flexDirection: 'row',
-                  marginTop: 4,
-                  marginBottom: 8,
-                  paddingBottom: 4,
-                  borderBottomWidth: 1,
+                  padding: 4,
                 }}
               >
-                {[
-                  { fromLevel: 0, iconName: 'checkmark-circle-outline' },
-                  { fromLevel: 1, iconName: 'checkmark-done-circle-outline' },
-                ].map(({ fromLevel, iconName }) => (
-                  <Button
-                    key={iconName}
-                    transparent
-                    style={{ marginRight: 8 }}
-                    onPress={() => {
-                      const lastSentenceInParagraph = paragraph.sentences.slice(
-                        -1,
-                      )[0];
-                      const lastTokenInParagraph = lastSentenceInParagraph.tokens.slice(
-                        -1,
-                      )[0];
+                <View>
+                  {paragraph.sentences.map((sentence, sentenceIndex) => (
+                    <RNView
+                      key={sentence.id}
+                      ref={
+                        paragraphIndex ===
+                          article.readingProgress.conlluTokenPointer
+                            .paragraphIndex &&
+                        sentenceIndex ===
+                          article.readingProgress.conlluTokenPointer
+                            .sentenceIndex
+                          ? (ref) => {
+                              viewToScrollToOnMountRef.current = ref;
+                              tryScrollToTheTokenToScrollToOnMount();
+                            }
+                          : undefined
+                      }
+                    >
+                      <Text>
+                        <Button
+                          transparent
+                          onPress={() => {
+                            ttsSpeak(
+                              sentence.tokens
+                                .map(
+                                  (token) =>
+                                    `${token.form}${getSpacesAfter(token)}`,
+                                )
+                                .join(''),
+                            );
+                          }}
+                        >
+                          <Icon name="volume-medium-outline" />
+                        </Button>
+                        {sentence.tokens.map((token, tokenIndex) => {
+                          tokenCounter += 1;
 
-                      api().articles_UpsertReadingProgress({
-                        id: article.id,
-                        request: {
-                          conlluTokenPointer: {
-                            documentId,
-                            paragraphId: paragraph.id,
-                            sentenceId: lastSentenceInParagraph.id ?? '',
-                            tokenId: lastTokenInParagraph.id ?? '',
+                          return (
+                            <RenderToken
+                              key={token.id}
+                              token={token}
+                              articleId={article.id}
+                              documentIndex={documentIndex}
+                              paragraphIndex={paragraphIndex}
+                              sentenceIndex={sentenceIndex}
+                              tokenIndex={tokenIndex}
+                              readRatio={round(
+                                tokenCounter / allTokensCount,
+                                2,
+                              )}
+                              isLastTokenInSentence={
+                                tokenIndex === sentence.tokens.length - 1
+                              }
+                            />
+                          );
+                        })}
+                      </Text>
+                    </RNView>
+                  ))}
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginTop: 4,
+                    marginBottom: 8,
+                    paddingBottom: 4,
+                    borderBottomWidth: 1,
+                  }}
+                >
+                  {[
+                    { fromLevel: 0, iconName: 'checkmark-circle-outline' },
+                    { fromLevel: 1, iconName: 'checkmark-done-circle-outline' },
+                  ].map(({ fromLevel, iconName }) => (
+                    <Button
+                      key={iconName}
+                      transparent
+                      style={{ marginRight: 8 }}
+                      onPress={() => {
+                        const lastSentenceInParagraph = paragraph.sentences.slice(
+                          -1,
+                        )[0];
+
+                        api().articles_UpsertReadingProgress({
+                          id: article.id,
+                          request: {
+                            conlluTokenPointer: {
+                              documentIndex,
+                              paragraphIndex,
+                              sentenceIndex:
+                                paragraph.sentences.length &&
+                                paragraph.sentences.length - 1,
+                              tokenIndex: lastSentenceInParagraph
+                                ? lastSentenceInParagraph.tokens.length &&
+                                  lastSentenceInParagraph.tokens.length - 1
+                                : 0,
+                            },
+                            // Taking the counter directly since we've already
+                            // increased the counter when rendering tokens.
+                            readRatio: round(tokenCounter / allTokensCount, 2),
                           },
-                          // Taking the counter directly since we've already
-                          // increased the counter when rendering tokens.
-                          readRatio: round(tokenCounter / allTokensCount, 2),
-                        },
-                      });
+                        });
 
-                      updateWordFamiliarityForTokens(
-                        fromLevel,
-                        3,
-                        paragraph.sentences
-                          .flatMap((s) => s.tokens)
-                          .filter(isWord),
-                      );
-                    }}
-                  >
-                    <Icon name={iconName} />
-                  </Button>
-                ))}
+                        updateWordFamiliarityForTokens(
+                          fromLevel,
+                          3,
+                          paragraph.sentences
+                            .flatMap((s) => s.tokens)
+                            .filter(isWord),
+                        );
+                      }}
+                    >
+                      <Icon name={iconName} />
+                    </Button>
+                  ))}
+                </View>
               </View>
-            </View>
-          ))}
+            ),
+          )}
           <Button onPress={() => markAllNewWordAs(3)}>
             <Text>{t('Mark all new words as known')}</Text>
           </Button>

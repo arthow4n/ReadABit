@@ -1326,10 +1326,10 @@ export interface ArticleReadingProgress {
 }
 
 export interface TokenPointer {
-    documentId: string;
-    paragraphId: string;
-    sentenceId: string;
-    tokenId: string;
+    documentIndex: number;
+    paragraphIndex: number;
+    sentenceIndex: number;
+    tokenIndex: number;
 }
 
 export interface ProblemDetails {
