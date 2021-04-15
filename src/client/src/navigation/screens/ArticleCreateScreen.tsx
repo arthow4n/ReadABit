@@ -23,24 +23,28 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLinkTo } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { ImportWebPageWebview } from '@src/shared/components/ImportWebPageWebview';
+import {
+  ImportWebPageWebview,
+  Scraper,
+} from '@src/shared/components/ImportWebPageWebview';
 
-import { api } from '../../integrations/backend/backend';
-import { Backend } from '../../integrations/backend/types';
-import { ContentLoading } from '../../shared/components/Loading';
-import { useAppSettingsContext } from '../../shared/contexts/AppSettingsContext';
+import { api } from '@src/integrations/backend/backend';
+import { Backend } from '@src/integrations/backend/types';
+import { ContentLoading } from '@src/shared/components/Loading';
+import { useAppSettingsContext } from '@src/shared/contexts/AppSettingsContext';
 import {
   queryCacheKey,
   QueryCacheKey,
   useMutateArticleCollectionsCreate,
   useMutateArticleCreate,
-} from '../../shared/hooks/useBackendReactQuery';
-import { ArticleStackParamList } from '../navigators/ArticleNavigator.types';
-import { Routes, routeUrl } from '../routes';
+} from '@src/shared/hooks/useBackendReactQuery';
+import { ArticleStackParamList } from '@src/navigation/navigators/ArticleNavigator.types';
+import { Routes, routeUrl } from '@src/navigation/routes';
 
 const formSchema = z.object({
   articleCollectionId: z.string().nonempty(),
   importFromUrl: z.string(),
+  scraper: z.nativeEnum(Scraper),
   name: z.string().nonempty(),
   text: z.string().nonempty(),
 });
@@ -50,10 +54,11 @@ const ArticleCreateForm: React.FC<{
 }> = ({ articleCollections }) => {
   const { t } = useTranslation();
   const linkTo = useLinkTo();
-  const { control, handleSubmit, errors, setValue } = useForm({
+  const { control, handleSubmit, errors, setValue, getValues } = useForm({
     defaultValues: {
       articleCollectionId: articleCollections[0]?.id ?? '',
       importFromUrl: '',
+      scraper: Scraper.ReadabilityScraper,
       name: '',
       text: '',
     },
@@ -78,13 +83,63 @@ const ArticleCreateForm: React.FC<{
   const isLoadingFromWebPageUrl = !!loadingFromWebPageUrl;
   const disabled = isLoading || isLoadingFromWebPageUrl;
 
-  const renderImportFromUrlInput = () => (
-    <Item stackedLabel disabled={disabled} error={!!errors.importFromUrl}>
+  const renderArticleCollectionPicker = () => (
+    <Item picker disabled={disabled} error={!!errors.articleCollectionId}>
       <Controller
         control={control}
-        name="importFromUrl"
+        name="articleCollectionId"
         render={({ onChange, value }) => (
-          <>
+          <Picker
+            enabled={!disabled}
+            mode="dropdown"
+            selectedValue={value}
+            onValueChange={onChange}
+          >
+            {articleCollections.map((ac) => (
+              <Picker.Item label={ac.name} value={ac.id} key={ac.id} />
+            ))}
+          </Picker>
+        )}
+      />
+      <Text>{errors.articleCollectionId?.message}</Text>
+    </Item>
+  );
+
+  const renderScraperPicker = () => (
+    <Item>
+      <Controller
+        control={control}
+        name="scraper"
+        render={(scraperHandle) => (
+          <Picker
+            enabled={!disabled}
+            mode="dropdown"
+            selectedValue={scraperHandle.value}
+            onValueChange={scraperHandle.onChange}
+          >
+            <Picker.Item
+              label="ReadabilityScraper"
+              value={Scraper.ReadabilityScraper}
+              key="ReadabilityScraper"
+            />
+            <Picker.Item
+              label="SimplifiedBodyInnerTextScraper"
+              value={Scraper.SimplifiedBodyInnerTextScraper}
+              key="SimplifiedBodyInnerTextScraper"
+            />
+          </Picker>
+        )}
+      />
+    </Item>
+  );
+
+  const renderImportFromUrlArea = () => (
+    <Controller
+      control={control}
+      name="importFromUrl"
+      render={({ onChange, value }) => (
+        <>
+          <Item stackedLabel disabled={disabled} error={!!errors.importFromUrl}>
             <Label>{t('Import from web page')}</Label>
             <Input
               disabled={disabled}
@@ -92,33 +147,35 @@ const ArticleCreateForm: React.FC<{
               placeholder={t('URL')}
               value={value}
             />
-            <Button
-              disabled={disabled}
-              onPress={() => {
-                setLoadingFromWebPageUrl(value);
+            <Text>{errors.importFromUrl?.message}</Text>
+          </Item>
+          {renderScraperPicker()}
+          <Button
+            disabled={disabled}
+            onPress={() => {
+              setLoadingFromWebPageUrl(value);
+            }}
+          >
+            <Text>{t('Load content')}</Text>
+            {isLoadingFromWebPageUrl && <Spinner />}
+          </Button>
+          {isLoadingFromWebPageUrl && (
+            <ImportWebPageWebview
+              scraper={getValues().scraper}
+              url={loadingFromWebPageUrl}
+              onParsed={({ title, content }) => {
+                setValue('name', title);
+                setValue('text', content);
+                setLoadingFromWebPageUrl('');
               }}
-            >
-              <Text>{t('Load content')}</Text>
-              {isLoadingFromWebPageUrl && <Spinner />}
-            </Button>
-            {isLoadingFromWebPageUrl && (
-              <ImportWebPageWebview
-                url={loadingFromWebPageUrl}
-                onParsed={({ title, content }) => {
-                  setValue('name', title);
-                  setValue('text', content);
-                  setLoadingFromWebPageUrl('');
-                }}
-                onFail={() => {
-                  setLoadingFromWebPageUrl('');
-                }}
-              />
-            )}
-          </>
-        )}
-      />
-      <Text>{errors.importFromUrl?.message}</Text>
-    </Item>
+              onFail={() => {
+                setLoadingFromWebPageUrl('');
+              }}
+            />
+          )}
+        </>
+      )}
+    />
   );
 
   const renderImportFromFileInput = () => (
@@ -146,29 +203,8 @@ const ArticleCreateForm: React.FC<{
     </Button>
   );
 
-  return (
-    <Form>
-      <Item picker disabled={disabled} error={!!errors.articleCollectionId}>
-        <Controller
-          control={control}
-          name="articleCollectionId"
-          render={({ onChange, value }) => (
-            <Picker
-              enabled={!disabled}
-              mode="dropdown"
-              selectedValue={value}
-              onValueChange={onChange}
-            >
-              {articleCollections.map((ac) => (
-                <Picker.Item label={ac.name} value={ac.id} key={ac.id} />
-              ))}
-            </Picker>
-          )}
-        />
-        <Text>{errors.articleCollectionId?.message}</Text>
-      </Item>
-      {renderImportFromFileInput()}
-      {renderImportFromUrlInput()}
+  const renderTitleContentEditorArea = () => (
+    <>
       <Item stackedLabel disabled={disabled} error={!!errors.name}>
         <Label>{t('Title')}</Label>
         <Controller
@@ -195,6 +231,15 @@ const ArticleCreateForm: React.FC<{
         )}
       />
       <Text>{errors.text?.message}</Text>
+    </>
+  );
+
+  return (
+    <Form>
+      {renderArticleCollectionPicker()}
+      {renderImportFromFileInput()}
+      {renderImportFromUrlArea()}
+      {renderTitleContentEditorArea()}
       <Button disabled={disabled} onPress={onSubmitPress}>
         <Text>{t('Import')}</Text>
         {disabled && <Spinner />}
