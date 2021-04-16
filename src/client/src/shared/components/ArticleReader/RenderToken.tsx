@@ -9,6 +9,8 @@ import { wordFamiliarityLevelColorCodeMapping } from '@src/shared/constants/colo
 import { useWordTokenHandle } from './ArticleReaderRenderContext';
 import { getSpacesAfter, isWord } from './TokenUtils';
 
+const fontSize = 20;
+
 export const RenderToken: React.FC<{
   token: Backend.Token;
   articleId: string;
@@ -37,7 +39,7 @@ export const RenderToken: React.FC<{
   const spacesAfter = getSpacesAfter(token);
 
   const renderSpaceAfter = () => (
-    <Text style={{ fontSize: 28 }}>{spacesAfter}</Text>
+    <Text style={{ fontSize }}>{spacesAfter}</Text>
   );
 
   return (
@@ -83,7 +85,7 @@ export const RenderToken: React.FC<{
             ttsSpeak(token.form);
           }}
           style={{
-            fontSize: 28,
+            fontSize,
           }}
         >
           {token.form}

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { ScrollView } from 'react-native';
 import { useQuery } from 'react-query';
 
 import produce from 'immer';
@@ -78,7 +79,7 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
   const renderMainWordHeader = () => (
     <Text
       style={{
-        fontSize: 28,
+        fontSize: 20,
         width: '100%',
       }}
     >
@@ -100,7 +101,7 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
     );
 
   return (
-    <View
+    <ScrollView
       style={{
         flex: 1,
         borderTopWidth: 4,
@@ -109,64 +110,66 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
         padding: 4,
       }}
     >
-      <View>{renderMainWordHeader()}</View>
       <View>
-        {/* TODO: Load public suggestions */}
-        <OnDeviceTranslation
-          sourceLanguageCode={articleLanguageCode}
-          sourceText={selectedToken.form}
-          sourceText2={selectedToken.lemma}
-          targetLanguageCode={appSettings.languageCodes.ui}
-        />
-        {/* TODO: Show all the available word definitions in a scrollable block */}
+        <View>{renderMainWordHeader()}</View>
         <View>
-          <Text style={{ fontSize: 24 }}>
-            {definitionListItems[0]?.meaning}
-          </Text>
+          {/* TODO: Load public suggestions */}
+          <OnDeviceTranslation
+            sourceLanguageCode={articleLanguageCode}
+            sourceText={selectedToken.form}
+            sourceText2={selectedToken.lemma}
+            targetLanguageCode={appSettings.languageCodes.ui}
+          />
+          {/* TODO: Show all the available word definitions in a scrollable block */}
+          <View>
+            <Text style={{ fontSize: 24 }}>
+              {definitionListItems[0]?.meaning}
+            </Text>
+          </View>
+          {/* TODO: Render token PoS tags */}
         </View>
-        {/* TODO: Render token PoS tags */}
-      </View>
-      <Grid>
-        <Row>
-          <Col>
-            <Button style={{ height: 100 }} onPress={gotoDictionaryLookUp}>
-              <Icon name="search-circle-outline" />
-            </Button>
-          </Col>
-          {[0, 1, 2, 3, -1].map((level) => (
-            <Col
-              key={level}
-              // @ts-ignore
-              onPress={() => {
-                updateWordFamiliarity(
-                  produce(wordFamiliarityItem, (draft) => {
-                    draft.level = level;
-                  }),
-                );
-              }}
-            >
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
+        <Grid>
+          <Row>
+            <Col>
+              <Button style={{ height: 100 }} onPress={gotoDictionaryLookUp}>
+                <Icon name="search-circle-outline" />
+              </Button>
+            </Col>
+            {[0, 1, 2, 3, -1].map((level) => (
+              <Col
+                key={level}
+                // @ts-ignore
+                onPress={() => {
+                  updateWordFamiliarity(
+                    produce(wordFamiliarityItem, (draft) => {
+                      draft.level = level;
+                    }),
+                  );
                 }}
               >
-                <Text
+                <View
                   style={{
-                    color:
-                      wordFamiliarityItem.level === level
-                        ? '#FF0000'
-                        : '#000000',
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
-                  {level}
-                </Text>
-              </View>
-            </Col>
-          ))}
-        </Row>
-      </Grid>
-    </View>
+                  <Text
+                    style={{
+                      color:
+                        wordFamiliarityItem.level === level
+                          ? '#FF0000'
+                          : '#000000',
+                    }}
+                  >
+                    {level}
+                  </Text>
+                </View>
+              </Col>
+            ))}
+          </Row>
+        </Grid>
+      </View>
+    </ScrollView>
   );
 };
