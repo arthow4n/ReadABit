@@ -18,8 +18,12 @@ export const ArticleScreen: React.FC<
 > = ({ route }) => {
   const { id } = route.params;
 
-  const { data } = useQuery(queryCacheKey(QueryCacheKey.Article, id), () =>
-    api().articles_Get({ id }),
+  const { data } = useQuery(
+    queryCacheKey(QueryCacheKey.Article, id),
+    () => api().articles_Get({ id }),
+    {
+      cacheTime: 0,
+    },
   );
 
   if (!data) {

@@ -17,8 +17,24 @@ import { useRerender } from '@src/shared/hooks/useRerender';
 
 import { ContentLoading } from '../Loading';
 
+type ReadingProgressPointingTo = {
+  pageIndex: number;
+};
+
+type ShallowConlluPointer = {
+  conlluPointer: { paragraphIndex: number; sentenceIndex: number };
+};
+
+export type TokenWithPointer = Backend.Token & ShallowConlluPointer;
+
+export type SentenceForPageRendering = {
+  tokens: TokenWithPointer[];
+} & ShallowConlluPointer;
+
 type ArticleReaderRenderContextValue = {
   article: Backend.ArticleViewModel;
+  articlePages: SentenceForPageRendering[][];
+  readingProgressPointingTo: ReadingProgressPointingTo;
   articleLanguageCode: string;
   wordFamiliarity: Backend.WordFamiliarityListViewModel;
   updateWordFamiliarity: (
@@ -106,6 +122,70 @@ class SubscriptionManager {
     };
   }
 }
+
+const createPaginatedParagraphs = (
+  article: Backend.ArticleViewModel,
+): {
+  articlePages: SentenceForPageRendering[][];
+  readingProgressPointingTo: ReadingProgressPointingTo;
+} => {
+  const articlePages: SentenceForPageRendering[][] = [];
+
+  const readingProgressPointingTo: ReadingProgressPointingTo = {
+    pageIndex: 0,
+  };
+
+  let currentPageTokensCount = 0;
+  let page: SentenceForPageRendering[] = [];
+  const allSentences = article.conlluDocument.paragraphs.flatMap(
+    (paragraph, paragraphIndex) =>
+      paragraph.sentences.map((sentence, sentenceIndex) => ({
+        sentence,
+        conlluPointer: {
+          sentenceIndex,
+          paragraphIndex,
+        },
+      })),
+  );
+  allSentences.forEach(
+    ({ sentence, conlluPointer }, sentenceIndexInAllSentences) => {
+      currentPageTokensCount += sentence.tokens.length;
+
+      if (
+        conlluPointer.paragraphIndex ===
+          article.readingProgress.conlluTokenPointer.paragraphIndex &&
+        conlluPointer.sentenceIndex ===
+          article.readingProgress.conlluTokenPointer.sentenceIndex
+      ) {
+        readingProgressPointingTo.pageIndex = articlePages.length;
+      }
+
+      const sentenceForPageRendering: SentenceForPageRendering = {
+        conlluPointer,
+        tokens: sentence.tokens.map((t) => ({
+          ...t,
+          conlluPointer,
+        })),
+      };
+
+      page.push(sentenceForPageRendering);
+
+      if (
+        currentPageTokensCount >= 300 ||
+        sentenceIndexInAllSentences === allSentences.length - 1
+      ) {
+        articlePages.push(page);
+        page = [];
+        currentPageTokensCount = 0;
+      }
+    },
+  );
+
+  return {
+    articlePages,
+    readingProgressPointingTo,
+  };
+};
 
 export const ArticleReaderRenderContextProvider: React.FC<{
   article: Backend.ArticleViewModel;
@@ -222,10 +302,34 @@ export const ArticleReaderRenderContextProvider: React.FC<{
     saveWordFamiliarity();
   };
 
+  const ttsSpeak = async (text: string) => {
+    const voice = await ttsVoice;
+
+    if (!voice) {
+      return;
+    }
+
+    if (
+      (voice.networkConnectionRequired || voice.notInstalled) &&
+      !appSettings.useMobileDataForAllDataTransfer
+    ) {
+      return;
+    }
+
+    Tts.stop();
+    Tts.speak(text);
+  };
+
+  const { articlePages, readingProgressPointingTo } = createPaginatedParagraphs(
+    article,
+  );
+
   return (
     <ArticleReaderRenderContext.Provider
       value={{
         article,
+        articlePages,
+        readingProgressPointingTo,
         articleLanguageCode: article.languageCode,
         wordFamiliarity: savedWordFamiliarity,
         updateWordFamiliarity,
@@ -245,23 +349,7 @@ export const ArticleReaderRenderContextProvider: React.FC<{
         subscribeToSelectedToken: (onChange) => {
           return subscriptionManager.current.subscribeToSelectedToken(onChange);
         },
-        ttsSpeak: async (text: string) => {
-          const voice = await ttsVoice;
-
-          if (!voice) {
-            return;
-          }
-
-          if (
-            (voice.networkConnectionRequired || voice.notInstalled) &&
-            !appSettings.useMobileDataForAllDataTransfer
-          ) {
-            return;
-          }
-
-          Tts.stop();
-          Tts.speak(text);
-        },
+        ttsSpeak,
       }}
     >
       {children}
@@ -358,11 +446,15 @@ export const useArticleReaderHandle = () => {
     updateWordFamiliarityForMatchedTokens: updateWordFamiliarityForTokens,
     ttsSpeak,
     article,
+    articlePages,
+    readingProgressPointingTo,
   } = React.useContext(ArticleReaderRenderContext);
 
   return {
     updateWordFamiliarityForTokens,
     ttsSpeak,
     article,
+    articlePages,
+    readingProgressPointingTo,
   };
 };
