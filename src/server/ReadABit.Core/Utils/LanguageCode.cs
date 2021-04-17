@@ -1,11 +1,12 @@
-using System.Linq;
-using System.Globalization;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace ReadABit.Core.Utils
 {
     public static class LanguageCode
     {
+        // TODO: Support BCP 47
         private static readonly HashSet<string> s_validCodes = new(
             CultureInfo
                 .GetCultures(CultureTypes.AllCultures)
