@@ -19,6 +19,7 @@ namespace ReadABit.Core.Commands
         public UserPreferenceUpdateValidator()
         {
             RuleFor(x => x.Data.WordDefinitionLanguageCode).MustBeValidLanguageCode();
+            RuleFor(x => x.Data.UserInterfaceLanguageCode).MustBeValidLanguageCode();
         }
     }
 }
