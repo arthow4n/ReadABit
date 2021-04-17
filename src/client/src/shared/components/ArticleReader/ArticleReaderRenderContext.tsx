@@ -3,7 +3,7 @@ import * as React from 'react';
 import Tts from 'react-native-tts';
 
 import produce from 'immer';
-import { compact } from 'lodash';
+import { compact, round } from 'lodash';
 
 import { api } from '@src/integrations/backend/backend';
 import { Backend } from '@src/integrations/backend/types';
@@ -25,7 +25,10 @@ type ShallowConlluPointer = {
   conlluPointer: { paragraphIndex: number; sentenceIndex: number };
 };
 
-export type TokenWithPointer = Backend.Token & ShallowConlluPointer;
+export type TokenWithPointer = Backend.Token &
+  ShallowConlluPointer & {
+    readRatio: number;
+  };
 
 export type SentenceForPageRendering = {
   tokens: TokenWithPointer[];
@@ -135,6 +138,13 @@ const createPaginatedParagraphs = (
     pageIndex: 0,
   };
 
+  const flattenedTokens = article.conlluDocument.paragraphs
+    .flatMap((p) => p.sentences)
+    .flatMap((s) => s.tokens);
+
+  const allTokensCount = flattenedTokens.length;
+  let tokenCounter = 0;
+
   let currentPageTokensCount = 0;
   let page: SentenceForPageRendering[] = [];
   const allSentences = article.conlluDocument.paragraphs.flatMap(
@@ -162,10 +172,15 @@ const createPaginatedParagraphs = (
 
       const sentenceForPageRendering: SentenceForPageRendering = {
         conlluPointer,
-        tokens: sentence.tokens.map((t) => ({
-          ...t,
-          conlluPointer,
-        })),
+        tokens: sentence.tokens.map((t) => {
+          tokenCounter += 1;
+
+          return {
+            ...t,
+            conlluPointer,
+            readRatio: round(tokenCounter / allTokensCount, 2),
+          };
+        }),
       };
 
       page.push(sentenceForPageRendering);

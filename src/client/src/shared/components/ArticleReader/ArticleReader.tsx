@@ -3,7 +3,7 @@ import React from 'react';
 import { findNodeHandle, ScrollView, View as RNView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { last, noop, round } from 'lodash';
+import { last, noop } from 'lodash';
 import { Button, Grid, Icon, Row, Text, View } from 'native-base';
 
 import { api } from '@src/integrations/backend/backend';
@@ -62,13 +62,7 @@ export const ArticleReader: React.FC = () => {
     attemptScrolling();
   };
 
-  const flattenedTokens = article.conlluDocument.paragraphs
-    .flatMap((p) => p.sentences)
-    .flatMap((s) => s.tokens);
-
   const documentIndex = 0;
-  const allTokensCount = flattenedTokens.length;
-  let tokenCounter = 0;
 
   const sentences = articlePages[currentPage];
 
@@ -133,8 +127,6 @@ export const ArticleReader: React.FC = () => {
                       <Icon name="volume-medium-outline" />
                     </Button>
                     {sentence.tokens.map((token, tokenIndex) => {
-                      tokenCounter += 1;
-
                       return (
                         <RenderToken
                           // eslint-disable-next-line react/no-array-index-key
@@ -145,7 +137,7 @@ export const ArticleReader: React.FC = () => {
                           paragraphIndex={token.conlluPointer.paragraphIndex}
                           sentenceIndex={token.conlluPointer.sentenceIndex}
                           tokenIndex={tokenIndex}
-                          readRatio={round(tokenCounter / allTokensCount, 2)}
+                          readRatio={token.readRatio}
                           isLastTokenInSentence={
                             tokenIndex === sentence.tokens.length - 1
                           }
@@ -191,9 +183,7 @@ export const ArticleReader: React.FC = () => {
                               lastSentenceInPage.tokens.length - 1
                             : 0,
                         },
-                        // Taking the counter directly since we've already
-                        // increased the counter when rendering tokens.
-                        readRatio: round(tokenCounter / allTokensCount, 2),
+                        readRatio: lastTokenInPage?.readRatio ?? 0,
                       },
                     });
 
