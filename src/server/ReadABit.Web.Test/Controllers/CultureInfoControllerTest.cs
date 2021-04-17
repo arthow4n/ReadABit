@@ -18,13 +18,11 @@ namespace ReadABit.Web.Test.Controllers
         {
         }
 
-
-        // TODO: Support BCP 47
-        // [InlineData("zh-TW", "Europe/Stockholm", "斯德哥爾摩")]
+        [InlineData("zh-TW", "Europe/Stockholm", "斯德哥爾摩")]
         [InlineData("ja", "Europe/Stockholm", "ストックホルム")]
         [InlineData("sv", "Europe/Copenhagen", "Köpenhamn")]
         [Theory]
-        public async Task ListAllSupportedTimeZones_ShouldReturnLocalisedDisplayNames(string userInterfaceLanguageCode, string ianaTimeZoneId, string expectDisplayName)
+        public async Task ListAllSupportedTimeZones_ShouldReturnLocalisedDisplayNames(string userInterfaceLanguageCode, string ianaTimeZoneId, string expectedDisplayName)
         {
             await UserPreferencesController.Upsert(new()
             {
@@ -39,14 +37,15 @@ namespace ReadABit.Web.Test.Controllers
                 .Where(vm => vm.Id == ianaTimeZoneId)
                 .Single()
                 .DisplayName
-                .ShouldContain(expectDisplayName);
+                .ShouldContain(expectedDisplayName);
         }
 
         private async Task<List<TimeZoneInfoViewModel>> ListAllSupportedTimeZones()
         {
             return (await CultureInfoController.ListAllSupportedTimeZones())
                 .ShouldBeOfType<OkObjectResult>()
-                .Value.ShouldBeOfType<List<TimeZoneInfoViewModel>>();
+                .Value
+                .ShouldBeOfType<List<TimeZoneInfoViewModel>>();
         }
     }
 }
