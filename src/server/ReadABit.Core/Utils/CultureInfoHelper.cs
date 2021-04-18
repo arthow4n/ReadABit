@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using NodaTime;
 using NodaTime.Extensions;
 using ReadABit.Core.Contracts;
 using TimeZoneConverter;
@@ -12,7 +13,7 @@ namespace ReadABit.Core.Utils
         /// <param name="languageCode">BCP 47 language code for render the display name of time zones in.</param>
         public static List<TimeZoneInfoViewModel> ListAllSupportedTimeZones(string languageCode)
         {
-            return NodaTime.DateTimeZoneProviders.Tzdb
+            return DateTimeZoneProviders.Tzdb
                 .GetAllZones()
                 .Select(tz =>
                 {

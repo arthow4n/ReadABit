@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -7,7 +6,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Utils;
-using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
