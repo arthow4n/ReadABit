@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
 using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
@@ -75,6 +76,8 @@ namespace ReadABit.Core.Commands
 
         private async Task UpsertWordFamiliarity(WordFamiliarityUpsertBatch request, CancellationToken cancellationToken)
         {
+            var now = Clock.GetCurrentInstant();
+
             var wordFamiliarities = await DB.Unsafe.Words
                 .OfWords(request.Words)
                 .Select(w => new WordFamiliarity
@@ -83,6 +86,8 @@ namespace ReadABit.Core.Commands
                     UserId = request.UserId,
                     Level = request.Level,
                     WordId = w.Id,
+                    CreatedAt = now,
+                    UpdatedAt = now,
                 })
                 .ToListAsync(cancellationToken);
 
@@ -96,6 +101,8 @@ namespace ReadABit.Core.Commands
                 .WhenMatched((existing, updated) => new WordFamiliarity
                 {
                     Level = updated.Level,
+                    CreatedAt = existing.CreatedAt,
+                    UpdatedAt = updated.UpdatedAt,
                 })
                 .RunAsync(cancellationToken);
         }
