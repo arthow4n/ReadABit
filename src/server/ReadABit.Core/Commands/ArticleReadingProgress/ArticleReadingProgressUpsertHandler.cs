@@ -21,6 +21,8 @@ namespace ReadABit.Core.Commands
         {
             new ArticleReadingProgressUpdateValidator().ValidateAndThrow(request);
 
+            var now = Clock.GetCurrentInstant();
+
             await DB.Unsafe.ArticleReadingProgress
                 .Upsert(new()
                 {
@@ -29,8 +31,8 @@ namespace ReadABit.Core.Commands
                     ArticleId = request.ArticleId,
                     ConlluTokenPointer = request.ConlluTokenPointer,
                     ReadRatio = request.ReadRatio,
-                    CreatedAt = Clock.GetCurrentInstant(),
-                    UpdatedAt = Clock.GetCurrentInstant(),
+                    CreatedAt = now,
+                    UpdatedAt = now,
                 })
                 .On(x => new
                 {
