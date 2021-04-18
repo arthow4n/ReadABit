@@ -178,6 +178,18 @@ namespace ReadABit.Web
                 app.UseHttpsRedirection();
             }
 
+            var supportedCultures = new[] { "en", "zh-TW" };
+
+            app.UseRequestLocalization(
+                new RequestLocalizationOptions
+                {
+                    ApplyCurrentCultureToResponseHeaders = true,
+                }
+                    .SetDefaultCulture(supportedCultures[0])
+                    .AddSupportedCultures(supportedCultures)
+                    .AddSupportedUICultures(supportedCultures)
+            );
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
