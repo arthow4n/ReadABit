@@ -20,6 +20,8 @@ namespace ReadABit.Web.Test.Controllers
         [Fact]
         public async Task CRUD_Succeeds()
         {
+            // TODO: Add test for daily goal
+
             await WordFamiliaritiesController.UpsertBatch(new()
             {
                 Level = 1,

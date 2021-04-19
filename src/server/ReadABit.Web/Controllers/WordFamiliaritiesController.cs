@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Contracts;
+using ReadABit.Core.Utils;
+using ReadABit.Web.Contracts;
 using ReadABit.Web.Controller.Utils;
 
 namespace ReadABit.Web.Controllers
@@ -28,19 +31,37 @@ namespace ReadABit.Web.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WordFamiliarityUpsertBatchResultViewModal))]
         [ProducesDefaultResponseType]
         public async Task<IActionResult> UpsertBatch(WordFamiliarityUpsertBatch request)
         {
-            await Mediator.Send(new WordFamiliarityUpsertBatch
+            using var ts = DB.TransactionScope();
+
+            await Mediator.Send(request with
             {
                 UserId = RequestUserId,
-                Level = request.Level,
-                Words = request.Words,
+            });
+
+            var userPreferenceData = await Mediator.Send(new UserPreferenceGet
+            {
+                UserId = RequestUserId,
+            });
+
+            WordFamiliarityDailyGoalCheckViewModel dailyGoalStatus = await Mediator.Send(new WordFamiliarityDailyGoalCheck
+            {
+                UserId = RequestUserId,
+                DailyGoalResetTimeTimeZone = userPreferenceData.DailyGoalResetTimeTimeZone,
+                DailyGoalResetTimePartial = userPreferenceData.DailyGoalResetTimePartial,
+                DailyGoalNewlyCreatedWordFamiliarityCount = userPreferenceData.DailyGoalNewlyCreatedWordFamiliarityCount,
             });
 
             await SaveChangesAsync();
-            return NoContent();
+            ts.Complete();
+
+            return Ok(new WordFamiliarityUpsertBatchResultViewModal
+            {
+                DailyGoalStatus = dailyGoalStatus,
+            });
         }
     }
 }

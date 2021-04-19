@@ -66,6 +66,16 @@ namespace ReadABit.Infrastructure
                 })
                 .IsUnique();
 
+            // Mainly for counting daily new word goal
+            modelBuilder
+                .Entity<WordFamiliarity>()
+                .HasIndex(wf => new
+                {
+                    wf.UserId,
+                    wf.CreatedAt,
+                    wf.Level,
+                });
+
             modelBuilder
                 .Entity<UserPreference>()
                 .HasIndex(up => up.UserId)
