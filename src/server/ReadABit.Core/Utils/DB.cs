@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Transactions;
 using ReadABit.Infrastructure;
 using ReadABit.Infrastructure.Models;
 
@@ -7,6 +8,11 @@ namespace ReadABit.Core.Utils
 {
     public class DB
     {
+        public static TransactionScope TransactionScope()
+        {
+            return new TransactionScope(asyncFlowOption: TransactionScopeAsyncFlowOption.Enabled);
+        }
+
         private readonly UnsafeCoreDbContext _coreDbContext;
 
         public DB(UnsafeCoreDbContext coreDbContext)
