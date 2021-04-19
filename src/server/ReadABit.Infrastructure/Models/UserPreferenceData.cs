@@ -11,5 +11,6 @@ namespace ReadABit.Infrastructure.Models
         public string UserInterfaceLanguageCode { get; init; } = "en";
         public string DailyGoalResetTimeTimeZone { get; init; } = "Europe/London";
         public string DailyGoalResetTimePartial { get; init; } = "00:00:00";
+        public int DailyGoalNewlyCreatedWordFamiliarityCount { get; init; }
     }
 }

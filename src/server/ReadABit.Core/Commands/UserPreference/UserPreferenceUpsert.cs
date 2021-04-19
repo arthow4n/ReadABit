@@ -2,8 +2,6 @@
 using FluentValidation;
 using MediatR;
 using Newtonsoft.Json;
-using NodaTime;
-using NodaTime.Text;
 using NSwag.Annotations;
 using ReadABit.Infrastructure.Models;
 
@@ -22,15 +20,9 @@ namespace ReadABit.Core.Commands
         {
             RuleFor(x => x.Data.WordDefinitionLanguageCode).MustBeValidLanguageCode();
             RuleFor(x => x.Data.UserInterfaceLanguageCode).MustBeValidLanguageCode();
-            RuleFor(x => x.Data.DailyGoalResetTimeTimeZone)
-                .Must(x => DateTimeZoneProviders.Tzdb.GetZoneOrNull(x) is not null);
-            RuleFor(x => x.Data.DailyGoalResetTimePartial)
-                .Must(x =>
-                    LocalTimePattern
-                        .CreateWithInvariantCulture("HH':'mm':'ss")
-                        .Parse(x)
-                        .Success
-                );
+            RuleFor(x => x.Data.DailyGoalResetTimeTimeZone).MustBeSupportedTimeZone();
+            RuleFor(x => x.Data.DailyGoalResetTimePartial).MustBeIsoHHmmss();
+            RuleFor(x => x.Data.DailyGoalNewlyCreatedWordFamiliarityCount).GreaterThanOrEqualTo(0);
         }
     }
 }
