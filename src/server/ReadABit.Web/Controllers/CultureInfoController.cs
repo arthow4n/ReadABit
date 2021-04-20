@@ -17,6 +17,7 @@ namespace ReadABit.Web.Controllers
         {
         }
 
+        [Route("/SupportedTimeZones")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<TimeZoneInfoViewModel>))]
         [ProducesDefaultResponseType]

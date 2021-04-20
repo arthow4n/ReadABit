@@ -30,6 +30,7 @@ namespace ReadABit.Web.Controllers
             return Ok(list);
         }
 
+        [Route("UpsertBatch")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WordFamiliarityUpsertBatchResultViewModal))]
         [ProducesDefaultResponseType]
@@ -53,7 +54,7 @@ namespace ReadABit.Web.Controllers
             });
         }
 
-
+        [Route("/DailyGoalCheck")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WordFamiliarityDailyGoalCheckViewModel))]
         [ProducesDefaultResponseType]

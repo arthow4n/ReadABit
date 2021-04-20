@@ -23,6 +23,7 @@ export interface IClient {
     articles_Update(request: { id: string, request: ArticleUpdate }): Promise<void>;
     articles_Delete(request: { id: string }): Promise<void>;
     articles_UpsertReadingProgress(request: { id: string, request: ArticleReadingProgressUpsert }): Promise<void>;
+    cultureInfo_ListAllSupportedTimeZones(request: {  }): Promise<TimeZoneInfoViewModel[]>;
     userPreferences_Get(request: {  }): Promise<UserPreferenceData>;
     userPreferences_Upsert(request: { request: UserPreferenceUpsert }): Promise<void>;
     wordDefinitions_List(request: { filter_Word_LanguageCode: string | null, filter_Word_Expression: string | null, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfWordDefinition>;
@@ -32,7 +33,8 @@ export interface IClient {
     wordDefinitions_Update(request: { id: string, request: WordDefinitionUpdate }): Promise<void>;
     wordDefinitions_Delete(request: { id: string }): Promise<void>;
     wordFamiliarities_List(request: {  }): Promise<WordFamiliarityListViewModel>;
-    wordFamiliarities_UpsertBatch(request: { request: WordFamiliarityUpsertBatch }): Promise<void>;
+    wordFamiliarities_UpsertBatch(request: { request: WordFamiliarityUpsertBatch }): Promise<WordFamiliarityUpsertBatchResultViewModal>;
+    wordFamiliarities_DailyGoalCheck(request: { request: WordFamiliarityDailyGoalCheck }): Promise<WordFamiliarityDailyGoalCheckViewModel>;
 }
 
 export class Client implements IClient {
@@ -671,6 +673,55 @@ export class Client implements IClient {
         }
     }
 
+    cultureInfo_ListAllSupportedTimeZones(request: {  } = { }, cancelToken?: CancelToken | undefined ): Promise<TimeZoneInfoViewModel[]> {
+        let url_ = this.baseUrl + "/SupportedTimeZones";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processCultureInfo_ListAllSupportedTimeZones(_response);
+        });
+    }
+
+    protected processCultureInfo_ListAllSupportedTimeZones(response: AxiosResponse): Promise<TimeZoneInfoViewModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
     userPreferences_Get(request: {  } = { }, cancelToken?: CancelToken | undefined ): Promise<UserPreferenceData> {
         let url_ = this.baseUrl + "/api/v1/UserPreferences";
         url_ = url_.replace(/[?&]$/, "");
@@ -886,7 +937,7 @@ export class Client implements IClient {
     }
 
     wordDefinitions_ListPublicSuggestions(request: { filter_Word_LanguageCode: string | null, filter_Word_Expression: string | null, page_Index?: number | undefined, page_Size?: number | null | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfWordDefinitionListPublicSuggestionViewModel> {
-        let url_ = this.baseUrl + "/suggestions?";
+        let url_ = this.baseUrl + "/Suggestions?";
         if (request.filter_Word_LanguageCode === undefined)
             throw new Error("The parameter 'request.filter_Word_LanguageCode' must be defined.");
         else if(request.filter_Word_LanguageCode !== null)
@@ -1167,8 +1218,8 @@ export class Client implements IClient {
         }
     }
 
-    wordFamiliarities_UpsertBatch(request: { request: WordFamiliarityUpsertBatch }, cancelToken?: CancelToken | undefined ): Promise<void> {
-        let url_ = this.baseUrl + "/api/v1/WordFamiliarities";
+    wordFamiliarities_UpsertBatch(request: { request: WordFamiliarityUpsertBatch }, cancelToken?: CancelToken | undefined ): Promise<WordFamiliarityUpsertBatchResultViewModal> {
+        let url_ = this.baseUrl + "/api/v1/WordFamiliarities/UpsertBatch";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(request.request);
@@ -1179,6 +1230,7 @@ export class Client implements IClient {
             url: url_,
             headers: {
                 "Content-Type": "application/json",
+                "Accept": "application/json"
             },
             cancelToken
         };
@@ -1194,7 +1246,7 @@ export class Client implements IClient {
         });
     }
 
-    protected processWordFamiliarities_UpsertBatch(response: AxiosResponse): Promise<void> {
+    protected processWordFamiliarities_UpsertBatch(response: AxiosResponse): Promise<WordFamiliarityUpsertBatchResultViewModal> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1204,9 +1256,65 @@ export class Client implements IClient {
                 }
             }
         }
-        if (status === 204) {
+        if (status === 200) {
             const _responseText = response.data;
-            return Promise.resolve<void>(<any>null);
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = JSON.parse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    wordFamiliarities_DailyGoalCheck(request: { request: WordFamiliarityDailyGoalCheck }, cancelToken?: CancelToken | undefined ): Promise<WordFamiliarityDailyGoalCheckViewModel> {
+        let url_ = this.baseUrl + "/DailyGoalCheck";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request.request);
+
+        let options_ = <AxiosRequestConfig>{
+            data: content_,
+            method: "GET",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processWordFamiliarities_DailyGoalCheck(_response);
+        });
+    }
+
+    protected processWordFamiliarities_DailyGoalCheck(response: AxiosResponse): Promise<WordFamiliarityDailyGoalCheckViewModel> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
         } else {
             const _responseText = response.data;
             let resultdefault: any = null;
@@ -1414,8 +1522,17 @@ export interface ArticleReadingProgressUpsert {
     readRatio: number;
 }
 
+export interface TimeZoneInfoViewModel {
+    id: string;
+    displayName: string;
+}
+
 export interface UserPreferenceData {
     wordDefinitionLanguageCode?: string | null;
+    userInterfaceLanguageCode?: string | null;
+    dailyGoalResetTimeTimeZone?: string | null;
+    dailyGoalResetTimePartial?: string | null;
+    dailyGoalNewlyCreatedWordFamiliarityCount: number;
 }
 
 export interface UserPreferenceUpsert {
@@ -1484,9 +1601,26 @@ export interface WordFamiliarityListItemViewModel {
     level: number;
 }
 
+export interface WordFamiliarityUpsertBatchResultViewModal {
+    dailyGoalStatus: WordFamiliarityDailyGoalCheckViewModel;
+}
+
+export interface WordFamiliarityDailyGoalCheckViewModel {
+    newlyCreated: number;
+    newlyCreatedGoal: number;
+    newlyCreatedReached: boolean;
+}
+
 export interface WordFamiliarityUpsertBatch {
     level: number;
     words: WordSelector[];
+}
+
+export interface WordFamiliarityDailyGoalCheck {
+    userId: string;
+    dailyGoalResetTimeTimeZone: string;
+    dailyGoalResetTimePartial: string;
+    dailyGoalNewlyCreatedWordFamiliarityCount: number;
 }
 
 export class BackendCallException extends Error {

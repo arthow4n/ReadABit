@@ -28,7 +28,7 @@ namespace ReadABit.Web.Controllers
             return Ok(list);
         }
 
-        [Route("/suggestions")]
+        [Route("/Suggestions")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Paginated<WordDefinitionListPublicSuggestionViewModel>))]
         [ProducesDefaultResponseType]
