@@ -42,18 +42,7 @@ namespace ReadABit.Web.Controllers
                 UserId = RequestUserId,
             });
 
-            var userPreferenceData = await Mediator.Send(new UserPreferenceGet
-            {
-                UserId = RequestUserId,
-            });
-
-            WordFamiliarityDailyGoalCheckViewModel dailyGoalStatus = await Mediator.Send(new WordFamiliarityDailyGoalCheck
-            {
-                UserId = RequestUserId,
-                DailyGoalResetTimeTimeZone = userPreferenceData.DailyGoalResetTimeTimeZone,
-                DailyGoalResetTimePartial = userPreferenceData.DailyGoalResetTimePartial,
-                DailyGoalNewlyCreatedWordFamiliarityCount = userPreferenceData.DailyGoalNewlyCreatedWordFamiliarityCount,
-            });
+            var dailyGoalStatus = await PerformDailyGoalCheck();
 
             await SaveChangesAsync();
             ts.Complete();
@@ -61,6 +50,31 @@ namespace ReadABit.Web.Controllers
             return Ok(new WordFamiliarityUpsertBatchResultViewModal
             {
                 DailyGoalStatus = dailyGoalStatus,
+            });
+        }
+
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WordFamiliarityDailyGoalCheckViewModel))]
+        [ProducesDefaultResponseType]
+        public async Task<IActionResult> DailyGoalCheck(WordFamiliarityDailyGoalCheck request)
+        {
+            return Ok(PerformDailyGoalCheck());
+        }
+
+        private async Task<WordFamiliarityDailyGoalCheckViewModel> PerformDailyGoalCheck()
+        {
+            var userPreferenceData = await Mediator.Send(new UserPreferenceGet
+            {
+                UserId = RequestUserId,
+            });
+
+            return await Mediator.Send(new WordFamiliarityDailyGoalCheck
+            {
+                UserId = RequestUserId,
+                DailyGoalResetTimeTimeZone = userPreferenceData.DailyGoalResetTimeTimeZone,
+                DailyGoalResetTimePartial = userPreferenceData.DailyGoalResetTimePartial,
+                DailyGoalNewlyCreatedWordFamiliarityCount = userPreferenceData.DailyGoalNewlyCreatedWordFamiliarityCount,
             });
         }
     }

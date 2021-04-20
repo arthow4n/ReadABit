@@ -11,8 +11,11 @@ namespace ReadABit.Core.Commands
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; init; }
+        [OpenApiIgnore, JsonIgnore]
         public string DailyGoalResetTimeTimeZone { get; init; } = "Europe/London";
+        [OpenApiIgnore, JsonIgnore]
         public string DailyGoalResetTimePartial { get; init; } = "00:00:00";
+        [OpenApiIgnore, JsonIgnore]
         public int DailyGoalNewlyCreatedWordFamiliarityCount { get; set; }
     }
 

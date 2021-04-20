@@ -133,6 +133,14 @@ namespace ReadABit.Web.Test.Controllers
                     x => x.NewlyCreatedReached.ShouldBeFalse()
                 );
 
+            // Should yield the same result as what we got from Upsert's return
+            (await DailyGoalCheck())
+                .ShouldSatisfyAllConditions(
+                    x => x.NewlyCreated.ShouldBe(1),
+                    x => x.NewlyCreatedGoal.ShouldBe(4),
+                    x => x.NewlyCreatedReached.ShouldBeFalse()
+                );
+
             (await UpsertBatch(new()
             {
                 Level = 2,
@@ -260,6 +268,14 @@ namespace ReadABit.Web.Test.Controllers
                 .ShouldBeOfType<OkObjectResult>()
                 .Value
                 .ShouldBeOfType<WordFamiliarityUpsertBatchResultViewModal>();
+        }
+
+        private async Task<WordFamiliarityDailyGoalCheckViewModel> DailyGoalCheck()
+        {
+            return (await WordFamiliaritiesController.DailyGoalCheck(new()))
+                .ShouldBeOfType<OkObjectResult>()
+                .Value
+                .ShouldBeOfType<WordFamiliarityDailyGoalCheckViewModel>();
         }
     }
 }
