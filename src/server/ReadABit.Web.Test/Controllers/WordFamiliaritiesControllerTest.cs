@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using NodaTime.Text;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
@@ -101,6 +100,7 @@ namespace ReadABit.Web.Test.Controllers
         [Fact]
         public async Task UpsertBatch_DailyGoal_CountsCorrectly()
         {
+            #region day 1
             SetFakeClockTo("2020-03-01T11:00:00+08:00");
 
             await UserPreferencesController.Upsert(new()
@@ -133,8 +133,28 @@ namespace ReadABit.Web.Test.Controllers
                     x => x.NewlyCreatedReached.ShouldBeFalse()
                 );
 
-            // Should yield the same result as what we got from Upsert's return
+            // Should yield the same result as what we got from Upsert's return.
             (await DailyGoalCheck())
+                .ShouldSatisfyAllConditions(
+                    x => x.NewlyCreated.ShouldBe(1),
+                    x => x.NewlyCreatedGoal.ShouldBe(4),
+                    x => x.NewlyCreatedReached.ShouldBeFalse()
+                );
+
+            // Already learned word shouldn't count.
+            (await UpsertBatch(new()
+            {
+                Level = 3,
+                Words = new()
+                {
+                    new()
+                    {
+                        Expression = "a",
+                        LanguageCode = "sv",
+                    }
+                }
+            }))
+                .DailyGoalStatus
                 .ShouldSatisfyAllConditions(
                     x => x.NewlyCreated.ShouldBe(1),
                     x => x.NewlyCreatedGoal.ShouldBe(4),
@@ -227,12 +247,12 @@ namespace ReadABit.Web.Test.Controllers
                     x => x.NewlyCreatedGoal.ShouldBe(4),
                     x => x.NewlyCreatedReached.ShouldBeTrue()
                 );
+            #endregion
 
 
-
+            #region day 2
             FakeClock.AdvanceDays(1);
 
-            // Already learned word shouldn't count.
             (await UpsertBatch(new()
             {
                 Level = 2,
@@ -240,7 +260,7 @@ namespace ReadABit.Web.Test.Controllers
                 {
                     new()
                     {
-                        Expression = "a",
+                        Expression = "f",
                         LanguageCode = "sv",
                     }
                 }
@@ -248,10 +268,11 @@ namespace ReadABit.Web.Test.Controllers
                 .DailyGoalStatus
                 // Should reset state each day.
                 .ShouldSatisfyAllConditions(
-                    x => x.NewlyCreated.ShouldBe(0),
+                    x => x.NewlyCreated.ShouldBe(1),
                     x => x.NewlyCreatedGoal.ShouldBe(4),
                     x => x.NewlyCreatedReached.ShouldBeFalse()
                 );
+            #endregion
         }
 
         private async Task<WordFamiliarityListViewModel> List()
