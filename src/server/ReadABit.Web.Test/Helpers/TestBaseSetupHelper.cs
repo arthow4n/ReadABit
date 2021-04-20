@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using NodaTime.Text;
 using ReadABit.Core.Contracts;
 using Shouldly;
 
@@ -39,6 +40,17 @@ namespace ReadABit.Web.Test.Helpers
                 .ShouldBeOfType<CreatedAtActionResult>();
 
             return creationResult.Value.ShouldBeOfType<ArticleViewModel>();
+        }
+
+        public void SetFakeClockTo(string offsetDateTimePatternIso)
+        {
+            FakeClock.Reset(
+                OffsetDateTimePattern
+                    .GeneralIso
+                    .Parse(offsetDateTimePatternIso)
+                    .Value
+                    .ToInstant()
+            );
         }
     }
 }

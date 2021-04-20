@@ -3,11 +3,11 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
 
-    <Nullable>enable</Nullable> 
+    <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <UserSecretsId>0843d1de-9adb-4640-8ca6-a6b9410f1ac0</UserSecretsId>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <NoWarn>0162;1998</NoWarn>
   </PropertyGroup>
@@ -17,6 +17,8 @@
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+    <PackageReference Include="NodaTime" Version="3.0.5" />
+    <PackageReference Include="NodaTime.Testing" Version="3.0.5" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime" Version="5.0.2" />
     <PackageReference Include="Npgsql.NodaTime" Version="5.0.3" />
     <PackageReference Include="Shouldly" Version="4.0.3" />
@@ -33,7 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReadABit.Infrastructure\ReadABit.Infrastructure.csproj" />    
+    <ProjectReference Include="..\ReadABit.Infrastructure\ReadABit.Infrastructure.csproj" />
     <ProjectReference Include="..\ReadABit.Web\ReadABit.Web.csproj" />
   </ItemGroup>
 

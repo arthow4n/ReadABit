@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
+using NodaTime.Testing;
+using NodaTime.Text;
 using Npgsql;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Contracts.Utils;
@@ -22,8 +24,16 @@ namespace ReadABit.Web.Test
                 .AddUserSecrets<Startup>()
                 .Build();
 
-            // TODO: Consider replacing this with a fake clock
-            services.AddSingleton<IClock>(SystemClock.Instance);
+            services.AddScoped<IClock>(
+                (serviceProvider) =>
+                    new FakeClock(
+                        OffsetDateTimePattern
+                            .GeneralIso
+                            .Parse("2020-03-01T08:00:00+08:00")
+                            .Value
+                            .ToInstant()
+                    )
+                );
 
             NpgsqlConnection.GlobalTypeMapper.UseNodaTime();
             services.AddDbContext<UnsafeCoreDbContext>(

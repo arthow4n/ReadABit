@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Transactions;
+using Microsoft.Extensions.DependencyInjection;
+using NodaTime;
+using NodaTime.Testing;
 using ReadABit.Core.Utils;
 using ReadABit.Web.Controllers;
 
@@ -22,6 +25,7 @@ namespace ReadABit.Web.Test.Helpers
 
         protected readonly RequestContextMock RequestContext;
         protected readonly IServiceProvider ServiceProvider;
+        protected FakeClock FakeClock => (FakeClock)ServiceProvider.GetRequiredService<IClock>();
         protected ScopedAnotherUser User(int userNo)
         {
             if (userNo < 2)
