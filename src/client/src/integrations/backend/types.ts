@@ -34,7 +34,7 @@ export interface IClient {
     wordDefinitions_Delete(request: { id: string }): Promise<void>;
     wordFamiliarities_List(request: {  }): Promise<WordFamiliarityListViewModel>;
     wordFamiliarities_UpsertBatch(request: { request: WordFamiliarityUpsertBatch }): Promise<WordFamiliarityUpsertBatchResultViewModal>;
-    wordFamiliarities_DailyGoalCheck(request: { request: WordFamiliarityDailyGoalCheck }): Promise<WordFamiliarityDailyGoalCheckViewModel>;
+    wordFamiliarities_DailyGoalCheck(request: {  }): Promise<WordFamiliarityDailyGoalCheckViewModel>;
 }
 
 export class Client implements IClient {
@@ -1271,18 +1271,14 @@ export class Client implements IClient {
         }
     }
 
-    wordFamiliarities_DailyGoalCheck(request: { request: WordFamiliarityDailyGoalCheck }, cancelToken?: CancelToken | undefined ): Promise<WordFamiliarityDailyGoalCheckViewModel> {
+    wordFamiliarities_DailyGoalCheck(request: {  } = { }, cancelToken?: CancelToken | undefined ): Promise<WordFamiliarityDailyGoalCheckViewModel> {
         let url_ = this.baseUrl + "/DailyGoalCheck";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(request.request);
-
         let options_ = <AxiosRequestConfig>{
-            data: content_,
             method: "GET",
             url: url_,
             headers: {
-                "Content-Type": "application/json",
                 "Accept": "application/json"
             },
             cancelToken
@@ -1614,13 +1610,6 @@ export interface WordFamiliarityDailyGoalCheckViewModel {
 export interface WordFamiliarityUpsertBatch {
     level: number;
     words: WordSelector[];
-}
-
-export interface WordFamiliarityDailyGoalCheck {
-    userId: string;
-    dailyGoalResetTimeTimeZone: string;
-    dailyGoalResetTimePartial: string;
-    dailyGoalNewlyCreatedWordFamiliarityCount: number;
 }
 
 export class BackendCallException extends Error {

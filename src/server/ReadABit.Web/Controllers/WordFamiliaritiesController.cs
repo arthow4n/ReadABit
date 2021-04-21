@@ -58,9 +58,10 @@ namespace ReadABit.Web.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WordFamiliarityDailyGoalCheckViewModel))]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> DailyGoalCheck(WordFamiliarityDailyGoalCheck request)
+        public async Task<IActionResult> DailyGoalCheck([FromQuery] WordFamiliarityDailyGoalCheck request)
         {
-            return Ok(PerformDailyGoalCheck());
+            var result = await PerformDailyGoalCheck();
+            return Ok(result);
         }
 
         private async Task<WordFamiliarityDailyGoalCheckViewModel> PerformDailyGoalCheck()
