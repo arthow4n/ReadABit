@@ -10,6 +10,7 @@ import { useLinkTo, useNavigation } from '@react-navigation/native';
 import { api } from '@src/integrations/backend/backend';
 import { Routes, routeUrl } from '@src/navigation/routes';
 import { useAppSettingsContext } from '@src/shared/contexts/AppSettingsContext';
+import { useNavigationRefocusEffect } from '@src/shared/hooks/useNavigationRefocusEffect';
 import {
   queryCacheKey,
   QueryCacheKey,
@@ -56,21 +57,7 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
 
   // Refetch word definition when navigating back from other screens,
   // like `WordDefinitionsDictionaryLookupScreen`.
-  React.useEffect(() => {
-    const refetchCallback = () => {
-      wordDefinitionsListQuery.refetch();
-      navigation.removeListener('focus', refetchCallback);
-    };
-
-    const blurCleanup = navigation.addListener('blur', () => {
-      navigation.addListener('focus', refetchCallback);
-    });
-
-    return () => {
-      blurCleanup();
-      navigation.removeListener('focus', refetchCallback);
-    };
-  }, [wordDefinitionsListQuery.refetch]);
+  useNavigationRefocusEffect(wordDefinitionsListQuery.refetch);
 
   if (!selectedToken) {
     return null;
