@@ -16,6 +16,7 @@ export enum QueryCacheKey {
   WordDefinitionList = 'WordDefinitionList',
   WordDefinition = 'WordDefinition',
   WordFamiliarityList = 'WordFamiliarityList',
+  WordFamiliarityDailyGoalCheck = 'WordFamiliarityDailyGoalCheck',
 }
 
 // TODO: Extract language codes and collection IDs to individual cache keys preceding the filter
@@ -41,6 +42,9 @@ export function queryCacheKey(
 ): QueryKey;
 export function queryCacheKey(
   base: QueryCacheKey.WordFamiliarityList,
+): QueryKey;
+export function queryCacheKey(
+  base: QueryCacheKey.WordFamiliarityDailyGoalCheck,
 ): QueryKey;
 export function queryCacheKey(
   base: QueryCacheKey,

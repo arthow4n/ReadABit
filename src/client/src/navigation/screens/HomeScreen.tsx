@@ -5,6 +5,7 @@ import { Fab, Grid, Icon, Row, View } from 'native-base';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useLinkTo } from '@react-navigation/native';
 import { ArticleList } from '@src/shared/components/ArticleList';
+import { HomeDailyGoal } from '@src/shared/components/HomeDailyGoal';
 
 import { HomeBottomTabParamList } from '../navigators/HomeNavigator.types';
 import { Routes, routeUrl } from '../routes';
@@ -17,7 +18,10 @@ export const HomeScreen: React.FC<
   return (
     <View style={{ flex: 1 }}>
       <Grid>
-        <Row size={2}>{/* TODO: Daily goal, status, ...etc */}</Row>
+        <Row size={2}>
+          {/* TODO: Total known words count or some other numbers */}
+          <HomeDailyGoal />
+        </Row>
         <Row size={2}>
           <ArticleList />
         </Row>
