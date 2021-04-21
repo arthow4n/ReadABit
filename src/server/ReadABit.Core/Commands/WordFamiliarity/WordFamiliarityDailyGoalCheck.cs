@@ -16,7 +16,7 @@ namespace ReadABit.Core.Commands
         [OpenApiIgnore, JsonIgnore]
         public string DailyGoalResetTimePartial { get; init; } = "00:00:00";
         [OpenApiIgnore, JsonIgnore]
-        public int DailyGoalNewlyCreatedWordFamiliarityCount { get; set; }
+        public int DailyGoalNewlyCreatedWordFamiliarityCount { get; set; } = 25;
     }
 
     public class WordFamiliarityDailyGoalCheckValidator : AbstractValidator<WordFamiliarityDailyGoalCheck>
