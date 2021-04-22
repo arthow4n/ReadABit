@@ -11,6 +11,7 @@ import { HomeBottomTabParamList } from './HomeNavigator.types';
 import { BottomTabBar } from '../../shared/components/BottomTabBar';
 import { SafeArea } from '../../shared/components/SafeArea';
 import { HomeScreen } from '../screens/HomeScreen';
+import { SettingsScreen } from '../screens/SettingsScreen';
 
 const HomeBottomTab = createBottomTabNavigator<HomeBottomTabParamList>();
 
@@ -29,11 +30,15 @@ export const HomeNavigator: React.FC = () => {
             component={HomeScreen}
           />
           {/* TODO: Fix the missing screens */}
-          {/* <HomeButtomTab.Screen
+          {/* <HomeBottomTab.Screen
               name="ArticleCollectionNavigator"
               component={ArticleCollectionNavigator}
             /> */}
-          {/* <HomeButtomTab.Screen name="Settings" component={SettingsScreen} /> */}
+          <HomeBottomTab.Screen
+            name="Settings"
+            options={{ tabBarLabel: t('Settings') }}
+            component={SettingsScreen}
+          />
         </HomeBottomTab.Navigator>
       </Container>
     </SafeArea>

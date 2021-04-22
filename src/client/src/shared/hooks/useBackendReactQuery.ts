@@ -17,6 +17,8 @@ export enum QueryCacheKey {
   WordDefinition = 'WordDefinition',
   WordFamiliarityList = 'WordFamiliarityList',
   WordFamiliarityDailyGoalCheck = 'WordFamiliarityDailyGoalCheck',
+  UserPreferenceData = 'UserPreferenceData',
+  CultureInfoListAllSupportedTimeZones = 'CultureInfoListAllSupportedTimeZones',
 }
 
 // TODO: Extract language codes and collection IDs to individual cache keys preceding the filter
@@ -32,6 +34,10 @@ export function queryCacheKey(
   base: QueryCacheKey.Article,
   id: string,
 ): QueryKey;
+export function queryCacheKey(
+  base: QueryCacheKey.CultureInfoListAllSupportedTimeZones,
+): QueryKey;
+export function queryCacheKey(base: QueryCacheKey.UserPreferenceData): QueryKey;
 export function queryCacheKey(
   base: QueryCacheKey.WordDefinitionList,
   filter: Parameters<Backend.IClient['wordDefinitions_List']>[0],
@@ -65,7 +71,6 @@ const useMutateAndInvalidate = <TData, TVariables>(
     mutateAsync: async (...args) => {
       const result = await mutationHandle.mutateAsync(...args);
 
-      // TODO: Fix invalidation
       // Invalidation should be run after the mutation
       // because it will trigger refetch in background
       // when the query is currently being rendered.
@@ -106,5 +111,12 @@ export const useMutateWordDefninitionUpdate = (
 ) => {
   return useMutateAndInvalidate(api().wordDefinitions_Update, [
     [QueryCacheKey.WordDefinition, getRequestParam],
+  ]);
+};
+
+export const useMutateUserPreferenceUpdate = () => {
+  return useMutateAndInvalidate(api().userPreferences_Upsert, [
+    [QueryCacheKey.UserPreferenceData],
+    [QueryCacheKey.CultureInfoListAllSupportedTimeZones],
   ]);
 };
