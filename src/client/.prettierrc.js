@@ -11,12 +11,14 @@ module.exports = {
     '.*',
   ],
   importOrderSeparation: true,
-  overrides: [
-    {
-      files: '*.{ts,tsx}',
-      options: {
-        parser: 'babel-ts',
-      },
-    },
-  ],
+  // Commented out because this often doesn't work for normal tsx files
+  // but sometimes it works great for files with weird syntax.
+  // overrides: [
+  //   {
+  //     files: '*.{ts,tsx}',
+  //     options: {
+  //       parser: 'babel-ts',
+  //     },
+  //   },
+  // ],
 };
