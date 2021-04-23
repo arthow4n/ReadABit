@@ -45,7 +45,7 @@ const SettingsScreenInner: React.FC<{
   timezones: Backend.TimeZoneInfoViewModel[];
 }> = ({ userPreferenceData, timezones }) => {
   const { t } = useTranslation();
-  const { control, handleSubmit, errors, getValues } = useForm({
+  const { control, handleSubmit, errors } = useForm({
     // TODO: Pass view model instead of entity from backend to fix the nullish check.
     // These actually shouldn't be null here.
     defaultValues: {
@@ -60,6 +60,7 @@ const SettingsScreenInner: React.FC<{
       wordDefinitionLanguageCode:
         userPreferenceData.wordDefinitionLanguageCode ?? 'en',
     },
+    shouldUnregister: false,
     resolver: zodResolver(formSchema),
   });
 
