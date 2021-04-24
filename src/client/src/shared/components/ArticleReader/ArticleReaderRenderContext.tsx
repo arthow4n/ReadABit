@@ -5,15 +5,16 @@ import Tts from 'react-native-tts';
 import produce from 'immer';
 import { compact, round } from 'lodash';
 
+import { useNavigation } from '@react-navigation/core';
 import { api } from '@src/integrations/backend/backend';
 import { Backend } from '@src/integrations/backend/types';
 import { useAppSettingsContext } from '@src/shared/contexts/AppSettingsContext';
+import { useRerender } from '@src/shared/hooks/useRerender';
 import {
   AsyncStorageKey,
   readFromAsyncStore,
   writeToAsyncStore,
 } from '@src/shared/utils/storage';
-import { useRerender } from '@src/shared/hooks/useRerender';
 
 import { ContentLoading } from '../Loading';
 
@@ -54,6 +55,9 @@ type ArticleReaderRenderContextValue = {
   ) => () => void;
   getSelectedToken: () => Backend.Token | null;
   updateSelectedToken: (token: Backend.Token) => void;
+  updateReadingProgress: (
+    request: Backend.ArticleReadingProgressUpsert,
+  ) => void;
   subscribeToSelectedToken: (onChange: () => void) => () => void;
   ttsSpeak: (text: string) => void;
 };
@@ -205,6 +209,7 @@ const createPaginatedParagraphs = (
 export const ArticleReaderRenderContextProvider: React.FC<{
   article: Backend.ArticleViewModel;
 }> = ({ article, children }) => {
+  const navigation = useNavigation();
   const { appSettings } = useAppSettingsContext();
   const subscriptionManager = React.useRef(
     new SubscriptionManager(article.languageCode),
@@ -226,11 +231,18 @@ export const ArticleReaderRenderContextProvider: React.FC<{
     return voice;
   }, [article]);
 
+  const updateNavigationTitle = (readRatio: number) => {
+    navigation.setOptions({
+      headerTitle: `(${round(readRatio * 100, 2)}%) ${article.name}`,
+    });
+  };
+
   React.useEffect(() => {
     (async () => {
       // TODO: Use local cache first
       savedWordFamiliarity = await api().wordFamiliarities_List();
       saveWordFamiliarity();
+      updateNavigationTitle(article.readingProgress.readRatio);
       setIsReady(true);
     })();
   }, []);
@@ -335,6 +347,16 @@ export const ArticleReaderRenderContextProvider: React.FC<{
     Tts.speak(text);
   };
 
+  const updateReadingProgress = (
+    request: Backend.ArticleReadingProgressUpsert,
+  ) => {
+    api().articles_UpsertReadingProgress({
+      id: article.id,
+      request,
+    });
+    updateNavigationTitle(request.readRatio);
+  };
+
   const { articlePages, readingProgressPointingTo } = createPaginatedParagraphs(
     article,
   );
@@ -361,6 +383,7 @@ export const ArticleReaderRenderContextProvider: React.FC<{
         updateSelectedToken: (token: Backend.Token) => {
           subscriptionManager.current.updateSelectedToken(token);
         },
+        updateReadingProgress,
         subscribeToSelectedToken: (onChange) => {
           return subscriptionManager.current.subscribeToSelectedToken(onChange);
         },
@@ -401,6 +424,7 @@ export const useWordTokenHandle = (token?: Backend.Token | null) => {
     subscribeToWordFamiliarity,
     updateSelectedToken,
     ttsSpeak,
+    updateReadingProgress,
   } = React.useContext(ArticleReaderRenderContext);
 
   React.useEffect(() => {
@@ -414,6 +438,7 @@ export const useWordTokenHandle = (token?: Backend.Token | null) => {
       token,
     ),
     updateSelectedToken,
+    updateReadingProgress,
     ttsSpeak,
   };
 };

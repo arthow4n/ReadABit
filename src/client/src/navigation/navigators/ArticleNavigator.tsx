@@ -25,7 +25,9 @@ export const ArticleNavigator: React.FC = () => {
         <ArticleStack.Navigator
           headerMode="screen"
           screenOptions={{
-            header: (props) => <StackNavigatorHeader {...props} />,
+            header: (props) => {
+              return <StackNavigatorHeader {...props} />;
+            },
           }}
         >
           <ArticleStack.Screen

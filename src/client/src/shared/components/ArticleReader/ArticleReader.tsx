@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { findNodeHandle, ScrollView, View as RNView } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { findNodeHandle, ScrollView, View as RNView } from 'react-native';
 
 import { last, noop } from 'lodash';
 import { Button, Grid, Icon, Row, Text, View } from 'native-base';
@@ -132,7 +132,6 @@ export const ArticleReader: React.FC = () => {
                           // eslint-disable-next-line react/no-array-index-key
                           key={tokenIndex}
                           token={token}
-                          articleId={article.id}
                           documentIndex={documentIndex}
                           paragraphIndex={token.conlluPointer.paragraphIndex}
                           sentenceIndex={token.conlluPointer.sentenceIndex}

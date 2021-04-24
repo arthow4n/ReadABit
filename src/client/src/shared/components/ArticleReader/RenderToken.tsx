@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Text, View } from 'native-base';
 
-import { api } from '@src/integrations/backend/backend';
 import { Backend } from '@src/integrations/backend/types';
 import { wordFamiliarityLevelColorCodeMapping } from '@src/shared/constants/colorCode';
 
@@ -13,7 +12,6 @@ const fontSize = 20;
 
 export const RenderToken: React.FC<{
   token: Backend.Token;
-  articleId: string;
   documentIndex: number;
   paragraphIndex: number;
   sentenceIndex: number;
@@ -22,7 +20,6 @@ export const RenderToken: React.FC<{
   isLastTokenInSentence: boolean;
 }> = ({
   token,
-  articleId,
   documentIndex,
   paragraphIndex,
   sentenceIndex,
@@ -33,6 +30,7 @@ export const RenderToken: React.FC<{
   const {
     wordFamiliarityItem,
     updateSelectedToken,
+    updateReadingProgress,
     ttsSpeak,
   } = useWordTokenHandle(token);
 
@@ -68,17 +66,14 @@ export const RenderToken: React.FC<{
               return;
             }
 
-            api().articles_UpsertReadingProgress({
-              id: articleId,
-              request: {
-                conlluTokenPointer: {
-                  documentIndex,
-                  paragraphIndex,
-                  sentenceIndex,
-                  tokenIndex,
-                },
-                readRatio,
+            updateReadingProgress({
+              conlluTokenPointer: {
+                documentIndex,
+                paragraphIndex,
+                sentenceIndex,
+                tokenIndex,
               },
+              readRatio,
             });
 
             updateSelectedToken(token);
