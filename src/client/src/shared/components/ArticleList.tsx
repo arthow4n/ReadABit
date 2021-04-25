@@ -1,11 +1,13 @@
 import React from 'react';
 
+import { useTranslation } from 'react-i18next';
 import {
   Menu,
   MenuOption,
   MenuOptions,
   MenuTrigger,
 } from 'react-native-popup-menu';
+import { Bar } from 'react-native-progress';
 import {
   InfiniteData,
   useInfiniteQuery,
@@ -23,6 +25,7 @@ import {
   Right,
   Text,
   Thumbnail,
+  View,
 } from 'native-base';
 
 import { useLinkTo } from '@react-navigation/native';
@@ -38,6 +41,7 @@ import {
 export const ArticleList: React.FC<{
   articleCollectionId?: string;
 }> = ({ articleCollectionId }) => {
+  const { t } = useTranslation();
   const linkTo = useLinkTo();
   const queryClient = useQueryClient();
 
@@ -112,6 +116,12 @@ export const ArticleList: React.FC<{
             </Left>
             <Body>
               <Text>{item.name}</Text>
+              <View style={{ marginTop: 12 }}>
+                <Bar
+                  progress={item.readRadio}
+                  color={item.readRadio >= 1 ? 'green' : 'blue'}
+                />
+              </View>
             </Body>
             <Right>
               <Menu>
@@ -120,7 +130,7 @@ export const ArticleList: React.FC<{
                 </MenuTrigger>
                 <MenuOptions>
                   <MenuOption onSelect={() => deleteArticle(item.id)}>
-                    <Text style={{ color: '#FF0000' }}>Delete</Text>
+                    <Text style={{ color: '#FF0000' }}>{t('Delete')}</Text>
                   </MenuOption>
                 </MenuOptions>
               </Menu>

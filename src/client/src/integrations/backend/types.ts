@@ -1482,6 +1482,7 @@ export interface ArticleListItemViewModel {
     id: string;
     articleCollectionId: string;
     name: string;
+    readRadio: number;
 }
 
 export interface ArticleViewModel {

@@ -33,7 +33,16 @@ namespace ReadABit.Core.Contracts.Utils
                     )
                 );
 
-            CreateMap<Article, ArticleListItemViewModel>();
+            CreateMap<Article, ArticleListItemViewModel>()
+                .ForMember(
+                    vm => vm.ReadRadio,
+                    conf => conf.MapFrom(a =>
+                        a.ArticleReadingProgress
+                            .Where(arp => arp.UserId == userId)
+                            .Select(arp => arp.ReadRatio)
+                            .SingleOrDefault())
+                );
+
             CreateMap<ArticleCollection, ArticleCollectionViewModel>();
 
             CreateMap<WordSelector, Word>();

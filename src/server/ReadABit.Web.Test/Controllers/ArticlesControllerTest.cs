@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -107,6 +108,7 @@ Det beror på att det gör det lättare att förstå vad folk säger.
             );
 
             // Should default to 0 if never read.
+            (await List(null)).Items.Single().ReadRadio.ShouldBe(0);
             (await Get(created.Id)).ReadingProgress.ShouldSatisfyAllConditions(
                 x => x.ReadRatio.ShouldBe(0),
                 x => x.ConlluTokenPointer.ShouldBe(new())
@@ -125,6 +127,7 @@ Det beror på att det gör det lättare att förstå vad folk säger.
             };
             await ArticlesController.UpsertReadingProgress(created.Id, upsertRequest);
 
+            (await List(null)).Items.Single().ReadRadio.ShouldBe(upsertRequest.ReadRatio);
             (await Get(created.Id)).ReadingProgress.ShouldSatisfyAllConditions(
                 x => x.ReadRatio.ShouldBe(upsertRequest.ReadRatio),
                 x => x.ConlluTokenPointer.ShouldBe(upsertRequest.ConlluTokenPointer)
@@ -133,6 +136,7 @@ Det beror på att det gör det lättare att förstå vad folk säger.
             // Should not mix read progress between users.
             using (User(2))
             {
+                (await List(null)).Items.Single().ReadRadio.ShouldBe(0);
                 (await Get(created.Id)).ReadingProgress.ShouldSatisfyAllConditions(
                     x => x.ReadRatio.ShouldBe(0),
                     x => x.ConlluTokenPointer.ShouldBe(new())

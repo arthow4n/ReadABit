@@ -7,5 +7,6 @@ namespace ReadABit.Core.Contracts
         public Guid Id { get; init; }
         public Guid ArticleCollectionId { get; init; }
         public string Name { get; init; } = "";
+        public decimal ReadRadio { get; init; }
     }
 }
