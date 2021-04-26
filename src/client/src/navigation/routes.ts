@@ -3,8 +3,6 @@ import { LinkingOptions } from '@react-navigation/native';
 
 import { ArticleStackParamList } from './navigators/ArticleNavigator.types';
 
-import { redirectUri } from '../integrations/backend/oidcConstants';
-
 // Read the GUIDE: comments for how to add a new route to the app.
 
 // GUIDE:
@@ -46,7 +44,7 @@ const exactPathMapping: Record<Routes, string> = {
  * Format: https://reactnavigation.org/docs/configuring-links/
  */
 export const linking: LinkingOptions = {
-  prefixes: [BackendBaseUrl, redirectUri],
+  prefixes: [BackendBaseUrl, 'readabit://'],
   config: {
     screens: {
       LoginNavigator: {
