@@ -23,5 +23,9 @@
   "Daily goal": "Daily goal",
   "Reset time": "Reset time",
   "Time zone": "Time zone",
-  "Delete": "Delete"
+  "Delete": "Delete",
+  "Article": "Article",
+  "Article_plural": "Articles",
+  "Article collection": "Article collection",
+  "Article collection_plural": "Article collections"
 }

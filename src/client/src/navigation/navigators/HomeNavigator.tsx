@@ -6,6 +6,7 @@ import { Container } from 'native-base';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import { ArticleCollectionNavigator } from './ArticleCollectionNavigator';
 import { HomeBottomTabParamList } from './HomeNavigator.types';
 
 import { BottomTabBar } from '../../shared/components/BottomTabBar';
@@ -29,11 +30,11 @@ export const HomeNavigator: React.FC = () => {
             options={{ tabBarLabel: t('Home_screen name') }}
             component={HomeScreen}
           />
-          {/* TODO: Fix the missing screens */}
-          {/* <HomeBottomTab.Screen
-              name="ArticleCollectionNavigator"
-              component={ArticleCollectionNavigator}
-            /> */}
+          <HomeBottomTab.Screen
+            name="ArticleCollectionNavigator"
+            options={{ tabBarLabel: t('Article', { count: 100 }) }}
+            component={ArticleCollectionNavigator}
+          />
           <HomeBottomTab.Screen
             name="Settings"
             options={{ tabBarLabel: t('Settings') }}
