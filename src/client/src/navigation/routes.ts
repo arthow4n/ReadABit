@@ -114,6 +114,10 @@ export function routeUrl(
   route: Routes.Article,
   routeParams: { id: string },
 ): string;
+export function routeUrl(
+  route: Routes.ArticleCollection,
+  routeParams: { id: string },
+): string;
 export function routeUrl(route: Routes.ArticleCreate): string;
 export function routeUrl(
   route: Routes.WordDefinitionsDictionaryLookup,
