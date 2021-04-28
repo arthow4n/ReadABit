@@ -11,13 +11,13 @@ using ReadABit.Core.Contracts;
 
 namespace ReadABit.Core.Commands
 {
-    public class ArticleCollectionListHandler : CommandHandlerBase, IRequestHandler<ArticleCollectionList, Paginated<ArticleCollectionViewModel>>
+    public class ArticleCollectionListHandler : CommandHandlerBase, IRequestHandler<ArticleCollectionList, Paginated<ArticleCollectionListItemViewModel>>
     {
         public ArticleCollectionListHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
         }
 
-        public async Task<Paginated<ArticleCollectionViewModel>> Handle(ArticleCollectionList request, CancellationToken cancellationToken)
+        public async Task<Paginated<ArticleCollectionListItemViewModel>> Handle(ArticleCollectionList request, CancellationToken cancellationToken)
         {
             return await DB
                 .ArticleCollectionsOfUserOrPublic(request.UserId)
@@ -26,7 +26,7 @@ namespace ReadABit.Core.Commands
                 .Where(ac => request.Filter.OwnedByUserId == null || ac.UserId == request.Filter.OwnedByUserId)
                 .Where(ac => string.IsNullOrWhiteSpace(request.Filter.Name) || ac.Name.StartsWith(request.Filter.Name))
                 .SortBy(request.SortBy)
-                .ProjectTo<ArticleCollectionViewModel>(Mapper.ConfigurationProvider)
+                .ProjectTo<ArticleCollectionListItemViewModel>(Mapper.ConfigurationProvider)
                 .ToPaginatedAsync(request.Page, 50, cancellationToken);
         }
     }

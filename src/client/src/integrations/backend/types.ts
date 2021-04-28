@@ -12,7 +12,7 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Ca
 export module Backend {
 
 export interface IClient {
-    articleCollections_List(request: { filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined, sortBy?: SortBy | undefined }): Promise<PaginatedOfArticleCollection>;
+    articleCollections_List(request: { filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined, sortBy?: SortBy | undefined }): Promise<PaginatedOfArticleCollectionListItemViewModel>;
     articleCollections_Create(request: { request: ArticleCollectionCreate }): Promise<ArticleCollectionViewModel>;
     articleCollections_Get(request: { id: string }): Promise<ArticleCollectionViewModel>;
     articleCollections_Update(request: { id: string, request: ArticleCollectionUpdate }): Promise<void>;
@@ -47,7 +47,7 @@ export class Client implements IClient {
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
     }
 
-    articleCollections_List(request: { filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined, sortBy?: SortBy | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfArticleCollection> {
+    articleCollections_List(request: { filter_LanguageCode: string | null, filter_OwnedByUserId?: string | null | undefined, filter_Name?: string | null | undefined, page_Index?: number | undefined, page_Size?: number | null | undefined, sortBy?: SortBy | undefined }, cancelToken?: CancelToken | undefined ): Promise<PaginatedOfArticleCollectionListItemViewModel> {
         let url_ = this.baseUrl + "/api/v1/ArticleCollections?";
         if (request.filter_LanguageCode === undefined)
             throw new Error("The parameter 'request.filter_LanguageCode' must be defined.");
@@ -89,7 +89,7 @@ export class Client implements IClient {
         });
     }
 
-    protected processArticleCollections_List(response: AxiosResponse): Promise<PaginatedOfArticleCollection> {
+    protected processArticleCollections_List(response: AxiosResponse): Promise<PaginatedOfArticleCollectionListItemViewModel> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1321,9 +1321,9 @@ export class Client implements IClient {
     }
 }
 
-export interface PaginatedOfArticleCollection {
+export interface PaginatedOfArticleCollectionListItemViewModel {
     page: PageInfo;
-    items: ArticleCollection[];
+    items: ArticleCollectionListItemViewModel[];
 }
 
 export interface PageInfo {
@@ -1343,97 +1343,14 @@ export interface PageFilterFilled extends PageFilter {
     size: number;
 }
 
-export interface ArticleCollection {
+export interface ArticleCollectionListItemViewModel {
     id: string;
     userId: string;
-    user?: ApplicationUser | null;
     name: string;
     languageCode: string;
-    articles?: Article[] | null;
     public: boolean;
     createdAt: Date;
     updatedAt: Date;
-}
-
-export interface IdentityUserOfGuid {
-    id: string;
-    userName?: string | null;
-    normalizedUserName?: string | null;
-    email?: string | null;
-    normalizedEmail?: string | null;
-    emailConfirmed: boolean;
-    passwordHash?: string | null;
-    securityStamp?: string | null;
-    concurrencyStamp?: string | null;
-    phoneNumber?: string | null;
-    phoneNumberConfirmed: boolean;
-    twoFactorEnabled: boolean;
-    lockoutEnd?: Date | null;
-    lockoutEnabled: boolean;
-    accessFailedCount: number;
-}
-
-export interface ApplicationUser extends IdentityUserOfGuid {
-}
-
-export interface Article {
-    id: string;
-    articleCollectionId: string;
-    articleCollection?: ArticleCollection | null;
-    name: string;
-    text: string;
-    conlluDocument: Document;
-    createdAt: Date;
-    updatedAt: Date;
-    articleReadingProgress?: ArticleReadingProgress[] | null;
-}
-
-export interface Document {
-    id: string;
-    paragraphs: Paragraph[];
-}
-
-export interface Paragraph {
-    id: string;
-    sentences: Sentence[];
-}
-
-export interface Sentence {
-    id: string;
-    text: string;
-    tokens: Token[];
-}
-
-export interface Token {
-    id: string;
-    form: string;
-    lemma: string;
-    upos: string;
-    xpos: string;
-    feats: string;
-    head: string;
-    deprel: string;
-    deps: string;
-    misc: string;
-}
-
-export interface ArticleReadingProgress {
-    id: string;
-    userId: string;
-    user?: ApplicationUser | null;
-    articleId: string;
-    article?: Article | null;
-    conlluTokenPointer: TokenPointer;
-    readRatio: number;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-export interface TokenPointer {
-    documentIndex: number;
-    paragraphIndex: number;
-    sentenceIndex: number;
-    tokenIndex: number;
 }
 
 export interface ProblemDetails {
@@ -1496,7 +1413,100 @@ export interface ArticleViewModel {
     readingProgress: ArticleReadingProgressViewModel;
 }
 
+export interface Document {
+    id: string;
+    paragraphs: Paragraph[];
+}
+
+export interface Paragraph {
+    id: string;
+    sentences: Sentence[];
+}
+
+export interface Sentence {
+    id: string;
+    text: string;
+    tokens: Token[];
+}
+
+export interface Token {
+    id: string;
+    form: string;
+    lemma: string;
+    upos: string;
+    xpos: string;
+    feats: string;
+    head: string;
+    deprel: string;
+    deps: string;
+    misc: string;
+}
+
 export interface ArticleReadingProgressViewModel {
+    conlluTokenPointer: TokenPointer;
+    readRatio: number;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface TokenPointer {
+    documentIndex: number;
+    paragraphIndex: number;
+    sentenceIndex: number;
+    tokenIndex: number;
+}
+
+export interface Article {
+    id: string;
+    articleCollectionId: string;
+    articleCollection?: ArticleCollection | null;
+    name: string;
+    text: string;
+    conlluDocument: Document;
+    createdAt: Date;
+    updatedAt: Date;
+    articleReadingProgress?: ArticleReadingProgress[] | null;
+}
+
+export interface ArticleCollection {
+    id: string;
+    userId: string;
+    user?: ApplicationUser | null;
+    name: string;
+    languageCode: string;
+    articles?: Article[] | null;
+    public: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface IdentityUserOfGuid {
+    id: string;
+    userName?: string | null;
+    normalizedUserName?: string | null;
+    email?: string | null;
+    normalizedEmail?: string | null;
+    emailConfirmed: boolean;
+    passwordHash?: string | null;
+    securityStamp?: string | null;
+    concurrencyStamp?: string | null;
+    phoneNumber?: string | null;
+    phoneNumberConfirmed: boolean;
+    twoFactorEnabled: boolean;
+    lockoutEnd?: Date | null;
+    lockoutEnabled: boolean;
+    accessFailedCount: number;
+}
+
+export interface ApplicationUser extends IdentityUserOfGuid {
+}
+
+export interface ArticleReadingProgress {
+    id: string;
+    userId: string;
+    user?: ApplicationUser | null;
+    articleId: string;
+    article?: Article | null;
     conlluTokenPointer: TokenPointer;
     readRatio: number;
     createdAt: Date;

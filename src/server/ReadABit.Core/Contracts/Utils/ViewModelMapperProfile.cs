@@ -44,6 +44,7 @@ namespace ReadABit.Core.Contracts.Utils
                 );
 
             CreateMap<ArticleCollection, ArticleCollectionViewModel>();
+            CreateMap<ArticleCollection, ArticleCollectionListItemViewModel>();
 
             CreateMap<WordSelector, Word>();
 

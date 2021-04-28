@@ -8,7 +8,7 @@ using ReadABit.Core.Contracts;
 
 namespace ReadABit.Core.Commands
 {
-    public record ArticleCollectionList : IPaginatedRequest, IRequest<Paginated<ArticleCollectionViewModel>>
+    public record ArticleCollectionList : IPaginatedRequest, IRequest<Paginated<ArticleCollectionListItemViewModel>>
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; init; }

@@ -4,6 +4,8 @@ import { Body, Button, Header, Icon, Left, Right, Title } from 'native-base';
 
 import { StackHeaderProps } from '@react-navigation/stack';
 
+export const StackNavigatorHeaderEmpty: () => React.FC = () => () => <></>;
+
 export const StackNavigatorHeader: React.FC<StackHeaderProps> = ({
   scene,
   navigation,

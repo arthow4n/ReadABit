@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
-using ReadABit.Infrastructure.Models;
 using ReadABit.Web.Controllers;
 using ReadABit.Web.Test.Helpers;
 using Shouldly;
@@ -79,7 +78,7 @@ namespace ReadABit.Web.Test.Controllers
             (await ArticleCollectionsController.Get(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
-        private async Task<Paginated<ArticleCollectionViewModel>> List(string languageCode)
+        private async Task<Paginated<ArticleCollectionListItemViewModel>> List(string languageCode)
         {
             return
                 (await ArticleCollectionsController.List(
@@ -96,7 +95,7 @@ namespace ReadABit.Web.Test.Controllers
                     }))
                     .ShouldBeOfType<OkObjectResult>()
                     .Value
-                    .ShouldBeOfType<Paginated<ArticleCollectionViewModel>>();
+                    .ShouldBeOfType<Paginated<ArticleCollectionListItemViewModel>>();
         }
 
         private async Task<ArticleCollectionViewModel> Get(Guid id)

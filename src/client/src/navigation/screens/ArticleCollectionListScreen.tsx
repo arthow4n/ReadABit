@@ -100,20 +100,18 @@ export const ArticleCollectionListScreen: React.FC<
     });
   };
 
-  // TODO: Fix the types in this component
-  // TODO: Separate backend entity from view model for article collection list
   return !data ? (
     <ContentLoading />
   ) : (
     <List
       dataArray={data.pages.flatMap((p) => p.items)}
-      keyExtractor={(x /*:  Backend.ArticleListItemViewModel */) => x.id}
+      keyExtractor={(x: Backend.ArticleCollectionListItemViewModel) => x.id}
       onEndReached={() => fetchNextPage()}
       onEndReachedThreshold={0.5}
       renderItem={({
         item,
       }: {
-        item /* : Backend.ArticleListItemViewModel */;
+        item: Backend.ArticleCollectionListItemViewModel;
       }) => {
         return (
           <ListItem
@@ -131,12 +129,7 @@ export const ArticleCollectionListScreen: React.FC<
             </Left>
             <Body>
               <Text>{item.name}</Text>
-              <View style={{ marginTop: 12 }}>
-                <Bar
-                  progress={item.readRadio}
-                  color={item.readRadio >= 1 ? 'green' : 'blue'}
-                />
-              </View>
+              {/* TODO: Article collection reading progress */}
             </Body>
             <Right>
               <Menu>

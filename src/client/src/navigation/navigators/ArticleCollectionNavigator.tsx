@@ -14,6 +14,8 @@ import { ArticleCollectionListScreen } from '../screens/ArticleCollectionListScr
 
 const ArticleCollectionStack = createStackNavigator<ArticleCollectionStackParamList>();
 
+const dummyFc = () => null;
+
 export const ArticleCollectionNavigator: React.FC = () => {
   const { t } = useTranslation();
 
@@ -30,14 +32,13 @@ export const ArticleCollectionNavigator: React.FC = () => {
         >
           <ArticleCollectionStack.Screen
             name="ArticleCollectionList"
-            // TODO: Actual component
             component={ArticleCollectionListScreen}
-            options={{ headerTitle: t('Article collection', { count: 100 }) }}
+            options={{ header: () => null }}
           />
           <ArticleCollectionStack.Screen
             name="ArticleCollection"
             // TODO: Actual component
-            component={() => <></>}
+            component={dummyFc}
             options={{ headerTitle: t('Article', { count: 100 }) }}
           />
         </ArticleCollectionStack.Navigator>
