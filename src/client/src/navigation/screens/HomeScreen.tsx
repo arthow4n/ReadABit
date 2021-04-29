@@ -28,7 +28,7 @@ export const HomeScreen: React.FC<
       </Grid>
       <Fab
         position="bottomRight"
-        onPress={() => linkTo(routeUrl(Routes.ArticleCreate))}
+        onPress={() => linkTo(routeUrl(Routes.ArticleCreate, null, {}))}
       >
         <Icon name="add-outline" />
       </Fab>

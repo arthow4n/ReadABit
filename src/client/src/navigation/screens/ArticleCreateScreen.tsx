@@ -22,14 +22,15 @@ import * as z from 'zod';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLinkTo } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { StackScreenProps } from '@react-navigation/stack';
+import { api } from '@src/integrations/backend/backend';
+import { Backend } from '@src/integrations/backend/types';
+import { ArticleStackParamList } from '@src/navigation/navigators/ArticleNavigator.types';
+import { Routes, routeUrl } from '@src/navigation/routes';
 import {
   ImportWebPageWebview,
   Scraper,
 } from '@src/shared/components/ImportWebPageWebview';
-
-import { api } from '@src/integrations/backend/backend';
-import { Backend } from '@src/integrations/backend/types';
 import { ContentLoading } from '@src/shared/components/Loading';
 import { useAppSettingsContext } from '@src/shared/contexts/AppSettingsContext';
 import {
@@ -38,8 +39,6 @@ import {
   useMutateArticleCollectionsCreate,
   useMutateArticleCreate,
 } from '@src/shared/hooks/useBackendReactQuery';
-import { ArticleStackParamList } from '@src/navigation/navigators/ArticleNavigator.types';
-import { Routes, routeUrl } from '@src/navigation/routes';
 
 const formSchema = z.object({
   articleCollectionId: z.string().nonempty(),
@@ -51,12 +50,14 @@ const formSchema = z.object({
 
 const ArticleCreateForm: React.FC<{
   articleCollections: Backend.ArticleCollection[];
-}> = ({ articleCollections }) => {
+  preselectedArticleCollectionId?: string | undefined;
+}> = ({ articleCollections, preselectedArticleCollectionId }) => {
   const { t } = useTranslation();
   const linkTo = useLinkTo();
   const { control, handleSubmit, errors, setValue, getValues } = useForm({
     defaultValues: {
-      articleCollectionId: articleCollections[0]?.id ?? '',
+      articleCollectionId:
+        preselectedArticleCollectionId ?? articleCollections[0]?.id ?? '',
       importFromUrl: '',
       scraper: Scraper.ReadabilityScraper,
       name: '',
@@ -249,8 +250,8 @@ const ArticleCreateForm: React.FC<{
 };
 
 export const ArticleCreateScreen: React.FC<
-  StackNavigationProp<ArticleStackParamList, 'Article'>
-> = () => {
+  StackScreenProps<ArticleStackParamList, 'ArticleCreate'>
+> = ({ route }) => {
   const { t } = useTranslation();
   const { appSettings } = useAppSettingsContext();
 
@@ -287,7 +288,12 @@ export const ArticleCreateScreen: React.FC<
 
   return (
     <Content>
-      <ArticleCreateForm articleCollections={data.items} />
+      <ArticleCreateForm
+        articleCollections={data.items}
+        preselectedArticleCollectionId={
+          route.params.preselectedArticleCollectionId
+        }
+      />
     </Content>
   );
 };

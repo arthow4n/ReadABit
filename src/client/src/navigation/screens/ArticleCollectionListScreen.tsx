@@ -7,7 +7,6 @@ import {
   MenuOptions,
   MenuOption,
 } from 'react-native-popup-menu';
-import { Bar } from 'react-native-progress';
 import {
   InfiniteData,
   useInfiniteQuery,
@@ -22,7 +21,6 @@ import {
   Left,
   Thumbnail,
   Body,
-  View,
   Right,
   Icon,
   Text,

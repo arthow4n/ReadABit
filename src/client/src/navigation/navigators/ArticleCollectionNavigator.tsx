@@ -11,10 +11,9 @@ import { StackNavigatorHeader } from '@src/shared/components/StackNavigatorHeade
 import { ArticleCollectionStackParamList } from './ArticleCollectionNavigator.types';
 
 import { ArticleCollectionListScreen } from '../screens/ArticleCollectionListScreen';
+import { ArticleCollectionScreen } from '../screens/ArticleCollectionScreen';
 
 const ArticleCollectionStack = createStackNavigator<ArticleCollectionStackParamList>();
-
-const dummyFc = () => null;
 
 export const ArticleCollectionNavigator: React.FC = () => {
   const { t } = useTranslation();
@@ -37,8 +36,7 @@ export const ArticleCollectionNavigator: React.FC = () => {
           />
           <ArticleCollectionStack.Screen
             name="ArticleCollection"
-            // TODO: Actual component
-            component={dummyFc}
+            component={ArticleCollectionScreen}
             options={{ headerTitle: t('Article', { count: 100 }) }}
           />
         </ArticleCollectionStack.Navigator>

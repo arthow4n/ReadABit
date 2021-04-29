@@ -1,5 +1,7 @@
 export type ArticleStackParamList = {
-  ArticleCreate: undefined;
+  ArticleCreate: {
+    preselectedArticleCollectionId?: string;
+  };
   Article: { id: string };
   WordDefinitionsDictionaryLookup: {
     word: string;

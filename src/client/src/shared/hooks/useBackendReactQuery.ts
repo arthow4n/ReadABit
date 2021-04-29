@@ -11,6 +11,7 @@ import { Backend } from '../../integrations/backend/types';
 
 export enum QueryCacheKey {
   ArticleCollectionList = 'ArticleCollectionList',
+  ArticleCollection = 'ArticleCollection',
   ArticleList = 'ArticleList',
   Article = 'Article',
   WordDefinitionList = 'WordDefinitionList',
@@ -25,6 +26,10 @@ export enum QueryCacheKey {
 export function queryCacheKey(
   base: QueryCacheKey.ArticleCollectionList,
   filter: Parameters<Backend.IClient['articleCollections_List']>[0],
+): QueryKey;
+export function queryCacheKey(
+  base: QueryCacheKey.ArticleCollection,
+  id: string,
 ): QueryKey;
 export function queryCacheKey(
   base: QueryCacheKey.ArticleList,

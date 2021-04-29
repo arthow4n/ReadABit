@@ -118,7 +118,11 @@ export function routeUrl(
   route: Routes.ArticleCollection,
   routeParams: { id: string },
 ): string;
-export function routeUrl(route: Routes.ArticleCreate): string;
+export function routeUrl(
+  route: Routes.ArticleCreate,
+  routeParams: null,
+  queryParams: ArticleStackParamList['ArticleCreate'],
+): string;
 export function routeUrl(
   route: Routes.WordDefinitionsDictionaryLookup,
   routeParams: null,
@@ -136,7 +140,7 @@ export function routeUrl(
   });
 
   const query = Object.entries(queryParams ?? {})
-    .filter(([key, value]) => value !== undefined && value !== null)
+    .filter(([, value]) => value !== undefined && value !== null)
     .map(
       ([key, value]) =>
         `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
