@@ -6,6 +6,7 @@ import axios from 'axios';
 
 import { BackendBaseUrl } from '@env';
 import {
+  deleteFromSecureStore,
   readFromSecureStore,
   SecureStorageKey,
   writeToSecureStore,
@@ -18,6 +19,10 @@ import {
   OidcTokenSet,
 } from './tokenManager';
 import { Backend } from './types';
+
+class RefreshTokenException extends Error {}
+
+export class ReAuthRequiredException extends Error {}
 
 const axiosIntance = axios.create();
 // Get rid of the default transform because it overrides NSWag's transform.
@@ -115,6 +120,7 @@ export const api = () =>
         throw new Error('Please fix the hack in backend.ts.');
       }
 
+      // eslint-disable-next-line consistent-return
       return async (...args: any[]) => {
         if (tokenManager.currentToken === null) {
           throw new Error(
@@ -132,9 +138,31 @@ export const api = () =>
             refreshToken(tokenManager.currentToken);
         }
 
-        await ongoingRefreshTokenPromise;
+        try {
+          try {
+            await ongoingRefreshTokenPromise;
+          } catch (err) {
+            throw new RefreshTokenException((err as Error)?.message ?? '');
+          }
+          const result = await actual.call(innerClient, ...args);
+          return result;
+        } catch (err) {
+          console.error(err);
 
-        return actual.call(innerClient, ...args);
+          if (
+            err instanceof RefreshTokenException ||
+            (err instanceof Backend.BackendCallException && err.status === 401)
+          ) {
+            await deleteFromSecureStore(SecureStorageKey.AuthToken);
+            // This setter will trigger a state change in RootNavigator,
+            // which will redirect the user back to login screen.
+            tokenManager.currentToken = null;
+            // Query client doesn't retry when it catches this error.
+            throw new ReAuthRequiredException(err.message);
+          }
+
+          throw err;
+        }
       };
     },
   });

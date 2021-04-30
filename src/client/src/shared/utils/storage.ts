@@ -14,7 +14,10 @@ export enum AsyncStorageKey {
   WordFamiliarity = 'ReadABit.WordFamiliarity',
 }
 
-const secureStoreAvailabePromise = SecureStore.isAvailableAsync();
+(async () => {
+  await SecureStore.isAvailableAsync();
+  console.warn('SecureStore is unavailable');
+})();
 
 export async function readFromSecureStore(
   key: SecureStorageKey.AppSettings,
@@ -43,14 +46,11 @@ export async function readFromSecureStore<T>(
 }
 
 export const writeToSecureStore = async <T>(key: SecureStorageKey, data: T) => {
-  if (!(await secureStoreAvailabePromise)) {
-    console.warn(
-      `writeToSecureStore: SecureStore is unavailable. ${key} won't be saved.`,
-    );
-    return;
-  }
+  return SecureStore.setItemAsync(key, JSON.stringify(data)).catch();
+};
 
-  await SecureStore.setItemAsync(key, JSON.stringify(data));
+export const deleteFromSecureStore = async (key: SecureStorageKey) => {
+  return SecureStore.deleteItemAsync(key).catch();
 };
 
 export async function readFromAsyncStore(

@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { registerRootComponent } from 'expo';
 import { StatusBar } from 'expo-status-bar';
 
+import { ReAuthRequiredException } from './integrations/backend/backend';
 import { RootNavigator } from './navigation/RootNavigator';
 import { AppSettingsContextProvider } from './shared/contexts/AppSettingsContext';
 import { useCachedResources } from './shared/hooks/useCachedResources';
@@ -19,7 +20,19 @@ LogBox.ignoreLogs([
   'Setting a timer',
 ]);
 
-const queryClient = new QueryClient();
+const defaultRetryLogic = (failureCount: number, error: unknown) =>
+  failureCount < 3 && !(error instanceof ReAuthRequiredException);
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    mutations: {
+      retry: defaultRetryLogic,
+    },
+    queries: {
+      retry: defaultRetryLogic,
+    },
+  },
+});
 
 const App: React.FC = () => {
   const isLoadingComplete = useCachedResources();

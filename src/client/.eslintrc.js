@@ -28,5 +28,6 @@ module.exports = {
       'error',
       { props: true, ignorePropertyModificationsFor: ['draft'] },
     ],
+    'max-classes-per-file': 'off',
   },
 };
