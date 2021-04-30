@@ -109,7 +109,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -162,7 +162,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -220,7 +220,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -278,7 +278,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -332,7 +332,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -393,7 +393,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -446,7 +446,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -504,7 +504,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -562,7 +562,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -616,7 +616,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -668,7 +668,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -717,7 +717,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -766,7 +766,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -815,7 +815,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -878,7 +878,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -931,7 +931,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -994,7 +994,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -1052,7 +1052,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -1110,7 +1110,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -1164,7 +1164,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -1213,7 +1213,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -1266,7 +1266,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -1315,7 +1315,7 @@ export class Client implements IClient {
             const _responseText = response.data;
             let resultdefault: any = null;
             let resultDatadefault  = _responseText;
-            resultdefault = JSON.parse(resultDatadefault);
+            resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
     }
@@ -1633,7 +1633,8 @@ export class BackendCallException extends Error {
     constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
         super();
 
-        this.message = message;
+        this.name = 'BackendCallException';
+        this.message = `${message}: ${status}, ${result}, ${response}`;
         this.status = status;
         this.response = response;
         this.headers = headers;
@@ -1648,8 +1649,14 @@ export class BackendCallException extends Error {
 }
 
 function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
-    console.error(result);
+    console.error(`Backend.Client.throwException: ${status}, ${result}, ${response}`);
     throw new BackendCallException(message, status, response, headers, result);
+}
+
+function tryJsonParse(json: string): any {
+    try {
+        return JSON.parse(json);
+    } catch { }
 }
 
 function isAxiosError(obj: any | undefined): obj is AxiosError {

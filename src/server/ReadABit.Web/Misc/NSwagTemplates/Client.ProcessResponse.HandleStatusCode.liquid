@@ -38,7 +38,7 @@ let resultData{{ response.StatusCode }}  = _responseText;
 {%             if response.UseDtoClass -%}
 {{ response.DataConversionCode }}
 {%             else -%}
-result{{ response.StatusCode }} = JSON.parse(resultData{{ response.StatusCode }});
+result{{ response.StatusCode }} = {% if response.StatusCode == "default" %}tryJsonParse{% else %}JSON.parse{% endif %}(resultData{{ response.StatusCode }});
 {%             endif -%}
 {%         else -%}
 {%              if response.UseDtoClass or response.IsDateOrDateTime -%}

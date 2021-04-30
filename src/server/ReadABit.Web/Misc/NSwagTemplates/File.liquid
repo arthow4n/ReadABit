@@ -132,7 +132,8 @@ namespace {{ Namespace }} {
     constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
         super();
 
-        this.message = message;
+        this.name = 'BackendCallException';
+        this.message = `${message}: ${status}, ${result}, ${response}`;
         this.status = status;
         this.response = response;
         this.headers = headers;
