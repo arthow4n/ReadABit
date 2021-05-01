@@ -6,7 +6,7 @@
     "test": "jest --watchAll",
     "lint:fix": "eslint . --fix && prettier --write .",
     "lang:extract": "i18next-scanner",
-    "backend:regenerate-client": "sh ../../server/scripts/regenerate-client.sh",
+    "backend:regenerate-client": "sh ../server/scripts/regenerate-client.sh",
     "postinstall": "cp node_modules/@mozilla/readability/Readability.js node_modules/@mozilla/readability/Readability.js.txt"
   },
   "jest": {
