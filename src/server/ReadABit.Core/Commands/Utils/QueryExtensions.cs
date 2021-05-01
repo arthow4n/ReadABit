@@ -116,7 +116,22 @@ namespace ReadABit.Core.Commands
                 Commands.SortBy.LastUpdated => query.OrderByDescending(x => x.UpdatedAt),
                 Commands.SortBy.LastCreated => query.OrderByDescending(x => x.CreatedAt),
                 Commands.SortBy.CreatedAt => query.OrderByDescending(x => x.CreatedAt),
-                _ => throw new ArgumentOutOfRangeException(nameof(sortBy)),
+                _ => throw new ArgumentOutOfRangeException(nameof(sortBy), $"Sorting by {sortBy} is not implemented for {typeof(T).FullName}"),
+            };
+        }
+
+        public static IQueryable<Article> SortBy(this IQueryable<Article> query, SortBy sortBy, Guid userId)
+        {
+            return sortBy switch
+            {
+                Commands.SortBy.LastAccessed =>
+                    query.OrderByDescending(
+                        x => x.ArticleReadingProgress
+                            .Where(arp => arp.UserId == userId)
+                            .Select(arp => arp.UpdatedAt)
+                            .FirstOrDefault()
+                    ),
+                _ => SortBy(query, sortBy)
             };
         }
     }

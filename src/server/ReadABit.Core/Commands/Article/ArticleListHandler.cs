@@ -22,7 +22,7 @@ namespace ReadABit.Core.Commands
             return await DB.ArticleCollectionsOfUserOrPublic(request.UserId)
                            .Where(ac => !request.ArticleCollectionId.HasValue || ac.Id == request.ArticleCollectionId)
                            .SelectMany(ac => ac.Articles)
-                           .SortBy(request.SortBy)
+                           .SortBy(request.SortBy, request.UserId)
                            .ProjectTo<ArticleListItemViewModel>(Mapper.ConfigurationProvider, new { userId = request.UserId })
                            .ToPaginatedAsync(request.Page, 50, cancellationToken);
         }

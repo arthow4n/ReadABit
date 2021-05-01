@@ -40,17 +40,20 @@ import {
 
 export const ArticleList: React.FC<{
   articleCollectionId?: string;
-}> = ({ articleCollectionId }) => {
+  defaultSortBy?: Backend.SortBy;
+}> = ({ articleCollectionId, defaultSortBy }) => {
   const { t } = useTranslation();
   const linkTo = useLinkTo();
   const queryClient = useQueryClient();
 
-  // TODO: Support sorting
+  // TODO: Support selecting sorter
+  const [sortBy] = React.useState(defaultSortBy);
   // TODO: Support searching
 
   const queryKey = queryCacheKey(QueryCacheKey.ArticleList, {
     articleCollectionId,
     page_Size: 50,
+    sortBy,
   });
 
   const { data, fetchNextPage } = useInfiniteQuery(

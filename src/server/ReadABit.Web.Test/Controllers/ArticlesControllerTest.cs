@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using NodaTime;
+using NodaTime.Testing;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
@@ -144,7 +147,47 @@ Det beror på att det gör det lättare att förstå vad folk säger.
             }
         }
 
-        private async Task<Paginated<ArticleListItemViewModel>> List(Guid? articleCollectionId)
+        [Fact]
+        public async Task SortBy_LastAccessed()
+        {
+            FakeClock.AutoAdvance = Duration.FromSeconds(1);
+
+            var articles = new List<ArticleViewModel>
+            {
+            };
+
+            articles.Add(await SetupArticle());
+            articles.Add(await SetupArticle());
+            articles.Add(await SetupArticle());
+
+            var upsertRequest = new ArticleReadingProgressUpsert()
+            {
+                ConlluTokenPointer = new()
+                {
+                    DocumentIndex = 0,
+                    ParagraphIndex = 1,
+                    SentenceIndex = 2,
+                    TokenIndex = 3,
+                },
+                ReadRatio = 0.5m,
+            };
+
+            await ArticlesController.UpsertReadingProgress(articles[1].Id, upsertRequest);
+            await ArticlesController.UpsertReadingProgress(articles[2].Id, upsertRequest);
+            await ArticlesController.UpsertReadingProgress(articles[0].Id, upsertRequest);
+
+            (await List(null, SortBy.LastAccessed))
+                .Items
+                .Select(x => x.Id)
+                .ShouldBe(new List<Guid>
+                {
+                    articles[0].Id,
+                    articles[2].Id,
+                    articles[1].Id,
+                });
+        }
+
+        private async Task<Paginated<ArticleListItemViewModel>> List(Guid? articleCollectionId, SortBy sortBy = default)
         {
             return (await ArticlesController.List(new ArticleList
             {
@@ -153,6 +196,7 @@ Det beror på att det gör det lättare att förstå vad folk säger.
                 {
                     Index = 1,
                 },
+                SortBy = sortBy,
             })).ShouldBeOfType<OkObjectResult>()
                 .Value.ShouldBeOfType<Paginated<ArticleListItemViewModel>>();
         }

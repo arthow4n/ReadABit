@@ -5,5 +5,6 @@ namespace ReadABit.Core.Commands
         LastUpdated = 0,
         LastCreated = 1,
         CreatedAt = 2,
+        LastAccessed = 3,
     }
 }

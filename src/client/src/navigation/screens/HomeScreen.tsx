@@ -4,6 +4,7 @@ import { Fab, Grid, Icon, Row, View } from 'native-base';
 
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { useLinkTo } from '@react-navigation/native';
+import { Backend } from '@src/integrations/backend/types';
 import { ArticleList } from '@src/shared/components/ArticleList';
 import { HomeDailyGoal } from '@src/shared/components/HomeDailyGoal';
 
@@ -23,7 +24,7 @@ export const HomeScreen: React.FC<
           <HomeDailyGoal />
         </Row>
         <Row size={2}>
-          <ArticleList />
+          <ArticleList defaultSortBy={Backend.SortBy.LastAccessed} />
         </Row>
       </Grid>
       <Fab

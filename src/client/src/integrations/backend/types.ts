@@ -1366,6 +1366,7 @@ export enum SortBy {
     LastUpdated = "LastUpdated",
     LastCreated = "LastCreated",
     CreatedAt = "CreatedAt",
+    LastAccessed = "LastAccessed",
 }
 
 export interface ArticleCollectionViewModel {
