@@ -6,15 +6,15 @@ import { useQuery } from 'react-query';
 import produce from 'immer';
 import { Button, Col, Grid, Icon, Row, Text, View } from 'native-base';
 
-import { useLinkTo, useNavigation } from '@react-navigation/native';
+import { useLinkTo } from '@react-navigation/native';
 import { api } from '@src/integrations/backend/backend';
 import { Routes, routeUrl } from '@src/navigation/routes';
 import { useAppSettingsContext } from '@src/shared/contexts/AppSettingsContext';
-import { useNavigationRefocusEffect } from '@src/shared/hooks/useNavigationRefocusEffect';
 import {
   queryCacheKey,
   QueryCacheKey,
 } from '@src/shared/hooks/useBackendReactQuery';
+import { useNavigationRefocusEffect } from '@src/shared/hooks/useNavigationRefocusEffect';
 
 import {
   useSelectedTokenDefinitionCardHandle,
@@ -25,7 +25,6 @@ import { OnDeviceTranslation } from './OnDeviceTranslation';
 export const SelectedTokenDefinitionCard: React.FC = () => {
   const linkTo = useLinkTo();
   const { appSettings } = useAppSettingsContext();
-  const navigation = useNavigation();
 
   const {
     articleLanguageCode,

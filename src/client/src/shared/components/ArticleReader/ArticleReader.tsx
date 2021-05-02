@@ -68,7 +68,7 @@ export const ArticleReader: React.FC = () => {
 
   return (
     <Grid>
-      <Row size={3}>
+      <Row size={5}>
         <ScrollView
           ref={(ref) => {
             scrollViewRef.current = ref;
@@ -210,7 +210,7 @@ export const ArticleReader: React.FC = () => {
           )}
         </ScrollView>
       </Row>
-      <Row size={1}>
+      <Row size={2}>
         <SelectedTokenDefinitionCard />
       </Row>
     </Grid>

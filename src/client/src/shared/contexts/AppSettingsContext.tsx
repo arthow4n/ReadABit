@@ -23,10 +23,14 @@ const defaultAppSettings: AppSettings = {
   useMobileDataForAllDataTransfer: false,
 };
 
-let savedAppSettings: AppSettings | null = null;
+let savedAppSettings: AppSettings = defaultAppSettings;
 
 export const loadAppSettings = async () => {
-  savedAppSettings = await readFromSecureStore(SecureStorageKey.AppSettings);
+  const saved = await readFromSecureStore(SecureStorageKey.AppSettings);
+
+  if (saved) {
+    savedAppSettings = defaultsDeep(savedAppSettings, defaultAppSettings);
+  }
 };
 
 const AppSettingsContext = React.createContext<AppSettingsContextValue>({
@@ -36,9 +40,7 @@ const AppSettingsContext = React.createContext<AppSettingsContextValue>({
 
 export const AppSettingsContextProvider: React.FC = ({ children }) => {
   const [appSettingsState, setAppSettingsState] = React.useState<AppSettings>(
-    savedAppSettings
-      ? defaultsDeep(savedAppSettings, defaultAppSettings)
-      : defaultAppSettings,
+    savedAppSettings,
   );
 
   return (
@@ -58,3 +60,10 @@ export const AppSettingsContextProvider: React.FC = ({ children }) => {
 };
 
 export const useAppSettingsContext = () => React.useContext(AppSettingsContext);
+
+/**
+ * Prefer using `useAppSettingsContext` when possible to get proper state update.
+ */
+export const getAppSettings = () => {
+  return savedAppSettings;
+};

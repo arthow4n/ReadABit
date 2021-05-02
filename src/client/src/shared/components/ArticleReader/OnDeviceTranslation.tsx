@@ -1,11 +1,12 @@
 import * as React from 'react';
 
-import mlkitTranslate from 'react-native-mlkit-translate';
-
 import { Text, View } from 'native-base';
 
 import TranslatedByGoogle from '@src/assets/images/translatedByGoogle.svg';
-import { useAppSettingsContext } from '@src/shared/contexts/AppSettingsContext';
+import {
+  getFromTranslationCache,
+  getTranslation,
+} from '@src/shared/utils/cachedOnDeviceTranslation';
 
 export const OnDeviceTranslation: React.FC<{
   sourceLanguageCode: string;
@@ -13,46 +14,70 @@ export const OnDeviceTranslation: React.FC<{
   sourceText2?: string;
   targetLanguageCode: string;
 }> = ({ sourceLanguageCode, sourceText, sourceText2, targetLanguageCode }) => {
-  const { appSettings } = useAppSettingsContext();
+  const cachedTranslationResult = getFromTranslationCache(
+    sourceLanguageCode,
+    targetLanguageCode,
+    sourceText,
+  );
+  const cachedTranslationResult2 =
+    sourceText2 &&
+    getFromTranslationCache(
+      sourceLanguageCode,
+      targetLanguageCode,
+      sourceText2,
+    );
 
-  // These two are undefined when loading.
-  const [translationResult, setTranslationResult] = React.useState<string>();
-  const [translationResult2, setTranslationResult2] = React.useState<string>();
+  const [
+    delayedTranslationResult,
+    setDelayedTranslationResult,
+  ] = React.useState<string>();
+  const [
+    delayedTranslationResult2,
+    setDelayedTranslationResult2,
+  ] = React.useState<string>();
 
   React.useEffect(() => {
-    setTranslationResult(undefined);
-    setTranslationResult2(undefined);
-
     (async () => {
-      const result = await mlkitTranslate.translate(
-        sourceText,
-        sourceLanguageCode,
-        targetLanguageCode,
-        !appSettings.useMobileDataForAllDataTransfer,
+      if (cachedTranslationResult) {
+        return;
+      }
+      setDelayedTranslationResult(
+        await getTranslation(
+          sourceLanguageCode,
+          targetLanguageCode,
+          sourceText,
+        ),
       );
-      setTranslationResult(result);
     })();
 
     (async () => {
       if (!sourceText2) {
-        setTranslationResult2('');
+        setDelayedTranslationResult2('');
         return;
       }
-      const result = await mlkitTranslate.translate(
-        sourceText2,
-        sourceLanguageCode,
-        targetLanguageCode,
-        !appSettings.useMobileDataForAllDataTransfer,
+      if (cachedTranslationResult2) {
+        return;
+      }
+      setDelayedTranslationResult2(
+        await getTranslation(
+          sourceLanguageCode,
+          targetLanguageCode,
+          sourceText2,
+        ),
       );
-      setTranslationResult2(result);
     })();
   }, [
-    sourceText,
-    sourceText2,
     sourceLanguageCode,
     targetLanguageCode,
-    appSettings.useMobileDataForAllDataTransfer,
+    sourceText,
+    sourceText2,
+    cachedTranslationResult,
+    cachedTranslationResult2,
   ]);
+
+  const translationResult = cachedTranslationResult ?? delayedTranslationResult;
+  const translationResult2 =
+    cachedTranslationResult2 ?? delayedTranslationResult2;
 
   // Wait for loading because otherwise the translation logo might be rendered in a weird place.
   if (translationResult === undefined || translationResult2 === undefined) {
@@ -70,10 +95,12 @@ export const OnDeviceTranslation: React.FC<{
             {`(${translationResult2}) `}
           </Text>
         )}
+      </Text>
+      <View style={{ marginTop: 4 }}>
         {/* This logo is required by the usage guidelines of ML Kit on-device translation. */}
         {/* https://developers.google.com/ml-kit/language/translation/translation-terms */}
         <TranslatedByGoogle width={152} height={20} />
-      </Text>
+      </View>
     </View>
   );
 };

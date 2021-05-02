@@ -10,11 +10,14 @@ import { api } from '@src/integrations/backend/backend';
 import { Backend } from '@src/integrations/backend/types';
 import { useAppSettingsContext } from '@src/shared/contexts/AppSettingsContext';
 import { useRerender } from '@src/shared/hooks/useRerender';
+import { enqueueTranslationWarmUp } from '@src/shared/utils/cachedOnDeviceTranslation';
 import {
   AsyncStorageKey,
   readFromAsyncStore,
   writeToAsyncStore,
 } from '@src/shared/utils/storage';
+
+import { isWord } from './TokenUtils';
 
 import { ContentLoading } from '../Loading';
 
@@ -135,7 +138,9 @@ const createPaginatedParagraphs = (
 ): {
   articlePages: SentenceForPageRendering[][];
   readingProgressPointingTo: ReadingProgressPointingTo;
+  tokenWordExpressionSet: Set<string>;
 } => {
+  const tokenWordExpressionSet = new Set<string>();
   const articlePages: SentenceForPageRendering[][] = [];
 
   const readingProgressPointingTo: ReadingProgressPointingTo = {
@@ -178,6 +183,10 @@ const createPaginatedParagraphs = (
         conlluPointer,
         tokens: sentence.tokens.map((t) => {
           tokenCounter += 1;
+          if (isWord(t)) {
+            tokenWordExpressionSet.add(t.form);
+            tokenWordExpressionSet.add(t.lemma);
+          }
 
           return {
             ...t,
@@ -203,6 +212,7 @@ const createPaginatedParagraphs = (
   return {
     articlePages,
     readingProgressPointingTo,
+    tokenWordExpressionSet,
   };
 };
 
@@ -229,6 +239,14 @@ export const ArticleReaderRenderContextProvider: React.FC<{
     // TODO: Maybe allow choosing engine/voice/...etc.
 
     return voice;
+  }, [article]);
+  const { articlePages, readingProgressPointingTo } = React.useMemo(() => {
+    const paginated = createPaginatedParagraphs(article);
+    enqueueTranslationWarmUp(
+      article.languageCode,
+      paginated.tokenWordExpressionSet,
+    );
+    return paginated;
   }, [article]);
 
   const updateNavigationTitle = (readRatio: number) => {
@@ -356,10 +374,6 @@ export const ArticleReaderRenderContextProvider: React.FC<{
     });
     updateNavigationTitle(request.readRatio);
   };
-
-  const { articlePages, readingProgressPointingTo } = createPaginatedParagraphs(
-    article,
-  );
 
   return (
     <ArticleReaderRenderContext.Provider
