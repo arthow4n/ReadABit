@@ -29,5 +29,6 @@ module.exports = {
       { props: true, ignorePropertyModificationsFor: ['draft'] },
     ],
     'max-classes-per-file': 'off',
+    'no-await-in-loop': 'off',
   },
 };
