@@ -15,8 +15,9 @@ export enum AsyncStorageKey {
 }
 
 (async () => {
-  await SecureStore.isAvailableAsync();
-  console.warn('SecureStore is unavailable');
+  if (!(await SecureStore.isAvailableAsync())) {
+    console.warn('SecureStore is unavailable');
+  }
 })();
 
 export async function readFromSecureStore(
