@@ -29,7 +29,13 @@ export const HomeScreen: React.FC<
       </Grid>
       <Fab
         position="bottomRight"
-        onPress={() => linkTo(routeUrl(Routes.ArticleCreate, null, {}))}
+        onPress={() =>
+          linkTo(
+            routeUrl(Routes.ArticleCreate, null, {
+              preselectedArticleCollectionId: null,
+            }),
+          )
+        }
       >
         <Icon name="add-outline" />
       </Fab>

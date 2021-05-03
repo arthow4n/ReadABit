@@ -131,7 +131,7 @@ export function routeUrl(
 export function routeUrl(
   route: Routes,
   routeParams?: Record<string, string> | null,
-  queryParams?: Record<string, string> | null,
+  queryParams?: Record<string, string | null> | null,
 ) {
   let path = exactPathMapping[route];
 
@@ -143,7 +143,7 @@ export function routeUrl(
     .filter(([, value]) => value !== undefined && value !== null)
     .map(
       ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+        `${encodeURIComponent(key)}=${encodeURIComponent(value!)}`,
     )
     .join('&');
 

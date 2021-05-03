@@ -1,6 +1,8 @@
 export type ArticleStackParamList = {
   ArticleCreate: {
-    preselectedArticleCollectionId?: string;
+    // Don't know why but without making this required
+    // the `route.params` object in react-navigationcould be undefined
+    preselectedArticleCollectionId: string | null;
   };
   Article: { id: string };
   WordDefinitionsDictionaryLookup: {
