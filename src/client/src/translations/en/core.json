@@ -27,5 +27,10 @@
   "Article": "Article",
   "Article_plural": "Articles",
   "Article collection": "Article collection",
-  "Article collection_plural": "Article collections"
+  "Article collection_plural": "Article collections",
+  "Create new article collection": "Create new article collection",
+  "Article collection name": "Article collection name",
+  "Public": "Public",
+  "Cancel": "Cancel",
+  "Create": "Create"
 }

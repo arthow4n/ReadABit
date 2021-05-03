@@ -25,5 +25,10 @@
   "Time zone": "時區",
   "Delete": "刪除",
   "Article_0": "文章",
-  "Article collection_0": "文章集"
+  "Article collection_0": "文章集",
+  "Create new article collection": "創建新文章集",
+  "Article collection name": "文章集名稱",
+  "Public": "公開",
+  "Cancel": "取消",
+  "Create": "創建"
 }
