@@ -449,6 +449,7 @@ tmp/
 
 # VS Code interactive notebook
 **/*.ipynb
+**/*.dib
 
 # External dependencies
 UDPipe/
