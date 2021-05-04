@@ -21,7 +21,7 @@ namespace ReadABit.Core.Commands
         {
             new WordDefinitionCreateValidator().ValidateAndThrow(request);
 
-            var wordId = await request.Word.GetIdAndEnsureCreated(DB, cancellationToken);
+            var wordId = await request.Word.GetIdAndEnsureCreated(DB, Mapper, cancellationToken);
 
             var wordDefinition = new WordDefinition
             {

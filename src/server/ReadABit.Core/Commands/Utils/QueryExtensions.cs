@@ -17,7 +17,7 @@ namespace ReadABit.Core.Commands
             return query
                 .Where(wd =>
                     wd.Word.LanguageCode == selector.LanguageCode &&
-                    wd.Word.Expression == selector.Expression
+                    wd.Word.Expression == selector.Expression.Normalize()
                 );
         }
         public static IQueryable<Word> OfWord(this IQueryable<Word> query, WordSelector selector)
@@ -25,7 +25,7 @@ namespace ReadABit.Core.Commands
             return query
                 .Where(w =>
                     w.LanguageCode == selector.LanguageCode &&
-                    w.Expression == selector.Expression
+                    w.Expression == selector.Expression.Normalize()
                 );
         }
         public static IQueryable<Word> OfWords(this IQueryable<Word> query, ICollection<WordSelector> selectors)
@@ -35,7 +35,7 @@ namespace ReadABit.Core.Commands
             foreach (var rw in selectors)
             {
                 var languageCode = rw.LanguageCode;
-                var expression = rw.Expression;
+                var expression = rw.Expression.Normalize();
                 predicate = predicate.Or(w =>
                     w.LanguageCode == languageCode &&
                     w.Expression == expression
@@ -53,7 +53,7 @@ namespace ReadABit.Core.Commands
             foreach (var rw in selectors)
             {
                 var languageCode = rw.LanguageCode;
-                var expression = rw.Expression;
+                var expression = rw.Expression.Normalize();
                 predicate = predicate.Or(w =>
                     w.Word.LanguageCode == languageCode &&
                     w.Word.Expression == expression

@@ -46,7 +46,11 @@ namespace ReadABit.Core.Contracts.Utils
             CreateMap<ArticleCollection, ArticleCollectionViewModel>();
             CreateMap<ArticleCollection, ArticleCollectionListItemViewModel>();
 
-            CreateMap<WordSelector, Word>();
+            CreateMap<WordSelector, Word>()
+                .ForMember(
+                    w => w.Expression,
+                    conf => conf.MapFrom(ws => ws.Expression.Normalize())
+                );
 
             CreateMap<WordFamiliarity, WordFamiliarityListItemViewModel>()
                 .ForMember(

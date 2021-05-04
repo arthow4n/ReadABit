@@ -24,28 +24,7 @@ namespace ReadABit.Core.Commands
         {
             new WordFamiliarityUpsertBatchValidator().ValidateAndThrow(request);
 
-            await DB.Unsafe.Words
-                .UpsertRange(
-                    Mapper
-                        .Map<List<WordSelector>, List<Word>>(request.Words)
-                        .ConvertAll(w =>
-                        {
-                            w.Id = Guid.NewGuid();
-                            return w;
-                        })
-                )
-                .On(w => new
-                {
-                    w.LanguageCode,
-                    w.Expression,
-                })
-                .WhenMatched((existing, updated) => new Word
-                {
-                    Id = existing.Id,
-                    LanguageCode = existing.LanguageCode,
-                    Expression = existing.Expression,
-                })
-                .RunAsync(cancellationToken);
+            await WordSelector.EnsureWordsCreated(DB, Mapper, request.Words, cancellationToken);
 
             await DB.Unsafe.SaveChangesAsync(cancellationToken);
 

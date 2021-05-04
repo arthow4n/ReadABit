@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -21,37 +23,59 @@ namespace ReadABit.Core.Commands
             return db.Words.IdOfWord(this, cancellationToken);
         }
 
-        public async Task<Guid> GetIdAndEnsureCreated(DB db, CancellationToken cancellationToken)
+        public async Task<Guid> GetIdAndEnsureCreated(DB db, IMapper mapper, CancellationToken cancellationToken)
         {
             var wordId = await GetId(db, cancellationToken);
 
-            return await EnsureCreated(db, wordId, cancellationToken);
+            return await EnsureCreated(db, mapper, wordId, cancellationToken);
         }
 
-        public async Task<Guid> EnsureCreated(DB db, Guid wordId, CancellationToken cancellationToken)
+        public async Task<Guid> EnsureCreated(DB db, IMapper mapper, Guid wordId, CancellationToken cancellationToken)
         {
-            if (wordId == default)
+            if (wordId != default)
             {
-                var newWordId = Guid.NewGuid();
-
-                await db.Unsafe.Words
-                    .Upsert(new Word
-                    {
-                        Id = newWordId,
-                        LanguageCode = LanguageCode,
-                        Expression = Expression,
-                    })
-                    .On(w => new
-                    {
-                        w.LanguageCode,
-                        w.Expression,
-                    })
-                    .RunAsync(cancellationToken);
-
-                return newWordId;
+                return wordId;
             }
 
-            return wordId;
+            var word = mapper.Map<WordSelector, Word>(this);
+            word.Id = Guid.NewGuid();
+
+            await db.Unsafe.Words
+                .Upsert(word)
+                .On(w => new
+                {
+                    w.LanguageCode,
+                    w.Expression,
+                })
+                .RunAsync(cancellationToken);
+
+            return word.Id;
+        }
+
+        public static async Task EnsureWordsCreated(DB db, IMapper mapper, List<WordSelector> words, CancellationToken cancellationToken)
+        {
+            await db.Unsafe.Words
+                .UpsertRange(
+                    mapper
+                        .Map<List<WordSelector>, List<Word>>(words)
+                        .ConvertAll(w =>
+                        {
+                            w.Id = Guid.NewGuid();
+                            return w;
+                        })
+                )
+                .On(w => new
+                {
+                    w.LanguageCode,
+                    w.Expression,
+                })
+                .WhenMatched((existing, updated) => new Word
+                {
+                    Id = existing.Id,
+                    LanguageCode = existing.LanguageCode,
+                    Expression = existing.Expression,
+                })
+                .RunAsync(cancellationToken);
         }
     }
 
