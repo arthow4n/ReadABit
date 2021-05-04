@@ -31,13 +31,14 @@ namespace ReadABit.Core.Commands
             var now = Clock.GetCurrentInstant();
             articleCollection.UpdatedAt = now;
 
+            var normalisedText = request.Text.Normalize();
             var article = new Article
             {
                 Id = Guid.NewGuid(),
                 ArticleCollectionId = articleCollection.Id,
-                Name = request.Name.Trim(),
-                Text = request.Text,
-                ConlluDocument = UDPipeV1Service.ToConlluDocument(articleCollection.LanguageCode, request.Text),
+                Name = request.Name.Trim().Normalize(),
+                Text = normalisedText,
+                ConlluDocument = UDPipeV1Service.ToConlluDocument(articleCollection.LanguageCode, normalisedText),
                 CreatedAt = now,
                 UpdatedAt = now,
             };

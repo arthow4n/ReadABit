@@ -187,6 +187,67 @@ Det beror på att det gör det lättare att förstå vad folk säger.
                 });
         }
 
+        #region Unicode normalisation
+        /// <summary>
+        // UDPipe v1 seems to yield malformed output when given an input that's not normalised,
+        // thus we need to normalise the input before processing it with UDPipe v1.
+        //
+        // These tests are placed here because we might want to switch the underlying CoNLL-U generator in the future.
+        /// </summary>
+        [Fact]
+        public async Task Create_ShouldNormaliseUnicodeContentBeforeProcessingConlluConversion()
+        {
+            var article = await SetupArticle(
+                articleName: Uri.UnescapeDataString("a%CC%88ven"),
+                articleText: Uri.UnescapeDataString("a%CC%88ven")
+            );
+
+            // Example error if we don't do the normalisation:
+            // Difference     |  |    |    |    |    |   
+            //                | \|/  \|/  \|/  \|/  \|/  
+            // Index          | 0    1    2    3    4    
+            // Expected Value | ä    v    e    n         
+            // Actual Value   | a    ?    v    e    n    
+            // Expected Code  | 228  118  101  110       
+            // Actual Code    | 97   63   118  101  110  
+
+            (await Get(article.Id))
+                .ShouldSatisfyAllConditions(
+                    x => x.Name.ShouldBe(Uri.UnescapeDataString("%C3%A4ven")),
+                    x => x.ConlluDocument
+                        .Paragraphs.Single()
+                        .Sentences.Single()
+                        .Tokens.Single()
+                        .Form.ShouldBe(Uri.UnescapeDataString("%C3%A4ven"))
+                );
+        }
+
+        [Fact]
+        public async Task Update_ShouldNormaliseUnicodeContentBeforeProcessingConlluConversion()
+        {
+            var article = await SetupArticle(
+                articleName: Uri.UnescapeDataString("a%CC%88ven"),
+                articleText: Uri.UnescapeDataString("a%CC%88ven")
+            );
+
+            await ArticlesController.Update(article.Id, new()
+            {
+                Name = Uri.UnescapeDataString("a%CC%8Atta"),
+                Text = Uri.UnescapeDataString("a%CC%8Atta"),
+            });
+
+            (await Get(article.Id))
+                .ShouldSatisfyAllConditions(
+                    x => x.Name.ShouldBe(Uri.UnescapeDataString("%C3%A5tta")),
+                    x => x.ConlluDocument
+                        .Paragraphs.Single()
+                        .Sentences.Single()
+                        .Tokens.Single()
+                        .Form.ShouldBe(Uri.UnescapeDataString("%C3%A5tta"))
+                );
+        }
+        #endregion
+
         private async Task<Paginated<ArticleListItemViewModel>> List(Guid? articleCollectionId, SortBy sortBy = default)
         {
             return (await ArticlesController.List(new ArticleList

@@ -35,12 +35,13 @@ namespace ReadABit.Core.Commands
                 return false;
             }
 
-            article.Article.Name = request.Name is not null ? request.Name.Trim() : article.Article.Name;
-            article.Article.Text = request.Text ?? article.Article.Text;
+            var normalisedRequestText = request.Text?.Normalize();
+            article.Article.Name = request.Name?.Trim().Normalize() ?? article.Article.Name;
+            article.Article.Text = normalisedRequestText ?? article.Article.Text;
             article.Article.ConlluDocument =
-                request.Text is null ?
+                normalisedRequestText is null ?
                     article.Article.ConlluDocument :
-                    UDPipeV1Service.ToConlluDocument(article.ArticleCollection.LanguageCode, request.Text);
+                    UDPipeV1Service.ToConlluDocument(article.ArticleCollection.LanguageCode, normalisedRequestText);
 
             article.ArticleCollection.UpdatedAt = Clock.GetCurrentInstant();
 
