@@ -19,6 +19,7 @@ namespace ReadABit.Core.Commands
         {
             new ArticleCollectionCreateValidator().ValidateAndThrow(request);
 
+            var now = Clock.GetCurrentInstant();
             var articleCollection = new ArticleCollection
             {
                 Id = Guid.NewGuid(),
@@ -26,8 +27,8 @@ namespace ReadABit.Core.Commands
                 Name = request.Name.Trim(),
                 LanguageCode = request.LanguageCode,
                 Public = request.Public,
-                CreatedAt = Clock.GetCurrentInstant(),
-                UpdatedAt = Clock.GetCurrentInstant(),
+                CreatedAt = now,
+                UpdatedAt = now,
             };
 
             await DB.Unsafe.AddAsync(articleCollection, cancellationToken);

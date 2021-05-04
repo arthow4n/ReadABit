@@ -28,7 +28,8 @@ namespace ReadABit.Core.Commands
                          .Where(ac => ac.Id == request.ArticleCollectionId)
                          .SingleOrDefaultAsync(cancellationToken: cancellationToken);
 
-            articleCollection.UpdatedAt = Clock.GetCurrentInstant();
+            var now = Clock.GetCurrentInstant();
+            articleCollection.UpdatedAt = now;
 
             var article = new Article
             {
@@ -37,8 +38,8 @@ namespace ReadABit.Core.Commands
                 Name = request.Name.Trim(),
                 Text = request.Text,
                 ConlluDocument = UDPipeV1Service.ToConlluDocument(articleCollection.LanguageCode, request.Text),
-                CreatedAt = Clock.GetCurrentInstant(),
-                UpdatedAt = Clock.GetCurrentInstant(),
+                CreatedAt = now,
+                UpdatedAt = now,
             };
 
             await DB.Unsafe.AddAsync(article, cancellationToken);

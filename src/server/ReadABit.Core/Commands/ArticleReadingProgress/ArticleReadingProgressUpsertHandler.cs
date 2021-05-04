@@ -47,7 +47,7 @@ namespace ReadABit.Core.Commands
                     ConlluTokenPointer = updated.ConlluTokenPointer,
                     ReadRatio = updated.ReadRatio,
                     CreatedAt = existing.CreatedAt,
-                    UpdatedAt = updated.CreatedAt,
+                    UpdatedAt = updated.UpdatedAt,
                 })
                 .RunAsync(cancellationToken);
 
