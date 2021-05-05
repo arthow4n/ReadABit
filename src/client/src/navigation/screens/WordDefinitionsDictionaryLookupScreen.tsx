@@ -59,7 +59,7 @@ export const WordDefinitionsDictionaryLookupScreen: React.FC<
 
   // TODO: Support switching to seach with lemma instead of word form
 
-  // TODO: Support choosing another dictionary
+  // TODO: Support choosing another dictionary (findSupportedWebDictionary)
   // TODO: Support saving custom dictionary
   const dictionaryWebViewUrl = `https://${encodeURIComponent(
     dictionaryLanguageCode,
