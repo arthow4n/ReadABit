@@ -2,6 +2,8 @@ import * as React from 'react';
 
 import { defaultsDeep } from 'lodash';
 
+import { axiosIntance } from '@src/integrations/backend/backend';
+
 import { AppSettings } from './AppSettingsContext.types';
 
 import {
@@ -21,15 +23,26 @@ const defaultAppSettings: AppSettings = {
     ui: 'en',
   },
   useMobileDataForAllDataTransfer: false,
+  tts: {
+    // TODO: Default to true and allow editing from settings screen.
+    autoSpeakWhenTapOnWord: false,
+  },
 };
 
 let savedAppSettings: AppSettings = defaultAppSettings;
+
+const applySavedAppSettings = () => {
+  axiosIntance.defaults.headers.common[
+    'Accept-Language'
+  ] = `${savedAppSettings.languageCodes.ui},${savedAppSettings.languageCodes.studying};q=0.9`;
+};
 
 export const loadAppSettings = async () => {
   const saved = await readFromSecureStore(SecureStorageKey.AppSettings);
 
   if (saved) {
     savedAppSettings = defaultsDeep(savedAppSettings, defaultAppSettings);
+    applySavedAppSettings();
   }
 };
 
@@ -50,6 +63,7 @@ export const AppSettingsContextProvider: React.FC = ({ children }) => {
         updateAppSettings: async (appSettings) => {
           await writeToSecureStore(SecureStorageKey.AppSettings, appSettings);
           savedAppSettings = appSettings;
+          applySavedAppSettings();
           setAppSettingsState(appSettings);
         },
       }}

@@ -24,7 +24,7 @@ class RefreshTokenException extends Error {}
 
 export class ReAuthRequiredException extends Error {}
 
-const axiosIntance = axios.create();
+export const axiosIntance = axios.create();
 // Get rid of the default transform because it overrides NSWag's transform.
 axiosIntance.defaults.transformResponse = [];
 
