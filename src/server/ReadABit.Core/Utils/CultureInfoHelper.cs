@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using NodaTime;
 using NodaTime.Extensions;
@@ -11,7 +12,7 @@ namespace ReadABit.Core.Utils
     public static class CultureInfoHelper
     {
         /// <param name="languageCode">BCP 47 language code for render the display name of time zones in.</param>
-        public static List<TimeZoneInfoViewModel> ListAllSupportedTimeZones(string languageCode)
+        public static List<TimeZoneInfoViewModel> ListAllSupportedTimeZones()
         {
             // TODO: Refactor this & client so it makes a better selector, ref: https://github.com/moment/moment-timezone/issues/499#issuecomment-305338182
 
@@ -36,7 +37,7 @@ namespace ReadABit.Core.Utils
                 .Select(x => new TimeZoneInfoViewModel
                 {
                     Id = x.Id,
-                    DisplayName = $"{x.Id} {TZNames.GetDisplayNameForTimeZone(x.Id, languageCode)}",
+                    DisplayName = $"{x.Id} {TZNames.GetDisplayNameForTimeZone(x.Id, CultureInfo.CurrentCulture.Name)}",
                 })
                 .ToList();
         }

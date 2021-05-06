@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -24,13 +25,7 @@ namespace ReadABit.Web.Test.Controllers
         [Theory]
         public async Task ListAllSupportedTimeZones_ShouldReturnLocalisedDisplayNames(string userInterfaceLanguageCode, string ianaTimeZoneId, string expectedDisplayName)
         {
-            await UserPreferencesController.Upsert(new()
-            {
-                Data = new()
-                {
-                    UserInterfaceLanguageCode = userInterfaceLanguageCode,
-                },
-            });
+            CultureInfo.CurrentCulture = new(userInterfaceLanguageCode);
 
             (await ListAllSupportedTimeZones())
                 .Where(vm => vm.Id == ianaTimeZoneId)

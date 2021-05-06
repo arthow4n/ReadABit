@@ -23,12 +23,7 @@ namespace ReadABit.Web.Controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> ListAllSupportedTimeZones()
         {
-            UserPreferenceData vm = await Mediator.Send(new UserPreferenceGet
-            {
-                UserId = RequestUserId,
-            });
-
-            return Ok(CultureInfoHelper.ListAllSupportedTimeZones(vm.UserInterfaceLanguageCode));
+            return Ok(CultureInfoHelper.ListAllSupportedTimeZones());
         }
     }
 }
