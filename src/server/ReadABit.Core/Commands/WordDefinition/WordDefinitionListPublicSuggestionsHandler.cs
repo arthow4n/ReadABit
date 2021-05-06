@@ -7,7 +7,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Utils;
-using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
@@ -42,12 +41,7 @@ namespace ReadABit.Core.Commands
                                               Count = wdg.Count(),
                                           });
 
-            var userPreferredLanguageCode =
-                await DB.UserPreferencesOfUser(request.UserId)
-                        .Select(x => x.Data.WordDefinitionLanguageCode)
-                        .SingleOrDefaultAsync(cancellationToken: cancellationToken);
-
-            return tobePaginated.OrderByDescending(vm => vm.LanguageCode == userPreferredLanguageCode ? 1 : 0)
+            return tobePaginated.OrderByDescending(vm => vm.LanguageCode == request.Filter.PreferredLanguageCode ? 1 : 0)
                                 .ThenByDescending(vm => vm.Count)
                                 .AsQueryable()
                                 .ToPaginated(request.Page, 50);

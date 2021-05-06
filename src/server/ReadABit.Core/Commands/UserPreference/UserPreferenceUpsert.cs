@@ -18,7 +18,6 @@ namespace ReadABit.Core.Commands
     {
         public UserPreferenceUpdateValidator()
         {
-            RuleFor(x => x.Data.WordDefinitionLanguageCode).MustBeValidLanguageCode();
             RuleFor(x => x.Data.UserInterfaceLanguageCode).MustBeValidLanguageCode();
             RuleFor(x => x.Data.DailyGoalResetTimeTimeZone).MustBeSupportedTimeZone();
             RuleFor(x => x.Data.DailyGoalResetTimePartial).MustBeIsoHHmmss();

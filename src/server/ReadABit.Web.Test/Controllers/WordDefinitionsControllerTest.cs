@@ -144,18 +144,13 @@ namespace ReadABit.Web.Test.Controllers
             using (User(6))
             {
                 // Word definitions of preferred language should always show up first.
-                await UserPreferencesController.Upsert(new UserPreferenceUpsert
-                {
-                    Data = new()
-                    {
-                        WordDefinitionLanguageCode = "sv"
-                    }
-                });
-
-                (await ListPublicSuggestions()).Items.ShouldSatisfyAllConditions(
-                    x => x.Count.ShouldBe(2),
-                    x => x.First().ShouldBe(expectedVm with { Count = 1, LanguageCode = "sv", Meaning = "något annat" }),
-                    x => x.ElementAt(1).ShouldBe(expectedVm with { Count = 2 })
+                (await ListPublicSuggestions(preferredLanguageCode: "sv"))
+                    .Items
+                    .ShouldSatisfyAllConditions(
+                        x => x.Count.ShouldBe(2),
+                        x => x.First().ShouldBe(expectedVm with { Count = 1, LanguageCode = "sv", Meaning = "något annat" }),
+                        x => x.ElementAt(1).ShouldBe(expectedVm with { Count = 2 }
+                    )
                 );
             }
         }
@@ -177,13 +172,14 @@ namespace ReadABit.Web.Test.Controllers
                 .Value.ShouldBeOfType<Paginated<WordDefinition>>();
         }
 
-        private async Task<Paginated<WordDefinitionListPublicSuggestionViewModel>> ListPublicSuggestions()
+        private async Task<Paginated<WordDefinitionListPublicSuggestionViewModel>> ListPublicSuggestions(string preferredLanguageCode = "en")
         {
             return (await WordDefinitionsController.ListPublicSuggestions(new WordDefinitionListPublicSuggestions
             {
                 Filter = new WordDefinitionListPublicSuggestionsFilter
                 {
                     Word = Word,
+                    PreferredLanguageCode = preferredLanguageCode
                 },
                 Page = new PageFilter
                 {

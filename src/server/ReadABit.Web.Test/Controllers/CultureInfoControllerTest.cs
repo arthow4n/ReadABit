@@ -29,7 +29,6 @@ namespace ReadABit.Web.Test.Controllers
                 Data = new()
                 {
                     UserInterfaceLanguageCode = userInterfaceLanguageCode,
-                    WordDefinitionLanguageCode = "sv",
                 },
             });
 

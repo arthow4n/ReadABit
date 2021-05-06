@@ -25,10 +25,10 @@ namespace ReadABit.Web.Test.Controllers
             {
                 Data = new()
                 {
-                    WordDefinitionLanguageCode = "zh",
+                    DailyGoalNewlyCreatedWordFamiliarityCount = 10,
                 }
             });
-            (await Get()).WordDefinitionLanguageCode.ShouldBe("zh");
+            (await Get()).DailyGoalNewlyCreatedWordFamiliarityCount.ShouldBe(10);
 
             using (User(2))
             {
@@ -36,11 +36,11 @@ namespace ReadABit.Web.Test.Controllers
                 {
                     Data = new()
                     {
-                        WordDefinitionLanguageCode = "en",
+                        DailyGoalNewlyCreatedWordFamiliarityCount = 30,
                     }
                 });
             }
-            (await Get()).WordDefinitionLanguageCode.ShouldBe("zh");
+            (await Get()).DailyGoalNewlyCreatedWordFamiliarityCount.ShouldBe(10);
         }
 
         [Fact]
@@ -48,7 +48,7 @@ namespace ReadABit.Web.Test.Controllers
         {
             using (User(3))
             {
-                (await Get()).WordDefinitionLanguageCode.ShouldNotBeNullOrWhiteSpace();
+                (await Get()).DailyGoalNewlyCreatedWordFamiliarityCount.ShouldNotBe(default);
             }
         }
 

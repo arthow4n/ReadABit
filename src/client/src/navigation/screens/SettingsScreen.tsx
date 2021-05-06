@@ -55,10 +55,12 @@ const SettingsScreenInner: React.FC<{
         userPreferenceData.dailyGoalResetTimePartial ?? '',
       dailyGoalResetTimeTimeZone:
         userPreferenceData.dailyGoalResetTimeTimeZone ?? '',
+      // TODO: Move language codes to app local setting
       userInterfaceLanguageCode:
         userPreferenceData.userInterfaceLanguageCode ?? 'en',
-      wordDefinitionLanguageCode:
-        userPreferenceData.wordDefinitionLanguageCode ?? 'en',
+      // wordDefinitionLanguageCode:
+      //   userPreferenceData.wordDefinitionLanguageCode ?? 'en',
+      // TODO: TTS settings
     },
     shouldUnregister: false,
     resolver: zodResolver(formSchema),

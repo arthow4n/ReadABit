@@ -19,6 +19,7 @@ namespace ReadABit.Core.Commands
         public WordDefinitionListPublicSuggestionsValidator()
         {
             RuleFor(x => x.Filter.Word).MustBeValidWordSelector();
+            RuleFor(x => x.Filter.PreferredLanguageCode).MustBeValidLanguageCode();
         }
     }
 
@@ -34,6 +35,7 @@ namespace ReadABit.Core.Commands
 
     public record WordDefinitionListPublicSuggestionsFilter
     {
+        public string PreferredLanguageCode { get; init; } = "en";
         public WordSelector Word { get; init; } = new();
     }
 }
