@@ -4,6 +4,7 @@ import { Text, View } from 'native-base';
 
 import { Backend } from '@src/integrations/backend/types';
 import { wordFamiliarityLevelColorCodeMapping } from '@src/shared/constants/colorCode';
+import { useAppSettingsContext } from '@src/shared/contexts/AppSettingsContext';
 
 import { useWordTokenHandle } from './ArticleReaderRenderContext';
 import { getSpacesAfter, isWord } from './TokenUtils';
@@ -33,6 +34,7 @@ export const RenderToken: React.FC<{
     updateReadingProgress,
     ttsSpeak,
   } = useWordTokenHandle(token);
+  const { appSettings } = useAppSettingsContext();
 
   const spacesAfter = getSpacesAfter(token);
 
@@ -77,7 +79,10 @@ export const RenderToken: React.FC<{
             });
 
             updateSelectedToken(token);
-            ttsSpeak(token.form);
+
+            if (appSettings.tts.autoSpeakWhenTapOnWord) {
+              ttsSpeak(token.form);
+            }
           }}
           style={{
             fontSize,
