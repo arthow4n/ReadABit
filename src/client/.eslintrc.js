@@ -30,5 +30,6 @@ module.exports = {
     ],
     'max-classes-per-file': 'off',
     'no-await-in-loop': 'off',
+    'consistent-return': 'off',
   },
 };

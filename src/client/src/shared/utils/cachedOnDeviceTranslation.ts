@@ -61,7 +61,7 @@ export const getTranslation = async (
     wordExpression,
     sourceLanguageCode,
     targetLanguageCode,
-    !getAppSettings().useMobileDataForAllDataTransfer,
+    getAppSettings().saveDataUsage,
   );
 
   writeToTranslationCache(

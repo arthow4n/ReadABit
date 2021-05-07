@@ -1,14 +1,18 @@
-export type AppSettings = {
-  languageCodes: {
+import * as z from 'zod';
+
+export const appSettingsSchema = z.object({
+  languageCodes: z.object({
     // TODO: Use enum for language codes.
-    studying: string;
-    ui: string;
-  };
+    studying: z.string().nonempty(),
+    ui: z.string().nonempty(),
+  }),
   /**
    * If true, mobile data will be used as well for downloading larger content.
    */
-  useMobileDataForAllDataTransfer: boolean;
-  tts: {
-    autoSpeakWhenTapOnWord: boolean;
-  };
-};
+  saveDataUsage: z.boolean(),
+  tts: z.object({
+    autoSpeakWhenTapOnWord: z.boolean(),
+  }),
+});
+
+export type AppSettings = z.infer<typeof appSettingsSchema>;

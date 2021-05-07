@@ -32,5 +32,13 @@
   "Article collection name": "Article collection name",
   "Public": "Public",
   "Cancel": "Cancel",
-  "Create": "Create"
+  "Create": "Create",
+  "Text-to-speech": "Text-to-speech",
+  "When tapping on word": "When tapping on word",
+  "Network": "Network",
+  "Save data usage": "Save data usage",
+  "Language": "Language",
+  "Language_plural": "Language",
+  "Studying": "Studying",
+  "User interface": "User interface"
 }

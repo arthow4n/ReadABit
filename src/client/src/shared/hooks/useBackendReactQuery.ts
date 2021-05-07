@@ -122,6 +122,5 @@ export const useMutateWordDefninitionUpdate = (
 export const useMutateUserPreferenceUpdate = () => {
   return useMutateAndInvalidate(api().userPreferences_Upsert, [
     [QueryCacheKey.UserPreferenceData],
-    [QueryCacheKey.CultureInfoListAllSupportedTimeZones],
   ]);
 };

@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import i18n from 'i18next';
 import { defaultsDeep } from 'lodash';
 
 import { axiosIntance } from '@src/integrations/backend/backend';
@@ -22,7 +23,7 @@ const defaultAppSettings: AppSettings = {
     studying: 'sv',
     ui: 'en',
   },
-  useMobileDataForAllDataTransfer: false,
+  saveDataUsage: false,
   tts: {
     // TODO: Default to true and allow editing from settings screen.
     autoSpeakWhenTapOnWord: false,
@@ -35,13 +36,15 @@ const applySavedAppSettings = () => {
   axiosIntance.defaults.headers.common[
     'Accept-Language'
   ] = `${savedAppSettings.languageCodes.ui},${savedAppSettings.languageCodes.studying};q=0.9`;
+
+  i18n.changeLanguage(savedAppSettings.languageCodes.ui);
 };
 
 export const loadAppSettings = async () => {
   const saved = await readFromSecureStore(SecureStorageKey.AppSettings);
 
   if (saved) {
-    savedAppSettings = defaultsDeep(savedAppSettings, defaultAppSettings);
+    savedAppSettings = defaultsDeep(saved, defaultAppSettings);
     applySavedAppSettings();
   }
 };

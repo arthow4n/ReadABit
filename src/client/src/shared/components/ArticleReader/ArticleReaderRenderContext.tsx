@@ -356,7 +356,7 @@ export const ArticleReaderRenderContextProvider: React.FC<{
 
     if (
       (voice.networkConnectionRequired || voice.notInstalled) &&
-      !appSettings.useMobileDataForAllDataTransfer
+      appSettings.saveDataUsage
     ) {
       return;
     }

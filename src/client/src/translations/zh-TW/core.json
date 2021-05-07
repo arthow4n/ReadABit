@@ -30,5 +30,12 @@
   "Article collection name": "文章集名稱",
   "Public": "公開",
   "Cancel": "取消",
-  "Create": "創建"
+  "Create": "創建",
+  "Text-to-speech": "文字轉語音",
+  "When tapping on word": "當按在單字上時",
+  "Network": "網路",
+  "Save data usage": "節約數據用量",
+  "Language_0": "語言",
+  "Studying": "正在學習",
+  "User interface": "使用者介面"
 }
