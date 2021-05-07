@@ -3,7 +3,7 @@ import * as React from 'react';
 import Tts from 'react-native-tts';
 
 import produce from 'immer';
-import { compact, round } from 'lodash';
+import { compact, has, round } from 'lodash';
 
 import { useNavigation } from '@react-navigation/core';
 import { api } from '@src/integrations/backend/backend';
@@ -99,15 +99,16 @@ class SubscriptionManager {
   constructor(articleLanguageCode: string) {
     this.articleLanguageCode = articleLanguageCode;
     this.selectedTokenSubscribers = new Set<() => void>();
-    this.expressionSubscriberMapping = {};
+    this.expressionSubscriberMapping = Object.create(null);
   }
 
   subscribeToWordFamiliarity(
     expression: string,
     onChange: () => void,
   ): () => void {
-    this.expressionSubscriberMapping[expression] =
-      this.expressionSubscriberMapping[expression] || new Set();
+    if (!has(this.expressionSubscriberMapping, expression)) {
+      this.expressionSubscriberMapping[expression] = new Set();
+    }
 
     this.expressionSubscriberMapping[expression]?.add(onChange);
 
@@ -117,6 +118,10 @@ class SubscriptionManager {
   }
 
   notifyWordFamiliarityChange(expression: string) {
+    if (!has(this.expressionSubscriberMapping, expression)) {
+      return;
+    }
+
     this.expressionSubscriberMapping[expression]?.forEach((notify) => notify());
   }
 
@@ -277,8 +282,11 @@ export const ArticleReaderRenderContextProvider: React.FC<{
       return;
     }
 
-    savedWordFamiliarity.groupedWordFamiliarities[languageCode] =
-      savedWordFamiliarity.groupedWordFamiliarities[languageCode] ?? {};
+    if (!has(savedWordFamiliarity.groupedWordFamiliarities, languageCode)) {
+      savedWordFamiliarity.groupedWordFamiliarities[
+        languageCode
+      ] = Object.create(null);
+    }
 
     savedWordFamiliarity.groupedWordFamiliarities[languageCode][
       expression
@@ -307,11 +315,22 @@ export const ArticleReaderRenderContextProvider: React.FC<{
       tokens.map((token) => {
         const expression = token.form;
 
-        savedWordFamiliarity.groupedWordFamiliarities[article.languageCode] =
-          savedWordFamiliarity.groupedWordFamiliarities[article.languageCode] ??
-          {};
+        if (
+          !has(
+            savedWordFamiliarity.groupedWordFamiliarities,
+            article.languageCode,
+          )
+        ) {
+          savedWordFamiliarity.groupedWordFamiliarities[
+            article.languageCode
+          ] = Object.create(null);
+        }
 
         if (
+          has(
+            savedWordFamiliarity.groupedWordFamiliarities[article.languageCode],
+            token.form,
+          ) &&
           (savedWordFamiliarity.groupedWordFamiliarities[article.languageCode][
             token.form
           ]?.level ?? 0) !== fromLevel
