@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,10 @@ using ReadABit.Infrastructure.Models;
 namespace ReadABit.Infrastructure.Migrations
 {
     [DbContext(typeof(UnsafeCoreDbContext))]
-    partial class UnsafeCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210508222347_AddIndexForDailyGoalOfWordFamiliarities")]
+    partial class AddIndexForDailyGoalOfWordFamiliarities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
