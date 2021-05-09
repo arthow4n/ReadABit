@@ -78,6 +78,12 @@ namespace ReadABit.Web.Test.Controllers
             (await ArticleCollectionsController.Get(createdId, new ArticleCollectionGet { })).ShouldBeOfType<NotFoundResult>();
         }
 
+        // [Fact]
+        // public async Task ReorderArticles()
+        // {
+        // TODO: Implement method for reordering articles.
+        // }
+
         private async Task<Paginated<ArticleCollectionListItemViewModel>> List(string languageCode)
         {
             return

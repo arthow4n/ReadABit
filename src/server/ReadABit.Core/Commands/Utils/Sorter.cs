@@ -6,5 +6,6 @@ namespace ReadABit.Core.Commands
         LastCreated = 1,
         CreatedAt = 2,
         LastAccessed = 3,
+        OrderInCollection = 4,
     }
 }

@@ -131,6 +131,8 @@ namespace ReadABit.Core.Commands
                             .Select(arp => arp.UpdatedAt)
                             .FirstOrDefault()
                     ),
+                Commands.SortBy.OrderInCollection =>
+                    query.OrderBy(x => x.Order),
                 _ => SortBy(query, sortBy)
             };
         }

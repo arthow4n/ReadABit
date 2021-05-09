@@ -14,6 +14,12 @@ namespace ReadABit.Infrastructure.Models
         public Guid Id { get; set; }
         public Guid ArticleCollectionId { get; set; }
         public ArticleCollection ArticleCollection { get; set; }
+        /// <summary>
+        /// Order of article in the collection.
+        /// At the moment multiple articles can have the exact same <see cref="Order" />.
+        /// </summary>
+        [Required]
+        public int Order { get; set; }
 
         /// <summary>
         /// Article title

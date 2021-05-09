@@ -23,10 +23,19 @@ namespace ReadABit.Core.Commands
         {
             new ArticleCreateValidator().ValidateAndThrow(request);
 
+            var articleCollectionQuery =
+                DB.ArticleCollectionsOfUser(request.UserId)
+                    .Where(ac => ac.Id == request.ArticleCollectionId);
+
             var articleCollection =
-                await DB.ArticleCollectionsOfUser(request.UserId)
-                         .Where(ac => ac.Id == request.ArticleCollectionId)
-                         .SingleOrDefaultAsync(cancellationToken: cancellationToken);
+                await articleCollectionQuery.SingleAsync(cancellationToken);
+
+            var lastArticleOrderInCollection =
+                await articleCollectionQuery
+                    .SelectMany(ac => ac.Articles)
+                    .OrderByDescending(a => a.Order)
+                    .Select(a => a.Order)
+                    .FirstOrDefaultAsync(cancellationToken);
 
             var now = Clock.GetCurrentInstant();
             articleCollection.UpdatedAt = now;
@@ -36,6 +45,8 @@ namespace ReadABit.Core.Commands
             {
                 Id = Guid.NewGuid(),
                 ArticleCollectionId = articleCollection.Id,
+                // It's fine to start from 1 as we don't really care the exact number.
+                Order = lastArticleOrderInCollection + 1,
                 Name = request.Name.Trim().Normalize(),
                 Text = normalisedText,
                 ConlluDocument = UDPipeV1Service.ToConlluDocument(articleCollection.LanguageCode, normalisedText),
