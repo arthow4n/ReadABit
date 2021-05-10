@@ -139,7 +139,11 @@ export function routeUrl(
     path = path.replace(`:${key}`, encodeURIComponent(value));
   });
 
-  const query = Object.entries(queryParams ?? {})
+  const query = [
+    ...Object.entries(queryParams ?? {}),
+    // This hack is mainly for avoiding undefined route.params.
+    ['_', '_'],
+  ]
     .filter(([, value]) => value !== undefined && value !== null)
     .map(
       ([key, value]) =>
