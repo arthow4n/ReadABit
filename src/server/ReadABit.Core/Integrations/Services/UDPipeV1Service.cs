@@ -14,7 +14,21 @@ namespace ReadABit.Core.Integrations.Services
         /// <param name="input">Text content of the input.</param>
         public static Conllu.Document ToConlluDocument(string twoLetterISOLanguageName, string input)
         {
-            return ToConllu(twoLetterISOLanguageName, input).ToConlluDocument();
+            return ToConllu(twoLetterISOLanguageName, CleanUpInput(input)).ToConlluDocument();
+        }
+
+        /// <summary>
+        /// Replace characters UDPipe v1 can't handle with their equivent.
+        /// 
+        /// UDPipe v1 might throw a word into oblivion if there's a character it cannot handle adjacent to that word,
+        /// therefore we need to clean the input before sending them into UDPipe.
+        /// </summary>
+        /// <returns>Cleaned input.</returns>
+        private static string CleanUpInput(string input)
+        {
+            return input
+                    .Replace("”", "\"")
+                    .Replace("…", "...");
         }
 
         /// <param name="twoLetterISOLanguageName"><see cref="CultureInfo.TwoLetterISOLanguageName" /></param>
