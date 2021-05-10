@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper.QueryableExtensions;
+using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
@@ -19,6 +19,8 @@ namespace ReadABit.Core.Commands
 
         public async Task<Paginated<ArticleListItemViewModel>> Handle(ArticleList request, CancellationToken cancellationToken)
         {
+            new ArticleListValidator().ValidateAndThrow(request);
+
             return await DB.ArticleCollectionsOfUserOrPublic(request.UserId)
                            .Where(ac => !request.ArticleCollectionId.HasValue || ac.Id == request.ArticleCollectionId)
                            .SelectMany(ac => ac.Articles)

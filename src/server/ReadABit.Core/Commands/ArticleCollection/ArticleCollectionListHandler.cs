@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper.QueryableExtensions;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReadABit.Core.Commands.Utils;
@@ -19,6 +20,8 @@ namespace ReadABit.Core.Commands
 
         public async Task<Paginated<ArticleCollectionListItemViewModel>> Handle(ArticleCollectionList request, CancellationToken cancellationToken)
         {
+            new ArticleCollectionListValidator().ValidateAndThrow(request);
+
             return await DB
                 .ArticleCollectionsOfUserOrPublic(request.UserId)
                 .AsNoTracking()
