@@ -7,6 +7,7 @@ import { Fab, Icon, View } from 'native-base';
 import { useLinkTo, useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { api } from '@src/integrations/backend/backend';
+import { Backend } from '@src/integrations/backend/types';
 import { ArticleList } from '@src/shared/components/ArticleList';
 import {
   QueryCacheKey,
@@ -38,7 +39,10 @@ export const ArticleCollectionScreen: React.FC<
   return (
     <View style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
-        <ArticleList articleCollectionId={articleCollectionId} />
+        <ArticleList
+          articleCollectionId={articleCollectionId}
+          defaultSortBy={Backend.SortBy.OrderInCollection}
+        />
       </View>
       <Fab
         position="bottomRight"

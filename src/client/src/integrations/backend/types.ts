@@ -1369,6 +1369,7 @@ export enum SortBy {
     LastCreated = "LastCreated",
     CreatedAt = "CreatedAt",
     LastAccessed = "LastAccessed",
+    OrderInCollection = "OrderInCollection",
 }
 
 export interface ArticleCollectionViewModel {
@@ -1463,6 +1464,7 @@ export interface Article {
     id: string;
     articleCollectionId: string;
     articleCollection?: ArticleCollection | null;
+    order: number;
     name: string;
     text: string;
     conlluDocument: Document;
@@ -1538,7 +1540,6 @@ export interface TimeZoneInfoViewModel {
 }
 
 export interface UserPreferenceData {
-    userInterfaceLanguageCode?: string | null;
     dailyGoalResetTimeTimeZone?: string | null;
     dailyGoalResetTimePartial?: string | null;
     dailyGoalNewlyCreatedWordFamiliarityCount: number;
