@@ -101,7 +101,7 @@ namespace ReadABit.Web.Test.Controllers
         public async Task UpsertBatch_DailyGoal_CountsCorrectly()
         {
             #region day 1
-            SetFakeClockTo("2020-03-01T11:00:00+08:00");
+            FakeClock.SetToIso("2020-03-01T11:00:00+08:00");
 
             await UserPreferencesController.Upsert(new()
             {
