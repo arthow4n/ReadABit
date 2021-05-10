@@ -2,7 +2,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using NodaTime.Text;
 using ReadABit.Core.Contracts;
 using Shouldly;
 
@@ -15,10 +14,12 @@ namespace ReadABit.Web.Test.Helpers
             string articleCollectionName = "collection",
             bool articleCollectionIsPublic = false,
             string articleName = "dummy",
-            string articleText = "Hallå!"
+            string articleText = "Hallå!",
+            Guid? articleCollectionId = null
         )
         {
-            var articleCollectionId =
+            var targetArticleCollectionId =
+                articleCollectionId ??
                 (await ArticleCollectionsController.Create(new()
                 {
                     LanguageCode = articleCollectionLanguageCode,
@@ -33,24 +34,13 @@ namespace ReadABit.Web.Test.Helpers
             var creationResult =
                 (await ArticlesController.Create(new()
                 {
-                    ArticleCollectionId = articleCollectionId,
+                    ArticleCollectionId = targetArticleCollectionId,
                     Name = name,
                     Text = text,
                 }))
                 .ShouldBeOfType<CreatedAtActionResult>();
 
             return creationResult.Value.ShouldBeOfType<ArticleViewModel>();
-        }
-
-        public void SetFakeClockTo(string offsetDateTimePatternIso)
-        {
-            FakeClock.Reset(
-                OffsetDateTimePattern
-                    .GeneralIso
-                    .Parse(offsetDateTimePatternIso)
-                    .Value
-                    .ToInstant()
-            );
         }
     }
 }
