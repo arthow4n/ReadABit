@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using NodaTime;
 using NodaTime.Testing;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Contracts;
@@ -150,7 +150,7 @@ Det beror på att det gör det lättare att förstå vad folk säger.
         [Fact]
         public async Task SortBy_LastAccessed()
         {
-            FakeClock.AutoAdvance = Duration.FromSeconds(1);
+            FakeClock.Run();
 
             var articles = new List<ArticleViewModel>
             {
@@ -184,6 +184,44 @@ Det beror på att det gör det lättare att förstå vad folk säger.
                     articles[0].Id,
                     articles[2].Id,
                     articles[1].Id,
+                });
+        }
+
+        [Fact]
+        public async Task SortBy_OrderInCollection()
+        {
+            FakeClock.Run();
+
+            var articles = new List<ArticleViewModel>
+            {
+                await SetupArticle(),
+            };
+
+            var articleCollectionId = articles.First().ArticleCollectionId;
+
+            // Mess around with the state.
+            articles.Add(await SetupArticle(articleCollectionId: articleCollectionId));
+            articles.Add(await SetupArticle());
+            articles.Add(await SetupArticle(articleCollectionId: articleCollectionId));
+            await ArticlesController.Update(articles[0].Id, new ArticleUpdate
+            {
+                Name = "Name",
+                Text = "Text",
+            });
+
+            // Should throw because article's order only applies within the belonging collection
+            await List(null, SortBy.OrderInCollection)
+                .ShouldThrowAsync<ValidationException>();
+
+            (await List(articleCollectionId, SortBy.OrderInCollection))
+                .Items
+                .Select(x => x.Id)
+                .ShouldBe(new List<Guid>
+                {
+                    articles[0].Id,
+                    articles[1].Id,
+                    // No [2] because it belongs to another collection
+                    articles[3].Id,
                 });
         }
 

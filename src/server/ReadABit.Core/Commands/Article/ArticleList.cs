@@ -21,6 +21,10 @@ namespace ReadABit.Core.Commands
         public ArticleListValidator()
         {
             RuleFor(x => x.Page).MustBeValidPageFilter();
+            RuleFor(x => x.ArticleCollectionId)
+                .NotEmpty()
+                .When(x => x.SortBy == SortBy.OrderInCollection)
+                .WithMessage("Must specify article collection when ordering articles by the order in collection.");
         }
     }
 }
