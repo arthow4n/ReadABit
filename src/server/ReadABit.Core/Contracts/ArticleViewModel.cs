@@ -1,5 +1,7 @@
 using System;
+using Newtonsoft.Json;
 using NodaTime;
+using NSwag.Annotations;
 using ReadABit.Core.Integrations.Contracts.Conllu;
 
 namespace ReadABit.Core.Contracts
@@ -10,7 +12,12 @@ namespace ReadABit.Core.Contracts
         public Guid ArticleCollectionId { get; init; }
         public string Name { get; init; } = "";
         public string LanguageCode { get; init; } = "";
-        public Conllu.Document ConlluDocument { get; init; } = new();
+        /// <summary>
+        /// This is only for easier fetching data from DB.
+        /// </summary>
+        [OpenApiIgnore, JsonIgnore]
+        public Conllu.Document ColluDocumentInternal { get; init; } = new();
+        public ConlluDocumentViewModel ConlluDocument { get; set; } = new();
         public Instant CreatedAt { get; init; }
         public Instant UpdatedAt { get; init; }
         public ArticleReadingProgressViewModel ReadingProgress { get; set; } = new();

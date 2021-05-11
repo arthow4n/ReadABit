@@ -29,7 +29,7 @@ type ShallowConlluPointer = {
   conlluPointer: { paragraphIndex: number; sentenceIndex: number };
 };
 
-export type TokenWithPointer = Backend.Token &
+export type TokenWithPointer = Backend.ConlluTokenViewModel &
   ShallowConlluPointer & {
     readRatio: number;
   };
@@ -50,14 +50,14 @@ type ArticleReaderRenderContextValue = {
   updateWordFamiliarityForMatchedTokens: (
     fromLevel: number,
     toLevel: number,
-    tokens: Backend.Token[],
+    tokens: Backend.ConlluTokenViewModel[],
   ) => Promise<void>;
   subscribeToWordFamiliarity: (
     expression: string,
     onChange: () => void,
   ) => () => void;
-  getSelectedToken: () => Backend.Token | null;
-  updateSelectedToken: (token: Backend.Token) => void;
+  getSelectedToken: () => Backend.ConlluTokenViewModel | null;
+  updateSelectedToken: (token: Backend.ConlluTokenViewModel) => void;
   updateReadingProgress: (
     request: Backend.ArticleReadingProgressUpsert,
   ) => void;
@@ -92,7 +92,7 @@ class SubscriptionManager {
 
   selectedTokenSubscribers: Set<() => void>;
 
-  selectedToken?: Backend.Token;
+  selectedToken?: Backend.ConlluTokenViewModel;
 
   articleLanguageCode: string;
 
@@ -125,7 +125,7 @@ class SubscriptionManager {
     this.expressionSubscriberMapping[expression]?.forEach((notify) => notify());
   }
 
-  updateSelectedToken(token: Backend.Token) {
+  updateSelectedToken(token: Backend.ConlluTokenViewModel) {
     this.selectedToken = token;
     this.selectedTokenSubscribers.forEach((notify) => notify());
   }
@@ -309,11 +309,11 @@ export const ArticleReaderRenderContextProvider: React.FC<{
   const updateWordFamiliarityForMatchedTokens = async (
     fromLevel: number,
     toLevel: number,
-    tokens: Backend.Token[],
+    tokens: Backend.ConlluTokenViewModel[],
   ) => {
     const words = compact(
       tokens.map((token) => {
-        const expression = token.form;
+        const expression = token.normalisedToken.form;
 
         if (
           !has(
@@ -329,10 +329,10 @@ export const ArticleReaderRenderContextProvider: React.FC<{
         if (
           has(
             savedWordFamiliarity.groupedWordFamiliarities[article.languageCode],
-            token.form,
+            expression,
           ) &&
           (savedWordFamiliarity.groupedWordFamiliarities[article.languageCode][
-            token.form
+            expression
           ]?.level ?? 0) !== fromLevel
         ) {
           return null;
@@ -344,7 +344,7 @@ export const ArticleReaderRenderContextProvider: React.FC<{
         };
 
         savedWordFamiliarity.groupedWordFamiliarities[article.languageCode][
-          token.form
+          expression
         ] = {
           level: toLevel,
           word,
@@ -413,7 +413,7 @@ export const ArticleReaderRenderContextProvider: React.FC<{
         getSelectedToken: () => {
           return subscriptionManager.current.selectedToken || null;
         },
-        updateSelectedToken: (token: Backend.Token) => {
+        updateSelectedToken: (token: Backend.ConlluTokenViewModel) => {
           subscriptionManager.current.updateSelectedToken(token);
         },
         updateReadingProgress,
@@ -431,14 +431,14 @@ export const ArticleReaderRenderContextProvider: React.FC<{
 const retriveWordFamiliarityItem = (
   wordFamiliarity: Backend.WordFamiliarityListViewModel,
   articleLanguageCode: string,
-  token?: Backend.Token | null,
+  token?: Backend.ConlluTokenViewModel | null,
 ): Backend.WordFamiliarityListItemViewModel => {
   const wordFamiliarityItem = wordFamiliarity.groupedWordFamiliarities[
     articleLanguageCode
-  ]?.[token?.form ?? ''] ?? {
+  ]?.[token?.normalisedToken.form ?? ''] ?? {
     level: 0,
     word: {
-      expression: token?.form ?? '',
+      expression: token?.normalisedToken.form ?? '',
       languageCode: articleLanguageCode,
     },
   };
@@ -446,10 +446,12 @@ const retriveWordFamiliarityItem = (
   return wordFamiliarityItem;
 };
 
-export const useWordTokenHandle = (token?: Backend.Token | null) => {
+export const useWordTokenHandle = (
+  token?: Backend.ConlluTokenViewModel | null,
+) => {
   const { rerender } = useRerender();
 
-  const expression = token?.form ?? '';
+  const expression = token?.normalisedToken.form ?? '';
 
   const {
     articleLanguageCode,

@@ -12,7 +12,7 @@ import { getSpacesAfter, isWord } from './TokenUtils';
 const fontSize = 20;
 
 export const RenderToken: React.FC<{
-  token: Backend.Token;
+  token: Backend.ConlluTokenViewModel;
   documentIndex: number;
   paragraphIndex: number;
   sentenceIndex: number;
@@ -81,7 +81,7 @@ export const RenderToken: React.FC<{
             updateSelectedToken(token);
 
             if (appSettings.tts.autoSpeakWhenTapOnWord) {
-              ttsSpeak(token.form);
+              ttsSpeak(token.normalisedToken.form);
             }
           }}
           style={{

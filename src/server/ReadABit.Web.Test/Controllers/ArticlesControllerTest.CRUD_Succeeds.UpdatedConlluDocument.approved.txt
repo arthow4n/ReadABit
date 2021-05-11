@@ -18,7 +18,13 @@
               "Head": "2",
               "Deprel": "case",
               "Deps": "1",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "hallå",
+                "Lemma": "hallå",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "2",
@@ -30,7 +36,13 @@
               "Head": "0",
               "Deprel": "root",
               "Deps": "2",
-              "Misc": "SpaceAfter=No"
+              "Misc": "SpaceAfter=No",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "värld",
+                "Lemma": "värld",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "3",
@@ -42,7 +54,13 @@
               "Head": "2",
               "Deprel": "punct",
               "Deps": "3",
-              "Misc": "SpacesAfter=\\n\\n"
+              "Misc": "SpacesAfter=\\n\\n",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "",
+                "Lemma": "",
+                "LanguageCode": "sv"
+              }
             }
           ]
         }
@@ -65,7 +83,13 @@
               "Head": "4",
               "Deprel": "nsubj",
               "Deps": "1",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "han",
+                "Lemma": "han",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "2",
@@ -77,7 +101,13 @@
               "Head": "4",
               "Deprel": "cop",
               "Deps": "2",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "är",
+                "Lemma": "vara",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "3",
@@ -89,7 +119,13 @@
               "Head": "4",
               "Deprel": "nmod:poss",
               "Deps": "3",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "min",
+                "Lemma": "jag",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "4",
@@ -101,7 +137,13 @@
               "Head": "0",
               "Deprel": "root",
               "Deps": "4",
-              "Misc": "SpaceAfter=No"
+              "Misc": "SpaceAfter=No",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "pappa",
+                "Lemma": "pappa",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "5",
@@ -113,7 +155,13 @@
               "Head": "4",
               "Deprel": "punct",
               "Deps": "5",
-              "Misc": "SpacesAfter=\\n"
+              "Misc": "SpacesAfter=\\n",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "",
+                "Lemma": "",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "6",
@@ -125,7 +173,13 @@
               "Head": "9",
               "Deprel": "nsubj",
               "Deps": "6",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "hon",
+                "Lemma": "hon",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "7",
@@ -137,7 +191,13 @@
               "Head": "9",
               "Deprel": "cop",
               "Deps": "7",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "är",
+                "Lemma": "vara",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "8",
@@ -149,7 +209,13 @@
               "Head": "9",
               "Deprel": "nmod:poss",
               "Deps": "8",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "min",
+                "Lemma": "jag",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "9",
@@ -161,7 +227,13 @@
               "Head": "4",
               "Deprel": "parataxis",
               "Deps": "9",
-              "Misc": "SpaceAfter=No"
+              "Misc": "SpaceAfter=No",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "mamma",
+                "Lemma": "mamma",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "10",
@@ -173,7 +245,13 @@
               "Head": "9",
               "Deprel": "punct",
               "Deps": "10",
-              "Misc": "SpacesAfter=\\n"
+              "Misc": "SpacesAfter=\\n",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "",
+                "Lemma": "",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "11",
@@ -185,7 +263,13 @@
               "Head": "14",
               "Deprel": "nsubj",
               "Deps": "11",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "de",
+                "Lemma": "de",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "12",
@@ -197,7 +281,13 @@
               "Head": "14",
               "Deprel": "cop",
               "Deps": "12",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "är",
+                "Lemma": "vara",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "13",
@@ -209,7 +299,13 @@
               "Head": "14",
               "Deprel": "nmod:poss",
               "Deps": "13",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "mina",
+                "Lemma": "jag",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "14",
@@ -221,7 +317,13 @@
               "Head": "9",
               "Deprel": "conj",
               "Deps": "14",
-              "Misc": "SpaceAfter=No"
+              "Misc": "SpaceAfter=No",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "föräldrar",
+                "Lemma": "förälder",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "15",
@@ -233,7 +335,13 @@
               "Head": "4",
               "Deprel": "punct",
               "Deps": "15",
-              "Misc": "SpacesAfter=\\n\\n\\n\\n"
+              "Misc": "SpacesAfter=\\n\\n\\n\\n",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "",
+                "Lemma": "",
+                "LanguageCode": "sv"
+              }
             }
           ]
         }
@@ -256,7 +364,13 @@
               "Head": "4",
               "Deprel": "advmod",
               "Deps": "1",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "varför",
+                "Lemma": "varför",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "2",
@@ -268,7 +382,13 @@
               "Head": "4",
               "Deprel": "aux",
               "Deps": "2",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "vill",
+                "Lemma": "vilja",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "3",
@@ -280,7 +400,13 @@
               "Head": "4",
               "Deprel": "nsubj",
               "Deps": "3",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "du",
+                "Lemma": "du",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "4",
@@ -292,7 +418,13 @@
               "Head": "0",
               "Deprel": "root",
               "Deps": "4",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "lära",
+                "Lemma": "lära",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "5",
@@ -304,7 +436,13 @@
               "Head": "4",
               "Deprel": "iobj",
               "Deps": "5",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "dig",
+                "Lemma": "du",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "6",
@@ -316,7 +454,13 @@
               "Head": "4",
               "Deprel": "dobj",
               "Deps": "6",
-              "Misc": "SpaceAfter=No"
+              "Misc": "SpaceAfter=No",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "svenska",
+                "Lemma": "svensk",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "7",
@@ -328,7 +472,13 @@
               "Head": "4",
               "Deprel": "punct",
               "Deps": "7",
-              "Misc": "SpacesAfter=\\n"
+              "Misc": "SpacesAfter=\\n",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "",
+                "Lemma": "",
+                "LanguageCode": "sv"
+              }
             }
           ]
         },
@@ -346,7 +496,13 @@
               "Head": "2",
               "Deprel": "nsubj",
               "Deps": "1",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "det",
+                "Lemma": "den",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "2",
@@ -358,7 +514,13 @@
               "Head": "0",
               "Deprel": "root",
               "Deps": "2",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "beror",
+                "Lemma": "bero",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "3",
@@ -370,7 +532,13 @@
               "Head": "6",
               "Deprel": "case",
               "Deps": "3",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "på",
+                "Lemma": "på",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "4",
@@ -382,7 +550,13 @@
               "Head": "6",
               "Deprel": "mark",
               "Deps": "4",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "att",
+                "Lemma": "att",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "5",
@@ -394,7 +568,13 @@
               "Head": "6",
               "Deprel": "expl",
               "Deps": "5",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "det",
+                "Lemma": "den",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "6",
@@ -406,7 +586,13 @@
               "Head": "2",
               "Deprel": "advcl",
               "Deps": "6",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "gör",
+                "Lemma": "göra",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "7",
@@ -418,7 +604,13 @@
               "Head": "6",
               "Deprel": "nsubj",
               "Deps": "7",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "det",
+                "Lemma": "den",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "8",
@@ -430,7 +622,13 @@
               "Head": "6",
               "Deprel": "xcomp",
               "Deps": "8",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "lättare",
+                "Lemma": "lätt",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "9",
@@ -442,7 +640,13 @@
               "Head": "10",
               "Deprel": "mark",
               "Deps": "9",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "att",
+                "Lemma": "att",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "10",
@@ -454,7 +658,13 @@
               "Head": "6",
               "Deprel": "advcl",
               "Deps": "10",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "förstå",
+                "Lemma": "förstå",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "11",
@@ -466,7 +676,13 @@
               "Head": "13",
               "Deprel": "dobj",
               "Deps": "11",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "vad",
+                "Lemma": "vad",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "12",
@@ -478,7 +694,13 @@
               "Head": "13",
               "Deprel": "nsubj",
               "Deps": "12",
-              "Misc": "_"
+              "Misc": "_",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "folk",
+                "Lemma": "folk",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "13",
@@ -490,7 +712,13 @@
               "Head": "10",
               "Deprel": "ccomp",
               "Deps": "13",
-              "Misc": "SpaceAfter=No"
+              "Misc": "SpaceAfter=No",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "säger",
+                "Lemma": "säga",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "14",
@@ -502,7 +730,13 @@
               "Head": "2",
               "Deprel": "punct",
               "Deps": "14",
-              "Misc": "SpacesAfter=\\n"
+              "Misc": "SpacesAfter=\\n",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "",
+                "Lemma": "",
+                "LanguageCode": "sv"
+              }
             }
           ]
         }

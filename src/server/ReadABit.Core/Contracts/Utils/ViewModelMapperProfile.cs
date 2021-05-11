@@ -1,7 +1,9 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using AutoMapper;
 using ReadABit.Core.Commands;
+using ReadABit.Core.Integrations.Contracts.Conllu;
 using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Contracts.Utils
@@ -31,6 +33,40 @@ namespace ReadABit.Core.Contracts.Utils
                             })
                             .SingleOrDefault()
                     )
+                )
+                .ForMember(
+                    vm => vm.ColluDocumentInternal,
+                    conf => conf.MapFrom(a => a.ConlluDocument)
+                )
+                .ForMember(
+                    vm => vm.ConlluDocument,
+                    conf => conf.MapFrom(_ => new ConlluDocumentViewModel { })
+                );
+
+            CreateMap<Conllu.Document, ConlluDocumentViewModel>();
+            CreateMap<Conllu.Paragraph, ConlluParagraphViewModel>();
+            CreateMap<Conllu.Sentence, ConlluSentenceViewModel>();
+            CreateMap<Conllu.Token, ConlluTokenViewModel>()
+                .ForMember(
+                    vm => vm.LanguageCode,
+                    conf => conf.MapFrom((_, _, _, context) => (string)context.Items["LanguageCode"])
+                )
+                .ForMember(
+                    vm => vm.NormalisedToken,
+                    conf => conf.MapFrom((t, _, _, context) => new ConlluNormalisedTokenViewModel
+                    {
+                        Form =
+                            ConlluNormalisedTokenViewModel.NormaliseString(
+                                t.Form,
+                                CultureInfo.GetCultureInfo((string)context.Items["LanguageCode"])
+                            ),
+                        Lemma =
+                            ConlluNormalisedTokenViewModel.NormaliseString(
+                                t.Lemma,
+                                CultureInfo.GetCultureInfo((string)context.Items["LanguageCode"])
+                            ),
+                        LanguageCode = (string)context.Items["LanguageCode"],
+                    })
                 );
 
             CreateMap<Article, ArticleListItemViewModel>()

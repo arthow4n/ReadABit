@@ -18,7 +18,13 @@
               "Head": "0",
               "Deprel": "root",
               "Deps": "1",
-              "Misc": "SpaceAfter=No"
+              "Misc": "SpaceAfter=No",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "hallå",
+                "Lemma": "hallå",
+                "LanguageCode": "sv"
+              }
             },
             {
               "Id": "2",
@@ -30,7 +36,13 @@
               "Head": "1",
               "Deprel": "punct",
               "Deps": "2",
-              "Misc": "SpacesAfter=\\n"
+              "Misc": "SpacesAfter=\\n",
+              "LanguageCode": "sv",
+              "NormalisedToken": {
+                "Form": "",
+                "Lemma": "",
+                "LanguageCode": "sv"
+              }
             }
           ]
         }

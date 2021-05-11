@@ -1411,29 +1411,29 @@ export interface ArticleViewModel {
     articleCollectionId: string;
     name: string;
     languageCode: string;
-    conlluDocument: Document;
+    conlluDocument: ConlluDocumentViewModel;
     createdAt: Date;
     updatedAt: Date;
     readingProgress: ArticleReadingProgressViewModel;
 }
 
-export interface Document {
+export interface ConlluDocumentViewModel {
     id: string;
-    paragraphs: Paragraph[];
+    paragraphs: ConlluParagraphViewModel[];
 }
 
-export interface Paragraph {
+export interface ConlluParagraphViewModel {
     id: string;
-    sentences: Sentence[];
+    sentences: ConlluSentenceViewModel[];
 }
 
-export interface Sentence {
+export interface ConlluSentenceViewModel {
     id: string;
     text: string;
-    tokens: Token[];
+    tokens: ConlluTokenViewModel[];
 }
 
-export interface Token {
+export interface ConlluTokenViewModel {
     id: string;
     form: string;
     lemma: string;
@@ -1444,6 +1444,14 @@ export interface Token {
     deprel: string;
     deps: string;
     misc: string;
+    languageCode: string;
+    normalisedToken: ConlluNormalisedTokenViewModel;
+}
+
+export interface ConlluNormalisedTokenViewModel {
+    form: string;
+    lemma: string;
+    languageCode: string;
 }
 
 export interface ArticleReadingProgressViewModel {
@@ -1504,6 +1512,35 @@ export interface IdentityUserOfGuid {
 }
 
 export interface ApplicationUser extends IdentityUserOfGuid {
+}
+
+export interface Document {
+    id: string;
+    paragraphs: Paragraph[];
+}
+
+export interface Paragraph {
+    id: string;
+    sentences: Sentence[];
+}
+
+export interface Sentence {
+    id: string;
+    text: string;
+    tokens: Token[];
+}
+
+export interface Token {
+    id: string;
+    form: string;
+    lemma: string;
+    upos: string;
+    xpos: string;
+    feats: string;
+    head: string;
+    deprel: string;
+    deps: string;
+    misc: string;
 }
 
 export interface ArticleReadingProgress {
