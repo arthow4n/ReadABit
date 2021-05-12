@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using MoreLinq;
 using NodaTime;
 using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Utils;
@@ -57,7 +58,7 @@ namespace ReadABit.Core.Commands
         {
             var now = Clock.GetCurrentInstant();
 
-            var wordFamiliarities = await DB.Unsafe.Words
+            var wordFamiliarities = (await DB.Unsafe.Words
                 .OfWords(request.Words)
                 .Select(w => new WordFamiliarity
                 {
@@ -68,7 +69,8 @@ namespace ReadABit.Core.Commands
                     CreatedAt = now,
                     UpdatedAt = now,
                 })
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken))
+                .DistinctBy(w => w.Id);
 
             await DB.Unsafe.WordFamiliarities
                 .UpsertRange(wordFamiliarities)
