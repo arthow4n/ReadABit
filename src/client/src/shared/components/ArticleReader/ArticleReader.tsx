@@ -198,7 +198,7 @@ export const ArticleReader: React.FC = () => {
               ))}
             </View>
           </View>
-          {currentPage <= articlePages.length - 1 && (
+          {currentPage < articlePages.length - 1 && (
             <Button
               onPress={() => {
                 setCurrentPage((p) => p + 1);
