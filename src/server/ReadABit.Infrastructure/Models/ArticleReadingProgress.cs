@@ -7,7 +7,7 @@ using ReadABit.Infrastructure.Interfaces;
 
 namespace ReadABit.Infrastructure.Models
 {
-    public class ArticleReadingProgress : ITimestampedEntity
+    public class ArticleReadingProgress : IEntityWithCreateUpdateTimestamps
     {
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]

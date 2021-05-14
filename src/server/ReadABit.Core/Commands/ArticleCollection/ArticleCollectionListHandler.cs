@@ -28,7 +28,7 @@ namespace ReadABit.Core.Commands
                 .Where(ac => ac.LanguageCode == request.Filter.LanguageCode)
                 .Where(ac => request.Filter.OwnedByUserId == null || ac.UserId == request.Filter.OwnedByUserId)
                 .Where(ac => string.IsNullOrWhiteSpace(request.Filter.Name) || ac.Name.StartsWith(request.Filter.Name))
-                .SortBy(request.SortBy)
+                .SortByCreateUpdateTimestamps(request.SortBy)
                 .ProjectTo<ArticleCollectionListItemViewModel>(Mapper.ConfigurationProvider)
                 .ToPaginatedAsync(request.Page, 50, cancellationToken);
         }

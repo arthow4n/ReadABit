@@ -6,7 +6,7 @@ using ReadABit.Infrastructure.Interfaces;
 
 namespace ReadABit.Infrastructure.Models
 {
-    public class WordDefinition : ITimestampedEntity, IOfWord
+    public class WordDefinition : IEntityWithCreateUpdateTimestamps, IOfWord
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; set; }

@@ -109,14 +109,22 @@ namespace ReadABit.Core.Commands
             };
         }
 
-        public static IQueryable<T> SortBy<T>(this IQueryable<T> query, SortBy sortBy) where T : ITimestampedEntity
+        public static IQueryable<T> SortByCreateTimestamp<T>(this IQueryable<T> query, SortBy sortBy) where T : IEntityWithCreateTimestamp
+        {
+            return sortBy switch
+            {
+                Commands.SortBy.LastCreated => query.OrderByDescending(x => x.CreatedAt),
+                Commands.SortBy.CreatedAt => query.OrderByDescending(x => x.CreatedAt),
+                _ => throw new ArgumentOutOfRangeException(nameof(sortBy), $"Sorting by {sortBy} is not implemented for {typeof(T).FullName}"),
+            };
+        }
+
+        public static IQueryable<T> SortByCreateUpdateTimestamps<T>(this IQueryable<T> query, SortBy sortBy) where T : IEntityWithCreateUpdateTimestamps
         {
             return sortBy switch
             {
                 Commands.SortBy.LastUpdated => query.OrderByDescending(x => x.UpdatedAt),
-                Commands.SortBy.LastCreated => query.OrderByDescending(x => x.CreatedAt),
-                Commands.SortBy.CreatedAt => query.OrderByDescending(x => x.CreatedAt),
-                _ => throw new ArgumentOutOfRangeException(nameof(sortBy), $"Sorting by {sortBy} is not implemented for {typeof(T).FullName}"),
+                _ => SortByCreateTimestamp(query, sortBy)
             };
         }
 
@@ -133,7 +141,7 @@ namespace ReadABit.Core.Commands
                     ),
                 Commands.SortBy.OrderInCollection =>
                     query.OrderBy(x => x.Order),
-                _ => SortBy(query, sortBy)
+                _ => SortByCreateUpdateTimestamps(query, sortBy)
             };
         }
     }

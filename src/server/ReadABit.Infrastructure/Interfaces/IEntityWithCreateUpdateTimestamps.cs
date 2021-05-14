@@ -2,9 +2,8 @@ using NodaTime;
 
 namespace ReadABit.Infrastructure.Interfaces
 {
-    public interface ITimestampedEntity
+    public interface IEntityWithCreateUpdateTimestamps : IEntityWithCreateTimestamp
     {
-        public Instant CreatedAt { get; set; }
         public Instant UpdatedAt { get; set; }
     }
 }

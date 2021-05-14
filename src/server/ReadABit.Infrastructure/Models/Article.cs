@@ -8,7 +8,7 @@ using ReadABit.Infrastructure.Interfaces;
 
 namespace ReadABit.Infrastructure.Models
 {
-    public class Article : ITimestampedEntity
+    public class Article : IEntityWithCreateUpdateTimestamps
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid Id { get; set; }
