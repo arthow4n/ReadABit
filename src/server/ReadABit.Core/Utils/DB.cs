@@ -55,6 +55,10 @@ namespace ReadABit.Core.Utils
         {
             return _coreDbContext.UserPreferences.Where(up => up.UserId == userId);
         }
+        public IQueryable<UserAchievement> UserAchievementsOfUser(Guid userId)
+        {
+            return _coreDbContext.UserAchievements.Where(up => up.UserId == userId);
+        }
         public IQueryable<ArticleReadingProgress> ArticleReadingProgressOfUser(Guid userId)
         {
             return _coreDbContext.ArticleReadingProgress.Where(arp => arp.UserId == userId);

@@ -86,6 +86,8 @@ namespace ReadABit.Core.Commands
                     UpdatedAt = updated.UpdatedAt,
                 })
                 .RunAsync(cancellationToken);
+
+            // TODO: Update today's user achievement state
         }
     }
 }
