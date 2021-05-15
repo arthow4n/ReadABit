@@ -9,6 +9,7 @@ using NodaTime;
 using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
+using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands
 {
@@ -59,11 +60,40 @@ namespace ReadABit.Core.Commands
                     )
                     .CountAsync(wf => wf.Level >= 1, cancellationToken);
 
+            var newlyCreatedReached =
+                newlyCreatedWordFamiliarityDuringPeriod >=
+                request.DailyGoalNewlyCreatedWordFamiliarityCount;
+
+            if (newlyCreatedReached)
+            {
+                // It's fine to insert multiple entries in a day,
+                // we just want to avoid writing it all the time,
+                // therefore it's fine that this check misses when race condition happens.
+                var isDailyGoalReachedAchievementCreated =
+                    await DB.UserAchievementsOfUser(request.UserId)
+                        .Where(ua =>
+                            ua.CreatedAt >= dailyGoalPeriodStart &&
+                            ua.CreatedAt < dailyGoalPeriodEnd
+                        )
+                        .AnyAsync(cancellationToken);
+
+                if (!isDailyGoalReachedAchievementCreated)
+                {
+                    await DB.Unsafe.UserAchievements.AddAsync(new()
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = request.UserId,
+                        Type = UserAchievementType.WordFamiliarityDailyGoalReached,
+                        CreatedAt = Clock.GetCurrentInstant(),
+                    }, cancellationToken);
+                }
+            }
+
             return new WordFamiliarityDailyGoalCheckViewModel
             {
                 NewlyCreated = newlyCreatedWordFamiliarityDuringPeriod,
                 NewlyCreatedGoal = request.DailyGoalNewlyCreatedWordFamiliarityCount,
-                NewlyCreatedReached = newlyCreatedWordFamiliarityDuringPeriod >= request.DailyGoalNewlyCreatedWordFamiliarityCount,
+                NewlyCreatedReached = newlyCreatedReached,
             };
         }
     }

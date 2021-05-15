@@ -61,6 +61,7 @@ namespace ReadABit.Web.Controllers
         public async Task<IActionResult> DailyGoalCheck([FromQuery] WordFamiliarityDailyGoalCheck request)
         {
             var result = await PerformDailyGoalCheck();
+            await SaveChangesAsync();
             return Ok(result);
         }
 
