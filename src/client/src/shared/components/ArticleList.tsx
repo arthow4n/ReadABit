@@ -38,6 +38,8 @@ import {
   queryCacheKey,
 } from '@src/shared/hooks/useBackendReactQuery';
 
+import { useNavigationRefocusEffect } from '../hooks/useNavigationRefocusEffect';
+
 export const ArticleList: React.FC<{
   articleCollectionId?: string;
   defaultSortBy?: Backend.SortBy;
@@ -56,7 +58,7 @@ export const ArticleList: React.FC<{
     sortBy,
   });
 
-  const { data, fetchNextPage } = useInfiniteQuery(
+  const { data, fetchNextPage, refetch } = useInfiniteQuery(
     // TODO: Confirm the cache is keyed correctly here
     queryKey,
     ({ pageParam }) =>
@@ -70,6 +72,10 @@ export const ArticleList: React.FC<{
       getPreviousPageParam: (first) => first.page.previous?.index,
     },
   );
+
+  useNavigationRefocusEffect(() => {
+    refetch();
+  });
 
   const articleDeleteHandle = useMutation(api().articles_Delete);
 
