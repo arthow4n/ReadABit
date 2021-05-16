@@ -1,8 +1,12 @@
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ReadABit.Core.Commands;
 using ReadABit.Core.Contracts;
+using ReadABit.Web.Contracts;
 using Shouldly;
 
 namespace ReadABit.Web.Test.Helpers
@@ -41,6 +45,22 @@ namespace ReadABit.Web.Test.Helpers
                 .ShouldBeOfType<CreatedAtActionResult>();
 
             return creationResult.Value.ShouldBeOfType<ArticleViewModel>();
+        }
+
+        public async Task<WordFamiliarityUpsertBatchResultViewModal> SetupWordFamiliarity(int level, string languageCode, List<string> wordExpressions)
+        {
+            return (await WordFamiliaritiesController.UpsertBatch(new()
+            {
+                Level = level,
+                Words = wordExpressions.ConvertAll(we => new WordSelector
+                {
+                    LanguageCode = languageCode,
+                    Expression = we,
+                })
+            }))
+                .ShouldBeOfType<OkObjectResult>()
+                .Value
+                .ShouldBeOfType<WordFamiliarityUpsertBatchResultViewModal>();
         }
     }
 }

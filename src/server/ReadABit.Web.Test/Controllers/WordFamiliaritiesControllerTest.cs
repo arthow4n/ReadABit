@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
-using ReadABit.Web.Contracts;
 using ReadABit.Web.Controllers;
 using ReadABit.Web.Test.Helpers;
 using Shouldly;
@@ -21,18 +20,7 @@ namespace ReadABit.Web.Test.Controllers
         [Fact]
         public async Task CRUD_Succeeds()
         {
-            await UpsertBatch(new()
-            {
-                Level = 1,
-                Words = new()
-                {
-                    new()
-                    {
-                        LanguageCode = "sv",
-                        Expression = "Hallå",
-                    }
-                },
-            });
+            await SetupWordFamiliarity(1, "sv", new() { "Hallå" });
             (await List()).ShouldSatisfyAllConditions(
                 x => x.Flatten()
                     .ShouldHaveSingleItem()
@@ -53,18 +41,7 @@ namespace ReadABit.Web.Test.Controllers
                 (await List()).Flatten().ShouldBeEmpty();
             }
 
-            await UpsertBatch(new()
-            {
-                Level = 2,
-                Words = new()
-                {
-                    new()
-                    {
-                        LanguageCode = "sv",
-                        Expression = "Hallå",
-                    },
-                },
-            });
+            await SetupWordFamiliarity(2, "sv", new() { "Hallå" });
             (await List()).ShouldSatisfyAllConditions(
                 x => x.Flatten()
                     .ShouldHaveSingleItem()
@@ -82,18 +59,7 @@ namespace ReadABit.Web.Test.Controllers
 
             // Setting a word familiarity level to 0 should delete it instead,
             // because uncreated word familiarity is treated as 0.
-            await UpsertBatch(new()
-            {
-                Level = 0,
-                Words = new()
-                {
-                    new()
-                    {
-                        LanguageCode = "sv",
-                        Expression = "Hallå",
-                    },
-                },
-            });
+            await SetupWordFamiliarity(0, "sv", new() { "Hallå" });
             (await List()).Flatten().ShouldBeEmpty();
         }
 
@@ -114,18 +80,7 @@ namespace ReadABit.Web.Test.Controllers
                 },
             });
 
-            (await UpsertBatch(new()
-            {
-                Level = 1,
-                Words = new()
-                {
-                    new()
-                    {
-                        Expression = "a",
-                        LanguageCode = "sv",
-                    }
-                }
-            }))
+            (await SetupWordFamiliarity(1, "sv", new() { "a" }))
                 .DailyGoalStatus
                 .ShouldSatisfyAllConditions(
                     x => x.NewlyCreated.ShouldBe(1),
@@ -142,18 +97,7 @@ namespace ReadABit.Web.Test.Controllers
                 );
 
             // Already learned word shouldn't count.
-            (await UpsertBatch(new()
-            {
-                Level = 3,
-                Words = new()
-                {
-                    new()
-                    {
-                        Expression = "a",
-                        LanguageCode = "sv",
-                    }
-                }
-            }))
+            (await SetupWordFamiliarity(3, "sv", new() { "a" }))
                 .DailyGoalStatus
                 .ShouldSatisfyAllConditions(
                     x => x.NewlyCreated.ShouldBe(1),
@@ -161,23 +105,7 @@ namespace ReadABit.Web.Test.Controllers
                     x => x.NewlyCreatedReached.ShouldBeFalse()
                 );
 
-            (await UpsertBatch(new()
-            {
-                Level = 2,
-                Words = new()
-                {
-                    new()
-                    {
-                        Expression = "b",
-                        LanguageCode = "sv",
-                    },
-                    new()
-                    {
-                        Expression = "c",
-                        LanguageCode = "sv",
-                    }
-                }
-            }))
+            (await SetupWordFamiliarity(2, "sv", new() { "b", "c" }))
                 .DailyGoalStatus
                 .ShouldSatisfyAllConditions(
                     x => x.NewlyCreated.ShouldBe(3),
@@ -185,18 +113,7 @@ namespace ReadABit.Web.Test.Controllers
                     x => x.NewlyCreatedReached.ShouldBeFalse()
                 );
 
-            (await UpsertBatch(new()
-            {
-                Level = 3,
-                Words = new()
-                {
-                    new()
-                    {
-                        Expression = "d",
-                        LanguageCode = "sv",
-                    }
-                }
-            }))
+            (await SetupWordFamiliarity(3, "sv", new() { "d" }))
                 .DailyGoalStatus
                 .ShouldSatisfyAllConditions(
                     x => x.NewlyCreated.ShouldBe(4),
@@ -205,18 +122,7 @@ namespace ReadABit.Web.Test.Controllers
                 );
 
             // Word "marked as new" (removed) shouldn't count.
-            (await UpsertBatch(new()
-            {
-                Level = 0,
-                Words = new()
-                {
-                    new()
-                    {
-                        Expression = "d",
-                        LanguageCode = "sv",
-                    }
-                }
-            }))
+            (await SetupWordFamiliarity(0, "sv", new() { "d" }))
                 .DailyGoalStatus
                 .ShouldSatisfyAllConditions(
                     x => x.NewlyCreated.ShouldBe(3),
@@ -224,23 +130,7 @@ namespace ReadABit.Web.Test.Controllers
                     x => x.NewlyCreatedReached.ShouldBeFalse()
                 );
 
-            (await UpsertBatch(new()
-            {
-                Level = 1,
-                Words = new()
-                {
-                    new()
-                    {
-                        Expression = "d",
-                        LanguageCode = "sv",
-                    },
-                    new()
-                    {
-                        Expression = "e",
-                        LanguageCode = "sv",
-                    }
-                }
-            }))
+            (await SetupWordFamiliarity(1, "sv", new() { "d", "e" }))
                 .DailyGoalStatus
                 .ShouldSatisfyAllConditions(
                     x => x.NewlyCreated.ShouldBe(5),
@@ -253,18 +143,7 @@ namespace ReadABit.Web.Test.Controllers
             #region day 2
             FakeClock.AdvanceDays(1);
 
-            (await UpsertBatch(new()
-            {
-                Level = 2,
-                Words = new()
-                {
-                    new()
-                    {
-                        Expression = "f",
-                        LanguageCode = "sv",
-                    }
-                }
-            }))
+            (await SetupWordFamiliarity(2, "sv", new() { "f" }))
                 .DailyGoalStatus
                 // Should reset state each day.
                 .ShouldSatisfyAllConditions(
@@ -281,14 +160,6 @@ namespace ReadABit.Web.Test.Controllers
                 .ShouldBeOfType<OkObjectResult>()
                 .Value
                 .ShouldBeOfType<WordFamiliarityListViewModel>();
-        }
-
-        private async Task<WordFamiliarityUpsertBatchResultViewModal> UpsertBatch(WordFamiliarityUpsertBatch request)
-        {
-            return (await WordFamiliaritiesController.UpsertBatch(request))
-                .ShouldBeOfType<OkObjectResult>()
-                .Value
-                .ShouldBeOfType<WordFamiliarityUpsertBatchResultViewModal>();
         }
 
         private async Task<WordFamiliarityDailyGoalCheckViewModel> DailyGoalCheck()
