@@ -41,6 +41,7 @@ namespace ReadABit.Web.Test.Helpers
 
         protected ArticleCollectionsController ArticleCollectionsController => DI.New<ArticleCollectionsController>(ServiceProvider);
         protected ArticlesController ArticlesController => DI.New<ArticlesController>(ServiceProvider);
+        protected UserAchievementsController UserAchievementsController => DI.New<UserAchievementsController>(ServiceProvider);
         protected UserPreferencesController UserPreferencesController => DI.New<UserPreferencesController>(ServiceProvider);
         protected WordDefinitionsController WordDefinitionsController => DI.New<WordDefinitionsController>(ServiceProvider);
         protected WordFamiliaritiesController WordFamiliaritiesController => DI.New<WordFamiliaritiesController>(ServiceProvider);
