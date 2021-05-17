@@ -7,6 +7,7 @@ using ReadABit.Core.Commands.UserAchievements;
 using ReadABit.Core.Contracts;
 using ReadABit.Infrastructure.Models;
 using ReadABit.Web.Controller.Utils;
+using ReadABit.Web.Controllers.Helpers;
 
 namespace ReadABit.Web.Controllers
 {
@@ -22,10 +23,14 @@ namespace ReadABit.Web.Controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> GetDailyGoalStreakState([FromQuery] UserAchievementsDailyGoalStreakGet request)
         {
+            var dailyGoalCheckViewModel = await new DailyGoalHelper(this).PerformDailyGoalCheck();
+
             UserAchievementsDailyGoalStreakStateViewModel vm = await Mediator.Send(request with
             {
                 UserId = RequestUserId,
+                DailyGoalCheckViewModel = dailyGoalCheckViewModel,
             });
+
             return Ok(vm);
         }
     }

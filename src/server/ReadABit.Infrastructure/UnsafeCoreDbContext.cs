@@ -20,6 +20,7 @@ namespace ReadABit.Infrastructure
         public DbSet<ArticleCollection> ArticleCollections => Set<ArticleCollection>();
         public DbSet<ArticleReadingProgress> ArticleReadingProgress => Set<ArticleReadingProgress>();
         public DbSet<UserAchievement> UserAchievements => Set<UserAchievement>();
+        public DbSet<UserAchievementStreak> UserAchievementStreaks => Set<UserAchievementStreak>();
         public DbSet<UserPreference> UserPreferences => Set<UserPreference>();
         public DbSet<Word> Words => Set<Word>();
         public DbSet<WordDefinition> WordDefinitions => Set<WordDefinition>();

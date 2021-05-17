@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Transactions;
+using Microsoft.EntityFrameworkCore;
 using ReadABit.Infrastructure;
 using ReadABit.Infrastructure.Models;
 
@@ -58,6 +59,25 @@ namespace ReadABit.Core.Utils
         public IQueryable<UserAchievement> UserAchievementsOfUser(Guid userId)
         {
             return _coreDbContext.UserAchievements.Where(up => up.UserId == userId);
+        }
+        public IQueryable<UserAchievementStreak> UserAchievementStreaksOfUser(Guid userId, UserAchievementType type)
+        {
+            return _coreDbContext.UserAchievementStreaks
+                .FromSqlInterpolated(
+                $@"        
+                    with
+                    streaks as (
+                        select
+                            distinct ua.""CreatedAt""::date,
+                            ""CreatedAt""::date - make_interval(days:= (dense_rank() over(order by ""CreatedAt""::date))::int) as ""StreakGroup""
+                        from ""UserAchievements"" ua
+                        where ua.""UserId"" = {userId}
+                        and ua.""Type"" = {type}
+                    )
+                    select max(""CreatedAt"") as ""LastUtcDateInStreak"", COUNT(*) as ""StreakDays""
+                    from streaks
+                    group by ""StreakGroup""
+                ");
         }
         public IQueryable<ArticleReadingProgress> ArticleReadingProgressOfUser(Guid userId)
         {

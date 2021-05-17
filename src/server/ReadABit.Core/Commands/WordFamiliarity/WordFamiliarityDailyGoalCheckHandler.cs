@@ -84,7 +84,7 @@ namespace ReadABit.Core.Commands
                         Id = Guid.NewGuid(),
                         UserId = request.UserId,
                         Type = UserAchievementType.WordFamiliarityDailyGoalReached,
-                        CreatedAt = Clock.GetCurrentInstant(),
+                        CreatedAt = nowInRequestedZone.ToInstant(),
                     }, cancellationToken);
                 }
             }
@@ -94,6 +94,12 @@ namespace ReadABit.Core.Commands
                 NewlyCreated = newlyCreatedWordFamiliarityDuringPeriod,
                 NewlyCreatedGoal = request.DailyGoalNewlyCreatedWordFamiliarityCount,
                 NewlyCreatedReached = newlyCreatedReached,
+                Metadata = new()
+                {
+                    NowInRequestedZone = nowInRequestedZone,
+                    IsNowEarlierThanTodaysReset = isNowEarlierThanTodaysReset,
+                    StartOfDailyGoalPeriod = dailyGoalPeriodStart,
+                }
             };
         }
     }
