@@ -19,22 +19,22 @@ namespace ReadABit.Web.Controller.Utils
     [ApiController]
     public abstract class ApiControllerBase : ControllerBase
     {
-        private readonly IServiceProvider _serviceProvider;
+        public readonly IServiceProvider ServiceProvider;
 
         protected ApiControllerBase(IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider;
+            ServiceProvider = serviceProvider;
         }
 
-        protected IMediator Mediator => _serviceProvider.GetRequiredService<IMediator>();
-        protected IRequestContext RequestContext => _serviceProvider.GetRequiredService<IRequestContext>();
+        internal IMediator Mediator => ServiceProvider.GetRequiredService<IMediator>();
+        protected IRequestContext RequestContext => ServiceProvider.GetRequiredService<IRequestContext>();
 
         /// <summary>
         /// This should only be used in actions with [Authorize] because it asserts the user ID is not null.
         /// </summary>
-        protected Guid RequestUserId => RequestContext.UserId!.Value;
+        internal Guid RequestUserId => RequestContext.UserId!.Value;
 
-        protected UserManager<ApplicationUser> UserManager => _serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        protected UserManager<ApplicationUser> UserManager => ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
         protected async Task SaveChangesAsync()
         {

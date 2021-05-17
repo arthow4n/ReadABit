@@ -8,6 +8,7 @@ using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
 using ReadABit.Web.Contracts;
 using ReadABit.Web.Controller.Utils;
+using ReadABit.Web.Controllers.Helpers;
 
 namespace ReadABit.Web.Controllers
 {
@@ -42,10 +43,11 @@ namespace ReadABit.Web.Controllers
             {
                 UserId = RequestUserId,
             });
-
-            var dailyGoalStatus = await PerformDailyGoalCheck();
-
             await SaveChangesAsync();
+
+            var dailyGoalStatus = await new DailyGoalHelper(this).PerformDailyGoalCheck();
+            await SaveChangesAsync();
+
             ts.Complete();
 
             return Ok(new WordFamiliarityUpsertBatchResultViewModal
@@ -60,25 +62,9 @@ namespace ReadABit.Web.Controllers
         [ProducesDefaultResponseType]
         public async Task<IActionResult> DailyGoalCheck([FromQuery] WordFamiliarityDailyGoalCheck request)
         {
-            var result = await PerformDailyGoalCheck();
+            var result = await new DailyGoalHelper(this).PerformDailyGoalCheck();
             await SaveChangesAsync();
             return Ok(result);
-        }
-
-        private async Task<WordFamiliarityDailyGoalCheckViewModel> PerformDailyGoalCheck()
-        {
-            var userPreferenceData = await Mediator.Send(new UserPreferenceGet
-            {
-                UserId = RequestUserId,
-            });
-
-            return await Mediator.Send(new WordFamiliarityDailyGoalCheck
-            {
-                UserId = RequestUserId,
-                DailyGoalResetTimeTimeZone = userPreferenceData.DailyGoalResetTimeTimeZone,
-                DailyGoalResetTimePartial = userPreferenceData.DailyGoalResetTimePartial,
-                DailyGoalNewlyCreatedWordFamiliarityCount = userPreferenceData.DailyGoalNewlyCreatedWordFamiliarityCount,
-            });
         }
     }
 }
