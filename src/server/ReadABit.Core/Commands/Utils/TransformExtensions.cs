@@ -30,7 +30,7 @@ namespace ReadABit.Core.Commands.Utils
             return DateTimeZoneProviders.Tzdb[x];
         }
 
-        public static ZonedDateTime WithLocalTime(this ZonedDateTime source, LocalTime newLocalTime)
+        public static ZonedDateTime SwapLocalTime(this ZonedDateTime source, LocalTime newLocalTime)
         {
             source.Deconstruct(out var localDateTime, out var zone, out var offset);
             localDateTime.Deconstruct(out var date, out var _);
