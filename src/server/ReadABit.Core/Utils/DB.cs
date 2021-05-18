@@ -74,7 +74,9 @@ namespace ReadABit.Core.Utils
                         where ua.""UserId"" = {userId}
                         and ua.""Type"" = {type}
                     )
-                    select max(""CreatedAt"") as ""LastUtcDateInStreak"", COUNT(*) as ""StreakDays""
+                    select
+                        (max(""CreatedAt"") || '  00:00:00')::timestamp as ""LastUtcStartOfDateInStreak"",
+                        COUNT(*) as ""StreakDays""
                     from streaks
                     group by ""StreakGroup""
                 ");

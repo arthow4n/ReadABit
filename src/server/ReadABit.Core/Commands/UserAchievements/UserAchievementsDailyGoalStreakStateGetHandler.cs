@@ -23,10 +23,25 @@ namespace ReadABit.Core.Commands.UserAchievements
             var checkResult = request.DailyGoalCheckViewModel;
             var meta = checkResult.Metadata;
 
-            var streakCheckDateInUtc =
-                meta.IsNowEarlierThanTodaysReset && !checkResult.NewlyCreatedReached ?
-                    meta.NowInRequestedZone.Minus(Duration.FromDays(1)).LocalDateTime.Date :
-                    meta.NowInRequestedZone.LocalDateTime.Date;
+            // var streakCheckDateInUtc =
+            //     meta.IsNowEarlierThanTodaysReset && !checkResult.NewlyCreatedReached ?
+            //         meta.NowInRequestedZone.Minus(Duration.FromDays(1)).LocalDateTime.Date :
+            //         meta.NowInRequestedZone.LocalDateTime.Date;
+
+            var startOfDailyGoalPeriodInRequestedZone =
+                meta.StartOfDailyGoalPeriod
+                    .InZone(meta.NowInRequestedZone.Zone);
+
+            if (meta.IsNowEarlierThanTodaysReset && checkResult.NewlyCreatedReached)
+            {
+                startOfDailyGoalPeriodInRequestedZone += Duration.FromDays(1);
+            }
+
+            var streakCheckUtcStartOfDate =
+                startOfDailyGoalPeriodInRequestedZone
+                    .WithLocalTime("00:00:00".ParseIsoHhmmssToLocalTimeOrThrow())
+                    .Plus(Duration.FromTicks(meta.NowInRequestedZone.Offset.Ticks))
+                    .ToInstant();
 
             var streaks =
                 await DB.UserAchievementStreaksOfUser(request.UserId, UserAchievementType.WordFamiliarityDailyGoalReached)
@@ -34,7 +49,7 @@ namespace ReadABit.Core.Commands.UserAchievements
 
             var currentStreakDays =
                 await DB.UserAchievementStreaksOfUser(request.UserId, UserAchievementType.WordFamiliarityDailyGoalReached)
-                    .Where(s => s.LastUtcDateInStreak == streakCheckDateInUtc)
+                    .Where(s => s.LastUtcStartOfDateInStreak == streakCheckUtcStartOfDate)
                     .Select(s => s.StreakDays)
                     .SingleOrDefaultAsync(cancellationToken);
 

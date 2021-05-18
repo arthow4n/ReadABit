@@ -30,7 +30,7 @@ namespace ReadABit.Core.Commands
                     .ParseToDateTimeZoneOrThrow()
                 );
 
-            var dailyGoalResetTimeInTheSameDate = nowInRequestedZone.SwapLocalTime(
+            var dailyGoalResetTimeInTheSameDate = nowInRequestedZone.WithLocalTime(
                 request
                     .DailyGoalResetTimePartial
                     .ParseIsoHhmmssToLocalTimeOrThrow()
