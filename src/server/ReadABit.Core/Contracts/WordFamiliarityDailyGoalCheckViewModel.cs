@@ -15,8 +15,7 @@ namespace ReadABit.Core.Contracts
 
     public record WordFamiliarityDailyGoalCheckViewModelMetaData
     {
-        public ZonedDateTime NowInRequestedZone { get; init; }
         public bool IsNowEarlierThanTodaysReset { get; init; }
-        public Instant StartOfDailyGoalPeriod { get; init; }
+        public ZonedDateTime CurrentDailyGoalPeriodStart { get; internal set; }
     }
 }

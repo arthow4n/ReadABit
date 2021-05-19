@@ -23,10 +23,10 @@ namespace ReadABit.Core.Commands.UserAchievements
             var checkResult = request.DailyGoalCheckViewModel;
             var meta = checkResult.Metadata;
 
-            var streakCheckDateInUtc =
+            var streakCheckEffectiveDate =
                 meta.IsNowEarlierThanTodaysReset && !checkResult.NewlyCreatedReached ?
-                    meta.NowInRequestedZone.Minus(Duration.FromDays(1)).LocalDateTime.Date :
-                    meta.NowInRequestedZone.LocalDateTime.Date;
+                    meta.CurrentDailyGoalPeriodStart.LocalDateTime.Date.Minus(Period.FromDays(1)) :
+                    meta.CurrentDailyGoalPeriodStart.LocalDateTime.Date;
 
             var streaks =
                 await DB.UserAchievementStreaksOfUser(request.UserId, UserAchievementType.WordFamiliarityDailyGoalReached)
@@ -34,7 +34,7 @@ namespace ReadABit.Core.Commands.UserAchievements
 
             var currentStreakDays =
                 await DB.UserAchievementStreaksOfUser(request.UserId, UserAchievementType.WordFamiliarityDailyGoalReached)
-                    .Where(s => s.LastUtcDateInStreak == streakCheckDateInUtc)
+                    .Where(s => s.LastEffectiveDateInStreak == streakCheckEffectiveDate)
                     .Select(s => s.StreakDays)
                     .SingleOrDefaultAsync(cancellationToken);
 

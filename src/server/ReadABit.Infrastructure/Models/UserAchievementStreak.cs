@@ -6,7 +6,7 @@ namespace ReadABit.Infrastructure.Models
     [Keyless]
     public class UserAchievementStreak
     {
-        public LocalDate LastUtcDateInStreak { get; init; }
+        public LocalDate LastEffectiveDateInStreak { get; init; }
         public int StreakDays { get; init; }
     }
 }

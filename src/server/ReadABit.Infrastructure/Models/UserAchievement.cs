@@ -15,6 +15,14 @@ namespace ReadABit.Infrastructure.Models
         public ApplicationUser User { get; set; }
         [Required]
         public UserAchievementType Type { get; set; }
+        /// <summary>
+        /// A stable achievement date from the user's point of view.
+        /// This is mainly for making it easier to check streaks
+        /// especially when the user changes their daily goal time zone
+        /// during a streak.
+        /// </summary>
+        [Required]
+        public LocalDate EffectiveDate { get; set; }
         [Required]
         public Instant CreatedAt { get; set; }
     }

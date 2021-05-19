@@ -10,6 +10,7 @@ using ReadABit.Core.Commands.Utils;
 using ReadABit.Core.Contracts;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure.Models;
+using Z.EntityFramework.Plus;
 
 namespace ReadABit.Core.Commands
 {
@@ -23,40 +24,42 @@ namespace ReadABit.Core.Commands
         {
             new WordFamiliarityDailyGoalCheckValidator().ValidateAndThrow(request);
 
-            var nowInRequestedZone = Clock
-                .GetCurrentInstant()
-                .InZone(request
+            var requestedResetTimeZone =
+                request
                     .DailyGoalResetTimeTimeZone
-                    .ParseToDateTimeZoneOrThrow()
-                );
+                    .ParseToDateTimeZoneOrThrow();
 
-            var dailyGoalResetTimeInTheSameDate = nowInRequestedZone.SwapLocalTime(
+            var nowInRequestedResetTimeZone = Clock
+                .GetCurrentInstant()
+                .InZone(requestedResetTimeZone);
+
+            var dailyGoalResetTimeInTheSameDate = nowInRequestedResetTimeZone.SwapLocalTime(
                 request
                     .DailyGoalResetTimePartial
                     .ParseIsoHhmmssToLocalTimeOrThrow()
                 );
 
-            var isNowEarlierThanTodaysReset = (nowInRequestedZone - dailyGoalResetTimeInTheSameDate) < Duration.Zero;
+            var isNowEarlierThanTodaysReset = (nowInRequestedResetTimeZone - dailyGoalResetTimeInTheSameDate) < Duration.Zero;
 
             var dailyGoalPeriodStart =
-                (isNowEarlierThanTodaysReset ?
-                    dailyGoalResetTimeInTheSameDate.Minus(Duration.FromDays(1)) :
-                    dailyGoalResetTimeInTheSameDate
-                )
-                    .ToInstant();
+               isNowEarlierThanTodaysReset ?
+                   dailyGoalResetTimeInTheSameDate.Minus(Duration.FromDays(1)) :
+                   dailyGoalResetTimeInTheSameDate;
+
+            var dailyGoalPeriodStartInstant = dailyGoalPeriodStart.ToInstant();
 
             var dailyGoalPeriodEnd =
-                (isNowEarlierThanTodaysReset ?
+                isNowEarlierThanTodaysReset ?
                     dailyGoalResetTimeInTheSameDate :
-                    dailyGoalResetTimeInTheSameDate.Plus(Duration.FromDays(1))
-                )
-                    .ToInstant();
+                    dailyGoalResetTimeInTheSameDate.Plus(Duration.FromDays(1));
+
+            var dailyGoalPeriodEndInstant = dailyGoalPeriodEnd.ToInstant();
 
             var newlyCreatedWordFamiliarityDuringPeriod =
                 await DB.WordFamiliaritiesOfUser(request.UserId)
                     .Where(wf =>
-                        wf.CreatedAt >= dailyGoalPeriodStart &&
-                        wf.CreatedAt < dailyGoalPeriodEnd
+                        wf.CreatedAt >= dailyGoalPeriodStartInstant &&
+                        wf.CreatedAt < dailyGoalPeriodEndInstant
                     )
                     .CountAsync(wf => wf.Level >= 1, cancellationToken);
 
@@ -64,29 +67,42 @@ namespace ReadABit.Core.Commands
                 newlyCreatedWordFamiliarityDuringPeriod >=
                 request.DailyGoalNewlyCreatedWordFamiliarityCount;
 
-            if (newlyCreatedReached)
-            {
-                // It's fine to insert multiple entries in a day,
-                // we just want to avoid writing it all the time,
-                // therefore it's fine that this check misses when race condition happens.
-                var isDailyGoalReachedAchievementCreated =
-                    await DB.UserAchievementsOfUser(request.UserId)
-                        .Where(ua =>
-                            ua.CreatedAt >= dailyGoalPeriodStart &&
-                            ua.CreatedAt < dailyGoalPeriodEnd
-                        )
-                        .AnyAsync(cancellationToken);
 
-                if (!isDailyGoalReachedAchievementCreated)
+            // It's fine to insert multiple entries in a day,
+            // we just want to avoid writing it all the time,
+            // therefore it's fine that this check misses when race condition happens.
+            var isDailyGoalReachedAchievementCreated =
+                await DB.UserAchievementsOfUser(request.UserId)
+                    .Where(ua =>
+                        ua.CreatedAt >= dailyGoalPeriodStartInstant &&
+                        ua.CreatedAt < dailyGoalPeriodEndInstant
+                    )
+                    .AnyAsync(cancellationToken);
+
+            var effectiveDateForAchievement =
+                dailyGoalPeriodStartInstant
+                    .InZone(requestedResetTimeZone)
+                    .Date;
+
+            if (newlyCreatedReached && !isDailyGoalReachedAchievementCreated)
+            {
+                await DB.Unsafe.UserAchievements.AddAsync(new()
                 {
-                    await DB.Unsafe.UserAchievements.AddAsync(new()
-                    {
-                        Id = Guid.NewGuid(),
-                        UserId = request.UserId,
-                        Type = UserAchievementType.WordFamiliarityDailyGoalReached,
-                        CreatedAt = nowInRequestedZone.ToInstant(),
-                    }, cancellationToken);
-                }
+                    Id = Guid.NewGuid(),
+                    UserId = request.UserId,
+                    Type = UserAchievementType.WordFamiliarityDailyGoalReached,
+                    EffectiveDate = effectiveDateForAchievement,
+                    CreatedAt = nowInRequestedResetTimeZone.ToInstant(),
+                }, cancellationToken);
+            }
+            else if (!newlyCreatedReached)
+            {
+                await DB.UserAchievementsOfUser(request.UserId)
+                    .Where(ua =>
+                        ua.Type == UserAchievementType.WordFamiliarityDailyGoalReached &&
+                        ua.EffectiveDate == effectiveDateForAchievement
+                    )
+                    .DeleteAsync(cancellationToken);
             }
 
             return new WordFamiliarityDailyGoalCheckViewModel
@@ -96,9 +112,8 @@ namespace ReadABit.Core.Commands
                 NewlyCreatedReached = newlyCreatedReached,
                 Metadata = new()
                 {
-                    NowInRequestedZone = nowInRequestedZone,
                     IsNowEarlierThanTodaysReset = isNowEarlierThanTodaysReset,
-                    StartOfDailyGoalPeriod = dailyGoalPeriodStart,
+                    CurrentDailyGoalPeriodStart = dailyGoalPeriodStart,
                 }
             };
         }

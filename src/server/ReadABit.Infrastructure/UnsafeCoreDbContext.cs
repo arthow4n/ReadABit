@@ -91,6 +91,15 @@ namespace ReadABit.Infrastructure
                     arp.ArticleId,
                 })
                 .IsUnique();
+
+            // .ToView(null) was needed to skip creating table.
+            // See:
+            // https://stackoverflow.com/a/60079102
+            // https://github.com/dotnet/efcore/issues/18116#issuecomment-537267318
+            modelBuilder
+                .Entity<UserAchievementStreak>()
+                .HasNoKey()
+                .ToView(null);
         }
     }
 }

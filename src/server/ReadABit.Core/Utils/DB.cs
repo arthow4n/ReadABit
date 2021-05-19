@@ -66,15 +66,17 @@ namespace ReadABit.Core.Utils
                 .FromSqlInterpolated(
                 $@"        
                     with
-                    streaks as (
-                        select
-                            distinct ua.""CreatedAt""::date,
-                            ""CreatedAt""::date - make_interval(days:= (dense_rank() over(order by ""CreatedAt""::date))::int) as ""StreakGroup""
-                        from ""UserAchievements"" ua
-                        where ua.""UserId"" = {userId}
-                        and ua.""Type"" = {type}
-                    )
-                    select max(""CreatedAt"") as ""LastUtcDateInStreak"", COUNT(*) as ""StreakDays""
+                        streaks as (
+                            select
+                                distinct ua.""EffectiveDate"",
+                                ""EffectiveDate"" - make_interval(days:= (dense_rank() over(order by ""EffectiveDate""))::int) as ""StreakGroup""
+                            from ""UserAchievements"" ua
+                            where ua.""UserId"" = {userId}
+                            and ua.""Type"" = {type}
+                        )
+                    select
+                        max(""EffectiveDate"") as ""LastEffectiveDateInStreak"",
+                        COUNT(*) as ""StreakDays""
                     from streaks
                     group by ""StreakGroup""
                 ");
