@@ -18,6 +18,7 @@ export enum QueryCacheKey {
   WordDefinition = 'WordDefinition',
   WordFamiliarityList = 'WordFamiliarityList',
   WordFamiliarityDailyGoalCheck = 'WordFamiliarityDailyGoalCheck',
+  UserAchievementGetDailyGoalStreakState = 'UserAchievementGetDailyGoalStreakState',
   UserPreferenceData = 'UserPreferenceData',
   CultureInfoListAllSupportedTimeZones = 'CultureInfoListAllSupportedTimeZones',
 }
@@ -41,6 +42,9 @@ export function queryCacheKey(
 ): QueryKey;
 export function queryCacheKey(
   base: QueryCacheKey.CultureInfoListAllSupportedTimeZones,
+): QueryKey;
+export function queryCacheKey(
+  base: QueryCacheKey.UserAchievementGetDailyGoalStreakState,
 ): QueryKey;
 export function queryCacheKey(base: QueryCacheKey.UserPreferenceData): QueryKey;
 export function queryCacheKey(

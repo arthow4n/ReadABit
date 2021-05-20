@@ -25,7 +25,7 @@ namespace ReadABit.Web.Controllers
         {
             var dailyGoalCheckViewModel = await new DailyGoalHelper(this).PerformDailyGoalCheck();
 
-            UserAchievementsDailyGoalStreakStateViewModel vm = await Mediator.Send(request with
+            UserAchievementsDailyGoalStreakStateViewModel vm = await Mediator.Send(new UserAchievementsDailyGoalStreakGetInternal
             {
                 UserId = RequestUserId,
                 DailyGoalCheckViewModel = dailyGoalCheckViewModel,

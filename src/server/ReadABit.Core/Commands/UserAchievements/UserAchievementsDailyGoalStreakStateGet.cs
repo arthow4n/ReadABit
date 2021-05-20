@@ -7,11 +7,14 @@ using ReadABit.Core.Contracts;
 
 namespace ReadABit.Core.Commands.UserAchievements
 {
-    public record UserAchievementsDailyGoalStreakGet : IRequest<UserAchievementsDailyGoalStreakStateViewModel>
+    public record UserAchievementsDailyGoalStreakGet
     {
         [OpenApiIgnore, JsonIgnore]
         public Guid UserId { get; init; }
-        [OpenApiIgnore, JsonIgnore]
+    }
+
+    public record UserAchievementsDailyGoalStreakGetInternal : UserAchievementsDailyGoalStreakGet, IRequest<UserAchievementsDailyGoalStreakStateViewModel>
+    {
         public WordFamiliarityDailyGoalCheckViewModel DailyGoalCheckViewModel { get; init; } = new();
     }
 }

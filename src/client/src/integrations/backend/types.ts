@@ -24,6 +24,7 @@ export interface IClient {
     articles_Delete(request: { id: string }): Promise<void>;
     articles_UpsertReadingProgress(request: { id: string, request: ArticleReadingProgressUpsert }): Promise<void>;
     cultureInfo_ListAllSupportedTimeZones(request: {  }): Promise<TimeZoneInfoViewModel[]>;
+    userAchievements_GetDailyGoalStreakState(request: {  }): Promise<UserAchievementsDailyGoalStreakStateViewModel>;
     userPreferences_Get(request: {  }): Promise<UserPreferenceData>;
     userPreferences_Upsert(request: { request: UserPreferenceUpsert }): Promise<void>;
     wordDefinitions_List(request: { filter_Word_LanguageCode: string | null, filter_Word_Expression: string | null, page_Index?: number | undefined, page_Size?: number | null | undefined }): Promise<PaginatedOfWordDefinition>;
@@ -698,6 +699,55 @@ export class Client implements IClient {
     }
 
     protected processCultureInfo_ListAllSupportedTimeZones(response: AxiosResponse): Promise<TimeZoneInfoViewModel[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else {
+            const _responseText = response.data;
+            let resultdefault: any = null;
+            let resultDatadefault  = _responseText;
+            resultdefault = tryJsonParse(resultDatadefault);
+            return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
+        }
+    }
+
+    userAchievements_GetDailyGoalStreakState(request: {  } = { }, cancelToken?: CancelToken | undefined ): Promise<UserAchievementsDailyGoalStreakStateViewModel> {
+        let url_ = this.baseUrl + "/api/v1/UserAchievements/DailyGoalStreak";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUserAchievements_GetDailyGoalStreakState(_response);
+        });
+    }
+
+    protected processUserAchievements_GetDailyGoalStreakState(response: AxiosResponse): Promise<UserAchievementsDailyGoalStreakStateViewModel> {
         const status = response.status;
         let _headers: any = {};
         if (response.headers && typeof response.headers === "object") {
@@ -1576,6 +1626,17 @@ export interface TimeZoneInfoViewModel {
     displayName: string;
 }
 
+export interface UserAchievementsDailyGoalStreakStateViewModel {
+    currentStreakDays: number;
+    dailyGoalCheckResult: WordFamiliarityDailyGoalCheckViewModel;
+}
+
+export interface WordFamiliarityDailyGoalCheckViewModel {
+    newlyCreated: number;
+    newlyCreatedGoal: number;
+    newlyCreatedReached: boolean;
+}
+
 export interface UserPreferenceData {
     dailyGoalResetTimeTimeZone?: string | null;
     dailyGoalResetTimePartial?: string | null;
@@ -1650,12 +1711,6 @@ export interface WordFamiliarityListItemViewModel {
 
 export interface WordFamiliarityUpsertBatchResultViewModal {
     dailyGoalStatus: WordFamiliarityDailyGoalCheckViewModel;
-}
-
-export interface WordFamiliarityDailyGoalCheckViewModel {
-    newlyCreated: number;
-    newlyCreatedGoal: number;
-    newlyCreatedReached: boolean;
 }
 
 export interface WordFamiliarityUpsertBatch {

@@ -12,13 +12,13 @@ using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands.UserAchievements
 {
-    public class UserAchievementsDailyGoalStreakStateGetHandler : CommandHandlerBase, IRequestHandler<UserAchievementsDailyGoalStreakGet, UserAchievementsDailyGoalStreakStateViewModel>
+    public class UserAchievementsDailyGoalStreakStateGetHandler : CommandHandlerBase, IRequestHandler<UserAchievementsDailyGoalStreakGetInternal, UserAchievementsDailyGoalStreakStateViewModel>
     {
         public UserAchievementsDailyGoalStreakStateGetHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
         }
 
-        public async Task<UserAchievementsDailyGoalStreakStateViewModel> Handle(UserAchievementsDailyGoalStreakGet request, CancellationToken cancellationToken)
+        public async Task<UserAchievementsDailyGoalStreakStateViewModel> Handle(UserAchievementsDailyGoalStreakGetInternal request, CancellationToken cancellationToken)
         {
             var checkResult = request.DailyGoalCheckViewModel;
             var meta = checkResult.Metadata;
@@ -41,6 +41,7 @@ namespace ReadABit.Core.Commands.UserAchievements
             return new()
             {
                 CurrentStreakDays = currentStreakDays,
+                DailyGoalCheckResult = request.DailyGoalCheckViewModel,
             };
         }
     }
