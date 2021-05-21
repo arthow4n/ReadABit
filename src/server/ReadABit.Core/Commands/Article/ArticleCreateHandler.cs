@@ -49,7 +49,7 @@ namespace ReadABit.Core.Commands
                 Order = lastArticleOrderInCollection + 1,
                 Name = request.Name.Trim().Normalize(),
                 Text = normalisedText,
-                ConlluDocument = UDPipeV1Service.ToConlluDocument(articleCollection.LanguageCode, normalisedText),
+                ConlluDocument = ConlluService.ToConlluDocument(articleCollection.LanguageCode, normalisedText),
                 CreatedAt = now,
                 UpdatedAt = now,
             };

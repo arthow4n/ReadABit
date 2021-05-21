@@ -8,7 +8,7 @@ using Ufal.UDPipe;
 
 namespace ReadABit.Core.Integrations.Services
 {
-    public static class UDPipeV1Service
+    internal static class UDPipeV1Service
     {
         /// <param name="twoLetterISOLanguageName"><see cref="CultureInfo.TwoLetterISOLanguageName" /></param>
         /// <param name="input">Text content of the input.</param>
@@ -34,7 +34,7 @@ namespace ReadABit.Core.Integrations.Services
         /// <param name="twoLetterISOLanguageName"><see cref="CultureInfo.TwoLetterISOLanguageName" /></param>
         /// <param name="input">Text content of the input.</param>
         /// <returns>CoNLL-U annotaion of the input. See https://universaldependencies.org/format.html for full spec.</returns>
-        public static string ToConllu(string twoLetterISOLanguageName, string input)
+        private static string ToConllu(string twoLetterISOLanguageName, string input)
         {
             var pipeline = new Pipeline(
                 LanguageToModelMapping[twoLetterISOLanguageName].Value,
