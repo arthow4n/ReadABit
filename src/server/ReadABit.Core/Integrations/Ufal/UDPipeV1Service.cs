@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using ReadABit.Core.Integrations.Contracts.Conllu;
+using ReadABit.Core.Integrations.Services;
 using Ufal.UDPipe;
 
-namespace ReadABit.Core.Integrations.Services
+namespace ReadABit.Core.Integrations.Ufal
 {
-    internal static class UDPipeV1Service
+    public class UDPipeV1Service : ConlluServiceBase
     {
-        /// <param name="twoLetterISOLanguageName"><see cref="CultureInfo.TwoLetterISOLanguageName" /></param>
-        /// <param name="input">Text content of the input.</param>
-        public static Conllu.Document ToConlluDocument(string twoLetterISOLanguageName, string input)
+        public UDPipeV1Service(IServiceProvider serviceProvider) : base(serviceProvider)
+        {
+        }
+
+        public override async Task<Conllu.Document> ToConlluDocument(string twoLetterISOLanguageName, string input)
         {
             return ToConllu(twoLetterISOLanguageName, CleanUpInput(input)).ToConlluDocument();
         }

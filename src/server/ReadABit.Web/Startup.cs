@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -15,6 +16,7 @@ using NodaTime.Serialization.JsonNet;
 using Npgsql;
 using ReadABit.Core.Commands;
 using ReadABit.Core.Contracts.Utils;
+using ReadABit.Core.Integrations.SparvPipelineProxy;
 using ReadABit.Core.Utils;
 using ReadABit.Infrastructure;
 using ReadABit.Infrastructure.Models;
@@ -150,6 +152,12 @@ namespace ReadABit.Web
             services.AddHttpContextAccessor();
             services.AddScoped<IRequestContext, RequestContext>();
             services.AddScoped<DB, DB>();
+            services.AddSingleton((serviceProvider) =>
+                new SparvPipelineProxyClient(
+                    Configuration["Integrations:SparvPipelineProxy:BaseUrl"],
+                    new HttpClient()
+                )
+            );
 
             services.AddMediatR(typeof(SaveChanges));
 

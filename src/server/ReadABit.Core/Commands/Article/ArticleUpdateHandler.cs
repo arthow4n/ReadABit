@@ -41,7 +41,7 @@ namespace ReadABit.Core.Commands
             article.Article.ConlluDocument =
                 normalisedRequestText is null ?
                     article.Article.ConlluDocument :
-                    ConlluService.ToConlluDocument(article.ArticleCollection.LanguageCode, normalisedRequestText);
+                    await ConlluService.ToConlluDocument(article.ArticleCollection.LanguageCode, normalisedRequestText);
 
             article.ArticleCollection.UpdatedAt = Clock.GetCurrentInstant();
 
