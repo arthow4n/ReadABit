@@ -17,7 +17,7 @@ import {
   writeToAsyncStore,
 } from '@src/shared/utils/storage';
 
-import { isWord } from './TokenUtils';
+import { getCompoundOrLemmaForTranslation, isWord } from './TokenUtils';
 
 import { ContentLoading } from '../Loading';
 
@@ -189,8 +189,8 @@ const createPaginatedParagraphs = (
         tokens: sentence.tokens.map((t) => {
           tokenCounter += 1;
           if (isWord(t)) {
-            tokenWordExpressionSet.add(t.form);
-            tokenWordExpressionSet.add(t.lemma);
+            tokenWordExpressionSet.add(t.normalisedToken.form);
+            tokenWordExpressionSet.add(getCompoundOrLemmaForTranslation(t));
           }
 
           return {

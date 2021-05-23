@@ -15,11 +15,11 @@ namespace ReadABit.Core.Integrations.Services
         /// <param name="input">Text content of the input.</param>
         public override async Task<Conllu.Document> ToConlluDocument(string languageCode, string input)
         {
-            Conllu.Document? f;
+            Conllu.Document? result = null;
 
             try
             {
-                f = languageCode switch
+                result = languageCode switch
                 {
                     var s when s.StartsWith("sv") =>
                         // TODO: Switch to SparvPipelineProxy
@@ -27,9 +27,15 @@ namespace ReadABit.Core.Integrations.Services
                     _ => null,
                 };
             }
-            catch
+            catch (Exception ex)
             {
-                // TODO: Log error
+                // TODO: Log error in a better way e.g. Serilog
+                Console.WriteLine($"ConlluService.ToConlluDocument({languageCode}, ...) soft error: {ex.Message}");
+            }
+
+            if (result is not null)
+            {
+                return result;
             }
 
             return await UDPipeV1Service.ToConlluDocument(languageCode.Substring(0, 2), input);

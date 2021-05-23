@@ -63,7 +63,8 @@ export const RenderToken: React.FC<{
       >
         <Text
           onPress={() => {
-            console.log('Pressed in RenderToken: ', token);
+            console.log('Pressed in RenderToken: ', JSON.stringify(token));
+
             if (!isWord(token)) {
               return;
             }

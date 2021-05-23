@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using static ReadABit.Core.Integrations.Contracts.Conllu.Conllu;
 
 namespace ReadABit.Core.Contracts
 {
@@ -35,6 +36,7 @@ namespace ReadABit.Core.Contracts
         public string Deprel { get; init; } = "_";
         public string Deps { get; init; } = "_";
         public string Misc { get; init; } = "_";
+        public SparvPipelineMisc? SparvPipelineMisc { get; init; }
         public string LanguageCode { get; init; } = "en";
         /// <summary>
         /// Normalised form of the token mainly for matching word definition and familiarity.

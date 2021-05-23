@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native';
 import { useQuery } from 'react-query';
 
 import produce from 'immer';
+import { first } from 'lodash';
 import { Button, Col, Grid, Icon, Row, Text, View } from 'native-base';
 
 import { useLinkTo } from '@react-navigation/native';
@@ -21,6 +22,7 @@ import {
   useWordTokenHandle,
 } from './ArticleReaderRenderContext';
 import { OnDeviceTranslation } from './OnDeviceTranslation';
+import { getCompoundOrLemmaForTranslation } from './TokenUtils';
 
 export const SelectedTokenDefinitionCard: React.FC = () => {
   const linkTo = useLinkTo();
@@ -103,7 +105,7 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
           <OnDeviceTranslation
             sourceLanguageCode={articleLanguageCode}
             sourceText={selectedToken.form}
-            sourceText2={selectedToken.lemma}
+            sourceText2={getCompoundOrLemmaForTranslation(selectedToken)}
             targetLanguageCode={appSettings.languageCodes.ui}
           />
           {/* TODO: Show all the available word definitions in a scrollable block */}

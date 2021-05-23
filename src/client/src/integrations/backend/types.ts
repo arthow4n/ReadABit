@@ -1494,8 +1494,14 @@ export interface ConlluTokenViewModel {
     deprel: string;
     deps: string;
     misc: string;
+    sparvPipelineMisc?: SparvPipelineMisc | null;
     languageCode: string;
     normalisedToken: ConlluNormalisedTokenViewModel;
+}
+
+export interface SparvPipelineMisc {
+    tail: string;
+    compwf: string[][];
 }
 
 export interface ConlluNormalisedTokenViewModel {
@@ -1591,6 +1597,7 @@ export interface Token {
     deprel: string;
     deps: string;
     misc: string;
+    sparvPipelineMisc?: SparvPipelineMisc | null;
 }
 
 export interface ArticleReadingProgress {

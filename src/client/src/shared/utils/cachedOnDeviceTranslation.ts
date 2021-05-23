@@ -57,12 +57,14 @@ export const getTranslation = async (
     return cached;
   }
 
-  const result = await mlkitTranslate.translate(
-    wordExpression,
-    sourceLanguageCode,
-    targetLanguageCode,
-    getAppSettings().saveDataUsage,
-  );
+  const result = await mlkitTranslate
+    .translate(
+      wordExpression,
+      sourceLanguageCode,
+      targetLanguageCode,
+      getAppSettings().saveDataUsage,
+    )
+    .catch(() => wordExpression);
 
   writeToTranslationCache(
     sourceLanguageCode,

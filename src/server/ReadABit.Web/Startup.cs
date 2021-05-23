@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -155,7 +156,12 @@ namespace ReadABit.Web
             services.AddSingleton((serviceProvider) =>
                 new SparvPipelineProxyClient(
                     Configuration["Integrations:SparvPipelineProxy:BaseUrl"],
-                    new HttpClient()
+                    new HttpClient
+                    {
+                        // Never timeout because sparv-pipeline can run quite slow
+                        // when given large input especially on a machine that's not that performant.
+                        Timeout = Timeout.InfiniteTimeSpan
+                    }
                 )
             );
 

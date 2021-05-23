@@ -163,8 +163,26 @@ namespace ReadABit.Core.Integrations.Contracts.Conllu
             /// <summary>
             /// 10th column in a token. Could have supportive info like `SpaceAfter=No`, `SpaceAfter=\n` for transforming the tokens back into original text.
             /// </summary>
-            /// <value></value>
             public string Misc { get; init; } = "_";
+            /// <summary>
+            /// Formatted misc data parsed from SparvPipeline's output.
+            /// Client should prefer this over <see cref="Misc" /> when available.
+            /// </summary>
+            public SparvPipelineMisc? SparvPipelineMisc { get; init; }
+        }
+
+        public record SparvPipelineMisc
+        {
+            /// <summary>
+            /// Similar to SpaceAfter/SpacesAfter in <see cref="Token.Misc" /> from UDPipeV1
+            /// </summary>
+            public string Tail { get; init; } = "";
+            /// <summary>
+            /// Compound lemgram from compwf="", splitted by | then by +.
+            /// So it's a List of all possible compounds (List<string>),
+            /// and each compound contains the elements (string) to that compound.
+            /// </summary>
+            public List<List<string>> Compwf { get; init; } = new();
         }
 
         /// <summary>
