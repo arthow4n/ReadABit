@@ -22,7 +22,7 @@ import {
   useWordTokenHandle,
 } from './ArticleReaderRenderContext';
 import { OnDeviceTranslation } from './OnDeviceTranslation';
-import { getCompoundOrLemmaForTranslation } from './TokenUtils';
+import { getCompoundAndLemmaForTranslation } from './TokenUtils';
 
 export const SelectedTokenDefinitionCard: React.FC = () => {
   const linkTo = useLinkTo();
@@ -71,7 +71,9 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
         width: '100%',
       }}
     >
-      {`${selectedToken.form} (${selectedToken.lemma})`}
+      {`${selectedToken.form} (${getCompoundAndLemmaForTranslation(
+        selectedToken,
+      )})`}
     </Text>
   );
 
@@ -105,7 +107,7 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
           <OnDeviceTranslation
             sourceLanguageCode={articleLanguageCode}
             sourceText={selectedToken.form}
-            sourceText2={getCompoundOrLemmaForTranslation(selectedToken)}
+            sourceText2={getCompoundAndLemmaForTranslation(selectedToken)}
             targetLanguageCode={appSettings.languageCodes.ui}
           />
           {/* TODO: Show all the available word definitions in a scrollable block */}

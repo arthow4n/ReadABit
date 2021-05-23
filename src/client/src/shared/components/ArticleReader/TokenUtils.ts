@@ -20,8 +20,13 @@ export const getSpacesAfter = (token: Backend.ConlluTokenViewModel) =>
     .replace(/\\s/g, ' ')
     .replace(/\\n/g, '\n');
 
-export const getCompoundOrLemmaForTranslation = (
+export const getCompoundAndLemmaForTranslation = (
   token: Backend.ConlluTokenViewModel,
-) =>
-  first(token.sparvPipelineMisc?.compwf)?.join(' + ') ??
-  token.normalisedToken.lemma;
+) => {
+  const compound = first(token.sparvPipelineMisc?.compwf)?.join(' + ');
+  const { lemma } = token.normalisedToken;
+
+  // Lemma is rendered along with compound
+  // because sometimes the quality of compound analysis isn't that good.
+  return compound ? `${lemma}, ${compound}` : lemma;
+};
