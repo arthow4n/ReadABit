@@ -10,6 +10,9 @@ export const isWord = (token: Backend.ConlluTokenViewModel) =>
     !token.normalisedToken.form.trim()
   );
 
+export const isProperNoun = (token: Backend.ConlluTokenViewModel) =>
+  token.upos === 'PROPN';
+
 export const getSpacesAfter = (token: Backend.ConlluTokenViewModel) =>
   (
     token.sparvPipelineMisc?.tail ??

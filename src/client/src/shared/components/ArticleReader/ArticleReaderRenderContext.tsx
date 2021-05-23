@@ -17,7 +17,11 @@ import {
   writeToAsyncStore,
 } from '@src/shared/utils/storage';
 
-import { getCompoundAndLemmaForTranslation, isWord } from './TokenUtils';
+import {
+  getCompoundAndLemmaForTranslation,
+  isProperNoun,
+  isWord,
+} from './TokenUtils';
 
 import { ContentLoading } from '../Loading';
 
@@ -493,21 +497,26 @@ export const useSelectedTokenDefinitionCardHandle = () => {
     return subscribeToSelectedToken(rerender);
   }, []);
 
+  const selectedToken = getSelectedToken();
   React.useEffect(() => {
+    if (!selectedToken || !isWord(selectedToken)) {
+      return;
+    }
+
     const wordFamiliarityItem = retriveWordFamiliarityItem(
       wordFamiliarity,
       articleLanguageCode,
-      getSelectedToken(),
+      selectedToken,
     );
 
     if (wordFamiliarityItem.level === 0) {
       updateWordFamiliarity(
         produce(wordFamiliarityItem, (draft) => {
-          draft.level = 1;
+          draft.level = isProperNoun(selectedToken) ? -1 : 1;
         }),
       );
     }
-  }, [getSelectedToken()]);
+  }, [selectedToken]);
 
   return {
     articleLanguageCode,
