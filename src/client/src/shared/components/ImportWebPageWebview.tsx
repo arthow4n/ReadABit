@@ -8,6 +8,7 @@ import * as z from 'zod';
 import readabilityRawJs from '@src/../node_modules/@mozilla/readability/Readability.js.txt';
 
 import { useRerender } from '../hooks/useRerender';
+import { jsForWebView } from '../utils/webview';
 
 let readabilityRawJsContent: string | null = null;
 const readabilityRawJsLoadPromise = (async () => {
@@ -63,24 +64,19 @@ export const ImportWebPageWebview: React.FC<{
     onParsed(result.data);
   };
 
-  const injectedJavaScript = `
-  ${readabilityRawJsContent}
-
-  window.addEventListener('DOMContentLoaded', (event) => {    
-    ${scraper}
-    window.ReactNativeWebView.postMessage(JSON.stringify({ title, content }));
-  });
-
-  // WARNING: Don't remove the true at the end of script!
-  // https://github.com/react-native-webview/react-native-webview/blob/master/docs/Guide.md#communicating-between-js-and-native
-  true;
-  `;
-
   return (
     <WebView
       style={{ display: 'none' }}
       source={{ uri: url }}
-      injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
+      injectedJavaScriptBeforeContentLoaded={jsForWebView({
+        beforeDOMContentLoaded: `
+${readabilityRawJsContent}
+`,
+        onDOMContentLoaded: `
+${scraper}
+window.ReactNativeWebView.postMessage(JSON.stringify({ title, content }));
+`,
+      })}
       onMessage={extractFromMessage}
     />
   );
