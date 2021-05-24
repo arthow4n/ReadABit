@@ -4,7 +4,10 @@ export type ArticleStackParamList = {
   };
   Article: { id: string };
   WordDefinitionsDictionaryLookup: {
-    word: string;
+    /**
+     * string[] stringified.
+     */
+    wordsJson: string;
     wordLanguageCode: string;
     dictionaryLanguageCode: string;
     wordDefinitionId?: string;

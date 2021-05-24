@@ -1,15 +1,28 @@
+import { jsForWebView } from '../utils/webview';
+
 /**
  * @example
  * escapeUri`https://example.com/?q=${"1 2"}` === "https://example.com/?q=1%202"
  */
 const joinUri = (strs: TemplateStringsArray, ...components: string[]) =>
-  strs.map((s, i) => s + encodeURIComponent(components[i])).join('');
+  strs
+    .map(
+      (s, i) =>
+        s +
+        (typeof components[i] === 'string'
+          ? encodeURIComponent(components[i])
+          : ''),
+    )
+    .join('');
 
 /**
  * Take the first two chars of input string.
  * Mainly for cutting BCP 47 language code into shorter form
  */
 const to2 = (s: string) => s.slice(0, 2);
+
+const oneOfOrDefault = <T>(input: T, whitelist: T[], fallback: T) =>
+  whitelist.includes(input) ? input : fallback;
 
 export interface WebDictionary {
   name: string;
@@ -32,9 +45,39 @@ export interface WebDictionary {
     targetLanguageCode: string,
     wordExpression: string,
   ): string;
+  /**
+   * JavaScript to inject into web view.
+   * Mainly for deliverying smoother UX.
+   */
+  injectedJavaScriptBeforeContentLoaded?: string;
 }
 
 const dictionaries: WebDictionary[] = [
+  {
+    name: 'Folkets lexikon',
+    supportedSourceLanguageCodes: new Set(['sv', 'en']),
+    wordPageUrl: (
+      sourceLanguageCode: string,
+      targetLanguageCode: string,
+      wordExpression: string,
+    ) =>
+      joinUri`http://folkets-lexikon.csc.kth.se/folkets/service?lang=${to2(
+        sourceLanguageCode,
+      )}&interface=${oneOfOrDefault(
+        to2(targetLanguageCode),
+        ['sv', 'en'],
+        'en',
+      )}&word=${wordExpression}`,
+    injectedJavaScriptBeforeContentLoaded: jsForWebView({
+      onDOMContentLoaded: `
+        document.body.innerHTML +=
+        \`
+        <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css">
+        <link rel="stylesheet" href="https://unpkg.com/water.css@2.0.0/out/light.min.css">
+        \`;
+      `,
+    }),
+  },
   {
     name: 'Glosbe',
     supportedSourceLanguageCodes: new Set(['sv', 'en']),
@@ -59,6 +102,8 @@ const dictionaries: WebDictionary[] = [
 ];
 
 export const findSupportedWebDictionary = (sourceLanguageCode: string) =>
-  dictionaries.filter((x) =>
-    x.supportedSourceLanguageCodes.has(sourceLanguageCode),
+  dictionaries.filter(
+    (x) =>
+      x.supportedSourceLanguageCodes.has(sourceLanguageCode) ||
+      x.supportedSourceLanguageCodes.has(to2(sourceLanguageCode)),
   );
