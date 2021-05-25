@@ -10,11 +10,13 @@ import {
   Card,
   Form,
   Grid,
+  Icon,
   Input,
   Item,
   Row,
   Spinner,
   Text,
+  View,
 } from 'native-base';
 import * as z from 'zod';
 
@@ -44,9 +46,10 @@ export const WordDefinitionsDictionaryLookupScreen: React.FC<
     wordDefinitionId,
   } = route.params;
 
-  // TODO: Allow cycling through words (e.g. lemma)
+  const [currentWordIndex, setCurrentWordIndex] = React.useState(0);
+
   const words: string[] = JSON.parse(wordsJson);
-  const word = first(words) ?? '';
+  const word = words[currentWordIndex];
 
   const { appSettings } = useAppSettingsContext();
   const { t } = useTranslation();
@@ -65,10 +68,7 @@ export const WordDefinitionsDictionaryLookupScreen: React.FC<
     filter_Word_LanguageCode: wordLanguageCode,
   });
 
-  // TODO: Support switching to seach with lemma instead of word form
-
-  // TODO: Support saving custom dictionary
-  // TODO: Support choosing another dictionary (findSupportedWebDictionary)
+  // TODO: Support choosing another dictionary
   const webDictionary = first(findSupportedWebDictionary(wordLanguageCode));
 
   React.useEffect(() => {
@@ -155,6 +155,61 @@ export const WordDefinitionsDictionaryLookupScreen: React.FC<
               <Text>{errors.meaning?.message}</Text>
             </Item>
           </Form>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              marginTop: 8,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Button
+                disabled={disabled}
+                onPress={() =>
+                  setCurrentWordIndex((x) =>
+                    x - 1 >= 0 ? x - 1 : words.length - 1,
+                  )
+                }
+              >
+                <Icon name="arrow-back-circle-outline" />
+              </Button>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text
+                adjustsFontSizeToFit
+                style={{
+                  flex: 1,
+                  fontSize: 24,
+                  textAlign: 'center',
+                  textAlignVertical: 'center',
+                }}
+              >
+                {word}
+              </Text>
+            </View>
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Button
+                disabled={disabled}
+                onPress={() =>
+                  setCurrentWordIndex((x) => (x + 1 < words.length ? x + 1 : 0))
+                }
+              >
+                <Icon name="arrow-forward-circle-outline" />
+              </Button>
+            </View>
+          </View>
         </Card>
       </Row>
     </Grid>

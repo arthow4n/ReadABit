@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native';
 import { useQuery } from 'react-query';
 
 import produce from 'immer';
+import { compact, first, uniq } from 'lodash';
 import { Button, Col, Grid, Icon, Row, Text, View } from 'native-base';
 
 import { useLinkTo } from '@react-navigation/native';
@@ -81,7 +82,15 @@ export const SelectedTokenDefinitionCard: React.FC = () => {
   const gotoDictionaryLookUp = () =>
     linkTo(
       routeUrl(Routes.WordDefinitionsDictionaryLookup, null, {
-        wordsJson: JSON.stringify([selectedToken.form]),
+        wordsJson: JSON.stringify(
+          uniq(
+            compact([
+              selectedToken.normalisedToken.form,
+              selectedToken.normalisedToken.lemma,
+              ...(first(selectedToken.sparvPipelineMisc?.compwf) ?? []),
+            ]),
+          ),
+        ),
         wordLanguageCode: wordFamiliarityItem.word.languageCode,
         // TODO: Allow choosing another dictionary language
         dictionaryLanguageCode: appSettings.languageCodes.ui,
