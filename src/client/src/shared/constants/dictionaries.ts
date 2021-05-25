@@ -61,7 +61,7 @@ const dictionaries: WebDictionary[] = [
       targetLanguageCode: string,
       wordExpression: string,
     ) =>
-      joinUri`http://folkets-lexikon.csc.kth.se/folkets/service?lang=${to2(
+      joinUri`https://folkets-lexikon.csc.kth.se/folkets/service?lang=${to2(
         sourceLanguageCode,
       )}&interface=${oneOfOrDefault(
         to2(targetLanguageCode),
@@ -70,10 +70,10 @@ const dictionaries: WebDictionary[] = [
       )}&word=${wordExpression}`,
     injectedJavaScriptBeforeContentLoaded: jsForWebView({
       onDOMContentLoaded: `
-        document.body.innerHTML +=
+        document.head.innerHTML +=
         \`
-        <link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css">
-        <link rel="stylesheet" href="https://unpkg.com/water.css@2.0.0/out/light.min.css">
+        <link rel="stylesheet" referrerpolicy="no-referrer" href="https://unpkg.com/normalize.css@8.0.1/normalize.css">
+        <link rel="stylesheet" referrerpolicy="no-referrer" href="https://unpkg.com/water.css@2.0.0/out/light.min.css">
         \`;
       `,
     }),
