@@ -1,11 +1,10 @@
 import React from 'react';
 
-import { LogBox } from 'react-native';
+import { AppRegistry, LogBox } from 'react-native';
 import { MenuProvider } from 'react-native-popup-menu';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-import { registerRootComponent } from 'expo';
 import { StatusBar } from 'expo-status-bar';
 
 import { ReAuthRequiredException } from './integrations/backend/backend';
@@ -54,4 +53,4 @@ const App: React.FC = () => {
   );
 };
 
-registerRootComponent(App);
+AppRegistry.registerComponent('main', () => App);
