@@ -5,7 +5,7 @@ import { Backend } from '@src/integrations/backend/types';
 export const isWord = (token: Backend.ConlluTokenViewModel) =>
   !(
     token.upos === 'PUNCT' ||
-    token.upos === 'NUM' ||
+    (token.upos === 'NUM' && /[0-9]/.test(token.normalisedToken.form)) ||
     token.upos === 'SYM' ||
     !token.normalisedToken.form.trim()
   );
