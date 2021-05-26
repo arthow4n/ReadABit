@@ -18,7 +18,7 @@ import {
   Text,
   View,
 } from 'native-base';
-import * as z from 'zod';
+import { z } from 'zod';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigation } from '@react-navigation/core';

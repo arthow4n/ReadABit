@@ -18,7 +18,7 @@ import {
   Switch,
 } from 'native-base';
 import { useDebouncedCallback } from 'use-debounce/lib';
-import * as z from 'zod';
+import { z } from 'zod';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';

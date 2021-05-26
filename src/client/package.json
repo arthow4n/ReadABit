@@ -57,7 +57,7 @@
     "react-native-webview": "11.0.0",
     "react-query": "^3.9.9",
     "use-debounce": "^6.0.1",
-    "zod": "^2.0.0-beta.30"
+    "zod": "^3.1.0"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",

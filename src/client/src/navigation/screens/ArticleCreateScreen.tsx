@@ -21,7 +21,7 @@ import {
   View,
   Icon,
 } from 'native-base';
-import * as z from 'zod';
+import { z } from 'zod';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLinkTo } from '@react-navigation/native';

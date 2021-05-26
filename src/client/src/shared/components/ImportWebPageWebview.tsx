@@ -3,7 +3,7 @@ import * as React from 'react';
 import WebView, { WebViewMessageEvent } from 'react-native-webview';
 
 import { Asset } from 'expo-asset';
-import * as z from 'zod';
+import { z } from 'zod';
 
 import readabilityRawJs from '@src/../node_modules/@mozilla/readability/Readability.js.txt';
 
