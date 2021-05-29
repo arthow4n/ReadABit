@@ -101,7 +101,7 @@ const dictionaries: WebDictionary[] = [
   },
 ];
 
-export const findSupportedWebDictionary = (sourceLanguageCode: string) =>
+export const findSupportedWebDictionary = (sourceLanguageCode: string): WebDictionary[] =>
   dictionaries.filter(
     (x) =>
       x.supportedSourceLanguageCodes.has(sourceLanguageCode) ||
