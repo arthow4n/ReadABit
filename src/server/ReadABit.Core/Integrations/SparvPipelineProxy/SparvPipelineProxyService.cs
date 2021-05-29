@@ -86,6 +86,7 @@ namespace ReadABit.Core.Integrations.SparvPipelineProxy
                                     Compwf =
                                         StripRedundantPipes(xt.Attribute("compwf")?.Value)
                                             .Split("|")
+                                            .Where(x => !string.IsNullOrWhiteSpace(x))
                                             .Select(x => x.Split("+").ToList())
                                             .ToList(),
                                 },
