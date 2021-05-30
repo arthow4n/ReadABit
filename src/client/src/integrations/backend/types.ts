@@ -24,6 +24,7 @@ export interface IClient {
     articles_Delete(request: { id: string }): Promise<void>;
     articles_UpsertReadingProgress(request: { id: string, request: ArticleReadingProgressUpsert }): Promise<void>;
     cultureInfo_ListAllSupportedTimeZones(request: {  }): Promise<TimeZoneInfoViewModel[]>;
+    devTools_Noop(request: {  }): Promise<NoopResponse>;
     userAchievements_GetDailyGoalStreakState(request: {  }): Promise<UserAchievementsDailyGoalStreakStateViewModel>;
     userPreferences_Get(request: {  }): Promise<UserPreferenceData>;
     userPreferences_Upsert(request: { request: UserPreferenceUpsert }): Promise<void>;
@@ -721,6 +722,53 @@ export class Client implements IClient {
             resultdefault = tryJsonParse(resultDatadefault);
             return throwException("A server side error occurred.", status, _responseText, _headers, resultdefault);
         }
+    }
+
+    devTools_Noop(request: {  } = { }, cancelToken?: CancelToken | undefined ): Promise<NoopResponse> {
+        let url_ = this.baseUrl + "/api/v1/DevTools";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <AxiosRequestConfig>{
+            method: "POST",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processDevTools_Noop(_response);
+        });
+    }
+
+    protected processDevTools_Noop(response: AxiosResponse): Promise<NoopResponse> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (let k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return result200;
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<NoopResponse>(<any>null);
     }
 
     userAchievements_GetDailyGoalStreakState(request: {  } = { }, cancelToken?: CancelToken | undefined ): Promise<UserAchievementsDailyGoalStreakStateViewModel> {
@@ -1631,6 +1679,21 @@ export interface ArticleReadingProgressUpsert {
 export interface TimeZoneInfoViewModel {
     id: string;
     displayName: string;
+}
+
+export interface NoopResponse {
+    folketsLexikonLookUpViewModelWordEntry: FolketsLexikonLookUpViewModelWordEntry;
+    folketsLexikonLookUpViewModelTranslationEntry: FolketsLexikonLookUpViewModelTranslationEntry;
+}
+
+export interface FolketsLexikonLookUpViewModelWordEntry {
+    wordExpression: string;
+    translations: FolketsLexikonLookUpViewModelTranslationEntry[];
+}
+
+export interface FolketsLexikonLookUpViewModelTranslationEntry {
+    text: string;
+    comment?: string | null;
 }
 
 export interface UserAchievementsDailyGoalStreakStateViewModel {

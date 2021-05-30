@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Newtonsoft.Json;
+using ReadABit.Core.Contracts;
 
 namespace ReadABit.CliUtils.Commands
 {
@@ -18,7 +19,7 @@ namespace ReadABit.CliUtils.Commands
             var xmlRaw = await File.ReadAllTextAsync(inputXdxfPath);
             var xml = XDocument.Parse(xmlRaw);
 
-            var result = new Dictionary<string, List<WordEntry>> { };
+            var result = new Dictionary<string, List<FolketsLexikonLookUpViewModelWordEntry>> { };
 
             // Prefer using not null assertion instead of fallback value for easier debugging.
 
@@ -29,9 +30,9 @@ namespace ReadABit.CliUtils.Commands
                 {
                     var translations = xw
                         .Elements("translation")
-                        .Select(x => new TranslationEntry
+                        .Select(x => new FolketsLexikonLookUpViewModelTranslationEntry
                         {
-                            Value = x.Attribute("value")!.Value,
+                            Text = x.Attribute("value")!.Value,
                             Comment = x.Attribute("comment")?.Value,
                         })
                         .ToList();
@@ -50,7 +51,7 @@ namespace ReadABit.CliUtils.Commands
                         );
                     }
 
-                    return expressions.ConvertAll(expression => new WordEntry
+                    return expressions.ConvertAll(expression => new FolketsLexikonLookUpViewModelWordEntry
                     {
                         WordExpression = expression,
                         Translations = translations,
@@ -59,17 +60,6 @@ namespace ReadABit.CliUtils.Commands
 
 
             await File.WriteAllTextAsync(outputJsonPath, JsonConvert.SerializeObject(result));
-        }
-
-        private record WordEntry
-        {
-            public string WordExpression { get; init; } = "";
-            public List<TranslationEntry> Translations { get; init; } = new();
-        }
-        private record TranslationEntry
-        {
-            public string Value { get; init; } = "";
-            public string? Comment { get; init; }
         }
     }
 }
