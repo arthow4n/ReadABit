@@ -12,6 +12,7 @@ using ReadABit.Infrastructure.Models;
 
 namespace ReadABit.Core.Commands.UserAchievements
 {
+    // TODO: Maybe rename this to something like "get home screen state"
     public class UserAchievementsDailyGoalStreakStateGetHandler : CommandHandlerBase, IRequestHandler<UserAchievementsDailyGoalStreakGetInternal, UserAchievementsDailyGoalStreakStateViewModel>
     {
         public UserAchievementsDailyGoalStreakStateGetHandler(IServiceProvider serviceProvider) : base(serviceProvider)
@@ -38,10 +39,16 @@ namespace ReadABit.Core.Commands.UserAchievements
                     .Select(s => s.StreakDays)
                     .SingleOrDefaultAsync(cancellationToken);
 
+            var seenWordCount =
+                await DB.WordFamiliaritiesOfUser(request.UserId)
+                    .Where(wf => wf.Level > 0)
+                    .CountAsync(cancellationToken: cancellationToken);
+
             return new()
             {
                 CurrentStreakDays = currentStreakDays,
                 DailyGoalCheckResult = request.DailyGoalCheckViewModel,
+                SeenWordCount = seenWordCount,
             };
         }
     }

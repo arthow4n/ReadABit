@@ -157,6 +157,29 @@ namespace ReadABit.Web.Test.Controllers
             #endregion
         }
 
+        // TODO: Should rename this whole endpoint to something like "get home screen state"
+        [Fact]
+        public async Task DailyGoalStreak_CountsSeenWords()
+        {
+            await SetupWordFamiliarity(1, "sv", new() { "a" });
+
+            (await DailyGoalStreak())
+                .SeenWordCount
+                .ShouldBe(1);
+
+            await SetupWordFamiliarity(-1, "sv", new() { "a" });
+
+            (await DailyGoalStreak())
+                .SeenWordCount
+                .ShouldBe(0);
+
+            await SetupWordFamiliarity(3, "sv", new() { "a", "b", "c" });
+
+            (await DailyGoalStreak())
+                .SeenWordCount
+                .ShouldBe(3);
+        }
+
         private async Task<UserAchievementsDailyGoalStreakStateViewModel> DailyGoalStreak()
         {
             return (await UserAchievementsController.GetDailyGoalStreakState(new()))

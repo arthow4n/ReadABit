@@ -4,5 +4,6 @@ namespace ReadABit.Core.Contracts
     {
         public int CurrentStreakDays { get; init; }
         public WordFamiliarityDailyGoalCheckViewModel DailyGoalCheckResult { get; init; } = new();
+        public int SeenWordCount { get; init; }
     }
 }
